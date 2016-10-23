@@ -33,7 +33,7 @@ public class CustomListAdapter extends ArrayAdapter<String> {
         name.setText(list.get(position).toString());
 
         if (position == selectedItemPosition) {
-            convertView.setBackgroundColor(Color.YELLOW);
+            convertView.setBackgroundColor(Color.WHITE);
         } else {
             convertView.setBackgroundColor(Color.TRANSPARENT);
         }

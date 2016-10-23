@@ -1,7 +1,7 @@
 package com.example.zohaibsiddique.expensecalculator;
 
 /**
- * Created by deXterWaZowSki on 17/06/2016.
+ * Created by Zohaib Siddique on 17/06/2016.
  */
 import android.content.ContentValues;
 import android.content.Context;

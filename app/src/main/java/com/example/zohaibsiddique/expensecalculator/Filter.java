@@ -81,7 +81,6 @@ public class Filter extends AppCompatActivity implements LeftFilterContents.Get,
     @Override
     public void getToDateFromDateFragment(String toDate) {
         this.toDate = toDate;
-//        Utility.shortToast(Filter.this, toDate);
     }
 
     @Override

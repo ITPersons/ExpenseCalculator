@@ -510,21 +510,6 @@ public class DB extends SQLiteOpenHelper {
 //        listDataChild.put(listDataHeader.get(i), listSubType);
 //    }
 
-    public String selectSubTypeConfiguration(String id){
-        Cursor cursor = null;
-        try {
-            SQLiteDatabase db = this.getWritableDatabase();
-            cursor = db.rawQuery("SELECT " + NAME_SUB_TYPE + " FROM " + TABLE_SUB_TYPE
-                    + " WHERE " + ID_SUB_TYPE + "='" + id +"'", null);
-            cursor.moveToFirst();
-
-        } catch(Exception e) {
-            Log.d("selectSubTypeConfig"," error is " + e.getMessage());
-        }
-        return cursor.getString(cursor.getColumnIndex(NAME_SUB_TYPE));
-    }
-
-
     // delete by duration
     public void deleteType(String mainType, String subType) {
         Cursor cursor;

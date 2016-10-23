@@ -503,13 +503,6 @@ public class DB extends SQLiteOpenHelper {
         return cursor;
     }
 
-//    for(int k = 0; k < fkListSubType.size(); k++) {
-//        listSubType.add(db.selectSubTypeConfiguration(String.valueOf(fkListSubType.get(k))));
-//        Utility.shortToast(ConfigureDrawer.this,db.selectSubTypeConfiguration(String.valueOf(fkListSubType.get(k))));
-//
-//        listDataChild.put(listDataHeader.get(i), listSubType);
-//    }
-
     // delete by duration
     public void deleteType(String mainType, String subType) {
         Cursor cursor;

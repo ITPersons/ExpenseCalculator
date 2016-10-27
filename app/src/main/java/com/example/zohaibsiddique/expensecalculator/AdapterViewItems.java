@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class AdapterViewItems extends RecyclerView.Adapter<AdapterViewItems.MainViewHolder> {
-    LayoutInflater inflater;
+    private LayoutInflater inflater;
     List<HashMap<String, Object>> list;
     Context context;
 
@@ -32,9 +32,12 @@ public class AdapterViewItems extends RecyclerView.Adapter<AdapterViewItems.Main
     @Override
     public void onBindViewHolder(MainViewHolder holder, int position) {
         try {
-            holder.name.setText(list.get(position).get(DB.NAME_EXPENSE).toString());
-            holder.value.setText(list.get(position).get(DB.VALUE_EXPENSE).toString());
-            holder.date.setText(list.get(position).get(DB.DATE_EXPENSE).toString());
+            final String NAME = "name";
+            final String VALUE = "value";
+            final String DATE = "date";
+            holder.name.setText(list.get(position).get(NAME).toString());
+            holder.value.setText(list.get(position).get(VALUE).toString());
+            holder.date.setText(list.get(position).get(DATE).toString());
             holder.type.setText(list.get(position).get("type").toString());
         } catch (NullPointerException e) {
             Log.d("onBindViewHolder", " error is" + e.getMessage());
@@ -49,7 +52,7 @@ public class AdapterViewItems extends RecyclerView.Adapter<AdapterViewItems.Main
     class MainViewHolder extends RecyclerView.ViewHolder {
         TextView name,value,date,type;
 
-        public MainViewHolder(View itemView) {
+        private MainViewHolder(View itemView) {
             super(itemView);
             name = (TextView) itemView.findViewById(R.id.name_expense);
             value = (TextView) itemView.findViewById(R.id.value_expense);

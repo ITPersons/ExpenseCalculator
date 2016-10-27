@@ -7,12 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import java.util.HashMap;
 import java.util.List;
 
 public class AdapterConfigureDrawer extends RecyclerView.Adapter<AdapterConfigureDrawer.MainViewHolder> {
-    LayoutInflater inflater;
+    private LayoutInflater inflater;
     List<HashMap<String, Object>> list;
     Context context;
 
@@ -32,7 +31,8 @@ public class AdapterConfigureDrawer extends RecyclerView.Adapter<AdapterConfigur
     @Override
     public void onBindViewHolder(MainViewHolder holder, int position) {
         try {
-            holder.name.setText(list.get(position).get(DB.NAME_MAIN_TYPE).toString());
+            final String NAME_TYPE = "name";
+            holder.name.setText(list.get(position).get(NAME_TYPE).toString());
         } catch (NullPointerException e) {
             Log.d("onBindViewHolder", " error is" + e.getMessage());
         }
@@ -46,7 +46,7 @@ public class AdapterConfigureDrawer extends RecyclerView.Adapter<AdapterConfigur
     class MainViewHolder extends RecyclerView.ViewHolder {
         TextView name;
 
-        public MainViewHolder(View itemView) {
+        private MainViewHolder(View itemView) {
             super(itemView);
             name = (TextView) itemView.findViewById(R.id.name_main_type);
         }

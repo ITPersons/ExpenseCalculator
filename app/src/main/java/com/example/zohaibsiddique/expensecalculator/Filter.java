@@ -14,12 +14,12 @@ import android.view.MenuItem;
 
 import java.util.ArrayList;
 
-public class Filter extends AppCompatActivity implements LeftFilterContents.Get,
-        TypeFragmentRight.getDataFromTypeFragment, DateFragmentRight.getDateFromDateFragment,
-        FromToDateFragmentRight.getFromToDateFromFromToDateFragment{
+public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
+        TypeFragment.getDataFromTypeFragment, DateFragment.getDateFromDateFragment,
+        FromToDateFragment.getFromToDateFromFromToDateFragment{
 
     DB db;
-    ArrayList<String> arrayList = new ArrayList<>();
+    ArrayList<String> arrayList;
     String date, fromDate, toDate;
 
     @Override
@@ -32,10 +32,11 @@ public class Filter extends AppCompatActivity implements LeftFilterContents.Get,
         getSupportActionBar().setHomeAsUpIndicator(android.R.drawable.ic_menu_close_clear_cancel);
 
         db = new DB(Filter.this);
+        arrayList = new ArrayList<>();
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        TypeFragmentRight fragment = new TypeFragmentRight();
+        TypeFragment fragment = new TypeFragment();
         fragmentTransaction.replace(R.id.right_fragment_filter, fragment);
         fragmentTransaction.commit();
     }
@@ -45,17 +46,17 @@ public class Filter extends AppCompatActivity implements LeftFilterContents.Get,
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         if(s == 0) {
-            TypeFragmentRight fragment = new TypeFragmentRight();
+            TypeFragment fragment = new TypeFragment();
             fragmentTransaction.replace(R.id.right_fragment_filter, fragment);
             fragmentTransaction.commit();
         }
         if(s == 1) {
-            DateFragmentRight fragment = new DateFragmentRight();
+            DateFragment fragment = new DateFragment();
             fragmentTransaction.replace(R.id.right_fragment_filter, fragment);
             fragmentTransaction.commit();
         }
         if(s == 2) {
-            FromToDateFragmentRight fragment = new FromToDateFragmentRight();
+            FromToDateFragment fragment = new FromToDateFragment();
             fragmentTransaction.replace(R.id.right_fragment_filter, fragment);
             fragmentTransaction.commit();
         }

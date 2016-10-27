@@ -6,7 +6,7 @@
     <color name="failure">#bbB71C1C</color>
     <color name="success">#FF689F38</color>
     <color name="gray">#999</color>
-    <color name="offwhite">#eee</color>
+    <color name="off_white">#eee</color>
     <color name="white_shade">#99ffffff</color>
     <color name="white">#fff</color>
     <color name="black">#111</color>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_view_configure_drawer_items"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -16,7 +17,7 @@
             android:id="@+id/edit"
             android:layout_width="@dimen/swipeWidth"
             android:layout_height="match_parent"
-            android:background="@color/offwhite"
+            android:background="@color/off_white"
             android:clickable="true"
             android:focusable="true"
             android:orientation="vertical">
@@ -34,7 +35,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:src="@android:drawable/ic_menu_edit"
-                    android:tint="@color/success"/>
+                    android:tint="@color/success"
+                    android:contentDescription="@string/image"/>
 
                 <!--<TextView-->
                 <!--android:layout_width="wrap_content"-->
@@ -56,7 +58,7 @@
             android:id="@+id/delete"
             android:layout_width="@dimen/swipeWidth"
             android:layout_height="match_parent"
-            android:background="@color/offwhite"
+            android:background="@color/off_white"
             android:clickable="true"
             android:focusable="true"
             android:orientation="vertical">
@@ -74,7 +76,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     app:srcCompat="@android:drawable/ic_delete"
-                    android:tint="@color/failure"/>
+                    android:tint="@color/failure"
+                    android:contentDescription="@string/image"/>
 
                 <!--<TextView-->
                 <!--android:layout_width="wrap_content"-->
@@ -100,7 +103,6 @@
         android:background="@android:color/white"
         android:padding="@dimen/six_margin"
         android:clickable="true"
-        android:elevation="4dp"
         android:focusable="true"
         android:orientation="vertical"
         android:visibility="visible">
@@ -116,6 +118,5 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_alignParentBottom="true"
-        android:background="@color/offwhite"
-        android:elevation="5dp"/>
+        android:background="@color/off_white"/>
 </RelativeLayout>

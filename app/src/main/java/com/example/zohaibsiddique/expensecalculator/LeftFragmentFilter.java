@@ -11,10 +11,7 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
-/**
- * Created by Zohaib Siddique on 12/08/2016.
- */
-public class LeftFilterContents extends ListFragment implements AdapterView.OnItemClickListener {
+public class LeftFragmentFilter extends ListFragment implements AdapterView.OnItemClickListener {
 
     Get get;
     View view, prevSelectedView;

@@ -16,7 +16,7 @@ import java.util.Calendar;
 /**
  * Created by Zohaib Siddique on 12/08/2016.
  */
-public class FromToDateFragmentRight extends Fragment{
+public class FromToDateFragment extends Fragment{
     String fromKeyDate, toKeyDate = null;
     getFromToDateFromFromToDateFragment getDate;
     SessionManager sessionManager;

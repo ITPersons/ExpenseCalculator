@@ -41,18 +41,20 @@ public class AddLedger extends AppCompatActivity {
         db = new DB(AddLedger.this);
         getLayoutReferences();
 
+        List<Ledger> ledgerList = new ArrayList<>();
         Cursor cursor = db.selectLedger();
         cursor.moveToFirst();
         if (cursor.getCount() == 0) {
             Utility.shortToast(AddLedger.this, "Empty list");
         } else {
             for (int i = 0; i < cursor.getCount(); i++) {
-                String id = cursor.getString(cursor.getColumnIndex(DB.ID_LEDGER));
-                String title = cursor.getString(cursor.getColumnIndex(DB.TITLE_LEDGER));
-                String startingBalance = cursor.getString(cursor.getColumnIndex(DB.STARTING_BALANCE_LEDGER));
-                String date = cursor.getString(cursor.getColumnIndex(DB.DATE_LEDGER));
-                String fromDate = cursor.getString(cursor.getColumnIndex(DB.FROM_DATE_LEDGER));
-                String toDate = cursor.getString(cursor.getColumnIndex(DB.TO_DATE_LEDGER));
+                final String ID = "id";final String TITLE = "title";final String STARTING_BALANCE = "starting_balance";final String DATE = "date";final String FROM_DATE = "from_date";final String TO_DATE = "to_date";
+                String id = cursor.getString(cursor.getColumnIndex(ID));
+                String title = cursor.getString(cursor.getColumnIndex(TITLE));
+                String startingBalance = cursor.getString(cursor.getColumnIndex(STARTING_BALANCE));
+                String date = cursor.getString(cursor.getColumnIndex(DATE));
+                String fromDate = cursor.getString(cursor.getColumnIndex(FROM_DATE));
+                String toDate = cursor.getString(cursor.getColumnIndex(TO_DATE));
 
                 Ledger ledger = new Ledger(id, title, startingBalance, date, fromDate, toDate);
                 ledgerList.add(ledger);
@@ -133,7 +135,6 @@ public class AddLedger extends AppCompatActivity {
 
     @Override
     protected Dialog onCreateDialog(int id) {
-        // TODO Auto-generated method stub
 
         final Calendar c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
@@ -152,7 +153,6 @@ public class AddLedger extends AppCompatActivity {
     private DatePickerDialog.OnDateSetListener fromDatePicker = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker view, int year, int month, int day) {
-            // TODO Auto-generated method stub
             int months = month + 1;
             if (view.isShown()) {
                 fromDate = String.valueOf(new StringBuilder().append(day).append("/").append(months).append("/").append(year));
@@ -164,7 +164,6 @@ public class AddLedger extends AppCompatActivity {
     private DatePickerDialog.OnDateSetListener toDatePicker = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker view, int year, int month, int day) {
-            // TODO Auto-generated method stub
             int months = month + 1;
             if (view.isShown()) {
                 toDate = String.valueOf(new StringBuilder().append(day).append("/").append(months).append("/").append(year));
@@ -205,13 +204,9 @@ public class AddLedger extends AppCompatActivity {
     }
 
     private boolean validateEditText() {
-        if(Utility.validateEditText(addTitleEditText, layoutLedgerTitle, "Enter valid title") &&
+        return Utility.validateEditText(addTitleEditText, layoutLedgerTitle, "Enter valid title") &&
                 Utility.validateEditText(addStartingBalanceEditText, layoutStartingBalance, "Enter valid starting balance")
                 && Utility.validateEditText(fromDateEditText, layoutFromDate, "Please choose date") &&
-                Utility.validateEditText(toDateEditText, layoutToDate, "Please choose date")) {
-            return true;
-        } else {
-            return false;
-        }
+                Utility.validateEditText(toDateEditText, layoutToDate, "Please choose date");
     }
 }

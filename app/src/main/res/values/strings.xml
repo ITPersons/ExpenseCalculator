@@ -15,9 +15,11 @@
     <string name="enter_sub_type">Enter sub type</string>
     <string name="save">Save</string>
     <string name="search">Search</string>
+    <string name="image">image</string>
     <string name="add">Add</string>
     <string name="next">Next</string>
     <string name="add_more">Add more</string>
+    <string name="sum">Total Expense: %1$s</string>
     <string name="finish">finish</string>
     <string name="done">Done</string>
     <string name="add_type">Add type</string>
@@ -156,4 +158,6 @@
     <string name="title_activity_add__ledger">Add_Ledger</string>
     <string name="title_activity_filter">Filter</string>
     <string name="apply">Apply</string>
+    <string name="to">To</string>
+    <string name="from">From</string>
 </resources>

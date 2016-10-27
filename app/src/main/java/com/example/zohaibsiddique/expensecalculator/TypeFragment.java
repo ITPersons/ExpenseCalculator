@@ -20,10 +20,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Zohaib Siddique on 12/08/2016.
- */
-public class TypeFragmentRight extends ListFragment implements AdapterView.OnItemClickListener{
+public class TypeFragment extends ListFragment implements AdapterView.OnItemClickListener{
 
     ArrayList<String> arrayList;
     DB db;
@@ -82,7 +79,7 @@ public class TypeFragmentRight extends ListFragment implements AdapterView.OnIte
             } else {
                 list = getState();
                 if(list.isEmpty()) {
-
+                    Utility.shortToast(getActivity(), "empty");
                 } else {
                     for(int j = 0; j<list.size(); j++) {
                         listView.setItemChecked(Integer.valueOf(list.get(j)), true);
@@ -123,7 +120,7 @@ public class TypeFragmentRight extends ListFragment implements AdapterView.OnIte
                 Toast.makeText(getActivity(), "Empty list", Toast.LENGTH_SHORT).show();
             } else {
                 for (int i = 0; i < cursor.getCount(); i++) {
-                    arrayList.add(cursor.getString(cursor.getColumnIndex(db.NAME_MAIN_TYPE)));
+                    arrayList.add(cursor.getString(cursor.getColumnIndex("name")));
                     cursor.moveToNext();
                 }
                 cursor.close();

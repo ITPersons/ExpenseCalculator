@@ -17,7 +17,7 @@
             android:layout_width="@dimen/swipeWidth"
             android:layout_height="match_parent"
             android:layout_marginRight="@dimen/one_margin"
-            android:background="@color/offwhite"
+            android:background="@color/off_white"
             android:clickable="true"
             android:focusable="true"
             android:orientation="vertical">
@@ -56,7 +56,7 @@
             android:id="@+id/delete"
             android:layout_width="@dimen/swipeWidth"
             android:layout_height="match_parent"
-            android:background="@color/offwhite"
+            android:background="@color/off_white"
             android:clickable="true"
             android:focusable="true"
             android:orientation="vertical">
@@ -146,6 +146,6 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_alignParentBottom="true"
-        android:background="@color/offwhite"
+        android:background="@color/off_white"
         android:elevation="5dp"/>
 </RelativeLayout>

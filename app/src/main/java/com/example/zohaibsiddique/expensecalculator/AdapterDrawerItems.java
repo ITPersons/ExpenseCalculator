@@ -33,7 +33,8 @@ public class AdapterDrawerItems extends RecyclerView.Adapter<AdapterDrawerItems.
     @Override
     public void onBindViewHolder(MainViewHolder holder, int position) {
         try {
-            holder.name.setText(list.get(position).get(DB.NAME_MAIN_TYPE).toString());
+            final String NAME_TYPE = "name";
+            holder.name.setText(list.get(position).get(NAME_TYPE).toString());
         } catch (NullPointerException e) {
             Log.d("onBindViewHolder", " error is" + e.getMessage());
         }
@@ -47,7 +48,7 @@ public class AdapterDrawerItems extends RecyclerView.Adapter<AdapterDrawerItems.
     class MainViewHolder extends RecyclerView.ViewHolder {
         TextView name;
 
-        public MainViewHolder(View itemView) {
+        private MainViewHolder(View itemView) {
             super(itemView);
             name = (TextView) itemView.findViewById(R.id.name_type);
         }

@@ -26,7 +26,7 @@ public class ConfigureDrawer extends AppCompatActivity {
 
     DB db;
     private ArrayList<HashMap<String, Object>> arrayList;
-    public static AdapterConfigureDrawer adapter;
+    private AdapterConfigureDrawer adapter;
     RecyclerView recyclerView;
     View addMainTypeView;
     TextInputLayout layoutAddMainType;
@@ -88,7 +88,7 @@ public class ConfigureDrawer extends AppCompatActivity {
     }
 
     private void getReferencesForViewItemsRecyclerView() {
-        arrayList = new ArrayList<HashMap<String, Object>>();
+        arrayList = new ArrayList<>();
         adapter = new AdapterConfigureDrawer(ConfigureDrawer.this, arrayList);
         recyclerView = (RecyclerView) findViewById(R.id.configure_drawer_recycle_view);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -97,9 +97,9 @@ public class ConfigureDrawer extends AppCompatActivity {
     }
 
     private void addValuesToArrayList(Cursor cursor) {
-        HashMap<String, Object> hm = new HashMap<String, Object>();
-        hm.put(db.ID_MAIN_TYPE, cursor.getString(cursor.getColumnIndex(db.ID_MAIN_TYPE)));
-        hm.put(db.NAME_MAIN_TYPE, cursor.getString(cursor.getColumnIndex(db.NAME_MAIN_TYPE)));
+        HashMap<String, Object> hm = new HashMap<>();
+        hm.put("id", cursor.getString(cursor.getColumnIndex("id")));
+        hm.put("name", cursor.getString(cursor.getColumnIndex("name")));
         arrayList.add(hm);
     }
 
@@ -111,12 +111,12 @@ public class ConfigureDrawer extends AppCompatActivity {
                     @Override
                     public void onSwipeOptionClicked(int viewID, int position) {
                         if (viewID == R.id.delete) {
-                            final String idExpense = arrayList.get(position).get(DB.ID_MAIN_TYPE).toString();
+                            final String idExpense = arrayList.get(position).get("name").toString();
                             deleteType(idExpense);
 
                         } else if(viewID == R.id.edit) {
-                            String id = arrayList.get(position).get(DB.ID_MAIN_TYPE).toString();
-                            String name = arrayList.get(position).get(DB.NAME_MAIN_TYPE).toString();
+                            String id = arrayList.get(position).get("id").toString();
+                            String name = arrayList.get(position).get("name").toString();
                             updateType(id, name);
                         }
                     }

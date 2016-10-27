@@ -15,7 +15,7 @@
         android:id="@+id/left_fragment_filter"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:name="com.example.zohaibsiddique.expensecalculator.LeftFilterContents"
+        android:name="com.example.zohaibsiddique.expensecalculator.LeftFragmentFilter"
         tools:layout="@layout/list_fragment"
         android:layout_weight="1" />
 

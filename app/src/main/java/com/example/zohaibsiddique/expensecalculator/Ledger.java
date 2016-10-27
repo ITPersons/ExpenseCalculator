@@ -7,9 +7,6 @@ package com.example.zohaibsiddique.expensecalculator;
 public class Ledger {
     private String id, title, startingBalance, date, fromDate, toDate;
 
-    public Ledger() {
-    }
-
     public Ledger(String id, String title, String startingBalance, String date, String fromDate, String toDate) {
         this.id = id;
         this.title = title;

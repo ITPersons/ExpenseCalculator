@@ -30,7 +30,7 @@ public class CustomListAdapter extends ArrayAdapter<String> {
             name = (TextView) convertView.findViewById(R.id.list_item_left_filter_contents);
         }
 
-        name.setText(list.get(position).toString());
+        name.setText(list.get(position));
 
         if (position == selectedItemPosition) {
             convertView.setBackgroundColor(Color.WHITE);

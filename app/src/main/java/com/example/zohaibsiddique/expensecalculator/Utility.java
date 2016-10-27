@@ -25,15 +25,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by Zohaib Siddique on 23/08/2016.
- */
 public class Utility {
 
     public static String dateFormat(long date) {
         Date dateF = new Date(date);
-        String DateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm a").format(dateF);
-        return DateFormat;
+        return new SimpleDateFormat("dd-MM-yyyy hh:mm a").format(dateF);
     }
 
     public static String currentTimeInMillis() {
@@ -54,7 +50,6 @@ public class Utility {
             return timeInMilliseconds;
         }
         catch (ParseException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return 0;
@@ -262,8 +257,7 @@ public class Utility {
 
 
     public static int getResourceId(Context context, String directory, String resourceItem) {
-        int resID = context.getResources().getIdentifier(resourceItem , directory, context.getPackageName());
-        return resID;
+        return context.getResources().getIdentifier(resourceItem , directory, context.getPackageName());
     }
 
     public static boolean hintEnable(EditText editText, TextInputLayout textInputLayout) {
@@ -311,7 +305,7 @@ public class Utility {
     }
 
     public static void setSpinnerAdapterByArrayList(Spinner spinner, Context context, List<String> list) {
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, list);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, list);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
     }

@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class DateFragmentRight extends Fragment{
+public class DateFragment extends Fragment{
     String keyDate = null;
     getDateFromDateFragment getDate;
     DatePicker datePicker;

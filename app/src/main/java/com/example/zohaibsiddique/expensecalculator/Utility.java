@@ -25,24 +25,24 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class Utility {
+class Utility {
 
-    public static String dateFormat(long date) {
+    static String dateFormat(long date) {
         Date dateF = new Date(date);
         return new SimpleDateFormat("dd-MM-yyyy hh:mm a").format(dateF);
     }
 
-    public static String currentTimeInMillis() {
+    static String currentTimeInMillis() {
         Calendar calendar = Calendar.getInstance();
         return String.valueOf(calendar.getTimeInMillis());
     }
 
-    public static String simpleDateFormat(long timeInMills) {
+    static String simpleDateFormat(long timeInMills) {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         return formatter.format(new Date(timeInMills));
     }
 
-    public static long milliseconds(String date) {
+    static long milliseconds(String date) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         try {
             Date mDate = sdf.parse(date);
@@ -55,7 +55,7 @@ public class Utility {
         return 0;
     }
 
-    public static void setIntentResultCode(Activity activity) {
+    static void setIntentResultCode(Activity activity) {
         Intent intent = new Intent();
         activity.setResult(Activity.RESULT_OK, intent);
     }
@@ -78,38 +78,38 @@ public class Utility {
 }
 
     //Short Toast
-    public static void shortToast(Context context, String message) {
+    static void shortToast(Context context, String message) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 
     //Long Toast
-    public static void longToast(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
-    }
+//    static void longToast(Context context, String message) {
+//        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+//    }
+//
+//    static void alertDialog(Context context, String title, String message) {
+//        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+//        alertDialog.setTitle(title);
+//        alertDialog.setCancelable(true);
+//        alertDialog.setMessage(message);
+//        alertDialog.create();
+//        alertDialog.show();
+//    }
 
-    public static void alertDialog(Context context, String title, String message) {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-        alertDialog.setTitle(title);
-        alertDialog.setCancelable(true);
-        alertDialog.setMessage(message);
-        alertDialog.create();
-        alertDialog.show();
-    }
 
+//    static void customeSnackBar(Context context, View view, String message) {
+//        Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG);
+//        Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
+//        TextView textView = (TextView) layout.findViewById(android.support.design.R.id.snackbar_text);
+//        textView.setVisibility(View.INVISIBLE);
+//
+//        LayoutInflater layoutInflater = LayoutInflater.from(context);
+//        View view2 = layoutInflater.inflate(R.layout.add_expense, null);
+//        layout.addView(view2);
+//        snackbar.show();
+//    }
 
-    public static void customeSnackBar(Context context, View view, String message) {
-        Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG);
-        Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
-        TextView textView = (TextView) layout.findViewById(android.support.design.R.id.snackbar_text);
-        textView.setVisibility(View.INVISIBLE);
-
-        LayoutInflater layoutInflater = LayoutInflater.from(context);
-        View view2 = layoutInflater.inflate(R.layout.add_expense, null);
-        layout.addView(view2);
-        snackbar.show();
-    }
-
-    public static void failSnackBar(View view, String message, Context context) {
+    static void failSnackBar(View view, String message, Context context) {
         Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG);
         View view1 = snackbar.getView();
         view1.setBackgroundColor(context.getResources().getColor(R.color.failure));
@@ -118,7 +118,7 @@ public class Utility {
         snackbar.show();
     }
 
-    public static void successSnackBar(View view, String message, Context context) {
+    static void successSnackBar(View view, String message, Context context) {
         Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG);
         View view1 = snackbar.getView();
         view1.setBackgroundColor(context.getResources().getColor(R.color.success));
@@ -128,150 +128,150 @@ public class Utility {
     }
 
 
-    public static void startAnActivityWithBundle(Context context, Class<?> className, String key, String value) {
+//    static void startAnActivityWithBundle(Context context, Class<?> className, String key, String value) {
+//        Intent intent = new Intent(context, className);
+//        Bundle bundle = new Bundle();
+//        bundle.putString(key, value);
+//        intent.putExtras(bundle);
+//        context.startActivity(intent);
+//    }
+//
+//    static void startActivityWithStringArrayListBundleValue(Context context, Class<?> className, String key, ArrayList<String> value) {
+//        Intent intent = new Intent(context, className);
+//        Bundle bundle = new Bundle();
+//        bundle.putStringArrayList(key, value);
+//        intent.putExtras(bundle);
+//        context.startActivity(intent);
+//    }
+//
+//    static void startAnActivityWithIntBundleValue(Context context, Class<?> className, String key, int value) {
+//        Intent intent = new Intent(context, className);
+//        Bundle bundle = new Bundle();
+//        bundle.putInt(key, value);
+//        intent.putExtras(bundle);
+//        context.startActivity(intent);
+//    }
+
+    static void startAnActivity(Context context, Class<?> className) {
         Intent intent = new Intent(context, className);
-        Bundle bundle = new Bundle();
-        bundle.putString(key, value);
-        intent.putExtras(bundle);
         context.startActivity(intent);
     }
 
-    public static void startActivityWithStringArrayListBundleValue(Context context, Class<?> className, String key, ArrayList<String> value) {
-        Intent intent = new Intent(context, className);
-        Bundle bundle = new Bundle();
-        bundle.putStringArrayList(key, value);
-        intent.putExtras(bundle);
-        context.startActivity(intent);
-    }
-
-    public static void startAnActivityWithIntBundleValue(Context context, Class<?> className, String key, int value) {
-        Intent intent = new Intent(context, className);
-        Bundle bundle = new Bundle();
-        bundle.putInt(key, value);
-        intent.putExtras(bundle);
-        context.startActivity(intent);
-    }
-
-    public static void startAnActivity(Context context, Class<?> className) {
-        Intent intent = new Intent(context, className);
-        context.startActivity(intent);
-    }
-
-    public static void startAnActivityForResult(Activity activity, Context context, Class<?> className, int requestCode) {
+    static void startAnActivityForResult(Activity activity, Context context, Class<?> className, int requestCode) {
         Intent intent = new Intent(context, className);
         activity.startActivityForResult(intent, requestCode);
     }
 
-    public static void putValueToBundle(String key, String value) {
-        Bundle bundle = new Bundle();
-        bundle.putString(key, value);
-    }
+//    static void putValueToBundle(String key, String value) {
+//        Bundle bundle = new Bundle();
+//        bundle.putString(key, value);
+//    }
+//
+//    static int getValueFromBundle(Intent intent, String key) {
+//        Bundle extras = intent.getExtras();
+//        int value = 0;
+//        if (extras != null) {
+//            value = extras.getInt(key);
+//        }
+//        return value;
+//    }
 
-    public static int getValueFromBundle(Intent intent, String key) {
-        Bundle extras = intent.getExtras();
-        int value = 0;
-        if (extras != null) {
-            value = extras.getInt(key);
-        }
-        return value;
-    }
+//    static String getStringValueFromBundle(Intent intent, String key) {
+//        Bundle extras = intent.getExtras();
+//        String value = null;
+//        if (extras != null) {
+//            value = extras.getString(key);
+//        }
+//        return value;
+//    }
+//
+//    static ArrayList<String> getStringArrayListValueFromBundle(Intent intent, String key) {
+//        Bundle extras = intent.getExtras();
+//        ArrayList<String> arrayList = new ArrayList<>();
+//        if (arrayList != null) {
+//            arrayList = extras.getStringArrayList(key);
+//        }
+//        return arrayList;
+//    }
+//
+//    static void alertDialogWithThereArrayItems(final Context context, String directory, String resourceItem, String title, final Class<?> class1, final Class<?> class2, final Class<?> class3) {
+//        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+//        alertDialog.setTitle(title).setItems(Utility.getResourceId(context, directory, resourceItem), new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialogInterface, int i) {
+//                switch (i) {
+//                    case 0:
+//                        Utility.startAnActivity(context, class1);
+//                        break;
+//                    case 1:
+//                        Utility.startAnActivity(context, class2);
+//                        break;
+//                    case 2:
+//                        Utility.startAnActivity(context, class3);
+//                }
+//            }
+//        });
+//        alertDialog.setCancelable(true);
+//        alertDialog.create();
+//        alertDialog.show();
+//    }
 
-    public static String getStringValueFromBundle(Intent intent, String key) {
-        Bundle extras = intent.getExtras();
-        String value = null;
-        if (extras != null) {
-            value = extras.getString(key);
-        }
-        return value;
-    }
-
-    public static ArrayList<String> getStringArrayListValueFromBundle(Intent intent, String key) {
-        Bundle extras = intent.getExtras();
-        ArrayList<String> arrayList = new ArrayList<>();
-        if (arrayList != null) {
-            arrayList = extras.getStringArrayList(key);
-        }
-        return arrayList;
-    }
-
-    public static void alertDialogWithThereArrayItems(final Context context, String directory, String resourceItem, String title, final Class<?> class1, final Class<?> class2, final Class<?> class3) {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-        alertDialog.setTitle(title).setItems(Utility.getResourceId(context, directory, resourceItem), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                switch (i) {
-                    case 0:
-                        Utility.startAnActivity(context, class1);
-                        break;
-                    case 1:
-                        Utility.startAnActivity(context, class2);
-                        break;
-                    case 2:
-                        Utility.startAnActivity(context, class3);
-                }
-            }
-        });
-        alertDialog.setCancelable(true);
-        alertDialog.create();
-        alertDialog.show();
-    }
-
-    public static void chooseDialogWithTwoItems(final Context context, String directory, String resourceItem, String title, final Class<?> class1, final Class<?> class2, final String key, final int value, final String key1, final int value1) {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-        alertDialog.setTitle(title).setItems(Utility.getResourceId(context, directory, resourceItem), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                switch (i) {
-                    case 0:
-                        Utility.startAnActivityWithIntBundleValue(context, class1, key, value);
-                        break;
-                    case 1:
-                        Utility.startAnActivityWithIntBundleValue(context, class2, key1, value1);
-                        break;
-                }
-            }
-        });
-        alertDialog.setCancelable(true);
-        alertDialog.create();
-        alertDialog.show();
-    }
-
-    public static void chooseDialogWithOneItem(final Context context, String directory, String resourceItem, String title, final Class<?> class1, final int value, final String key) {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-        alertDialog.setTitle(title).setItems(Utility.getResourceId(context, directory, resourceItem), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                switch (i) {
-                    case 0:
-                        Utility.startAnActivityWithIntBundleValue(context, class1, key, value);
-                        break;
-                }
-            }
-        });
-        alertDialog.setCancelable(true);
-        alertDialog.create();
-        alertDialog.show();
-    }
-
-
+//    static void chooseDialogWithTwoItems(final Context context, String directory, String resourceItem, String title, final Class<?> class1, final Class<?> class2, final String key, final int value, final String key1, final int value1) {
+//        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+//        alertDialog.setTitle(title).setItems(Utility.getResourceId(context, directory, resourceItem), new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialogInterface, int i) {
+//                switch (i) {
+//                    case 0:
+//                        Utility.startAnActivityWithIntBundleValue(context, class1, key, value);
+//                        break;
+//                    case 1:
+//                        Utility.startAnActivityWithIntBundleValue(context, class2, key1, value1);
+//                        break;
+//                }
+//            }
+//        });
+//        alertDialog.setCancelable(true);
+//        alertDialog.create();
+//        alertDialog.show();
+//    }
+//
+//    static void chooseDialogWithOneItem(final Context context, String directory, String resourceItem, String title, final Class<?> class1, final int value, final String key) {
+//        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+//        alertDialog.setTitle(title).setItems(Utility.getResourceId(context, directory, resourceItem), new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialogInterface, int i) {
+//                switch (i) {
+//                    case 0:
+//                        Utility.startAnActivityWithIntBundleValue(context, class1, key, value);
+//                        break;
+//                }
+//            }
+//        });
+//        alertDialog.setCancelable(true);
+//        alertDialog.create();
+//        alertDialog.show();
+//    }
 
 
-    public static int getResourceId(Context context, String directory, String resourceItem) {
+
+
+    static int getResourceId(Context context, String directory, String resourceItem) {
         return context.getResources().getIdentifier(resourceItem , directory, context.getPackageName());
     }
 
-    public static boolean hintEnable(EditText editText, TextInputLayout textInputLayout) {
-        if (editText.getText().toString().trim().isEmpty()) {
-            textInputLayout.setHintAnimationEnabled(true);
-            textInputLayout.setHintEnabled(false);
-        } else {
-            textInputLayout.setHintAnimationEnabled(true);
-            textInputLayout.setHintEnabled(true);
-        }
-        return true;
-    }
+//    static boolean hintEnable(EditText editText, TextInputLayout textInputLayout) {
+//        if (editText.getText().toString().trim().isEmpty()) {
+//            textInputLayout.setHintAnimationEnabled(true);
+//            textInputLayout.setHintEnabled(false);
+//        } else {
+//            textInputLayout.setHintAnimationEnabled(true);
+//            textInputLayout.setHintEnabled(true);
+//        }
+//        return true;
+//    }
 
-    public static boolean validateEditText(EditText editText, TextInputLayout textInputLayout, String errorMessage) {
+    static boolean validateEditText(EditText editText, TextInputLayout textInputLayout, String errorMessage) {
             if (editText.getText().toString().trim().isEmpty()) {
                 textInputLayout.setError(errorMessage);
                 textInputLayout.setHintEnabled(false);
@@ -286,25 +286,25 @@ public class Utility {
             return true;
     }
 
-    public static boolean validateInput(EditText editText) {
-        if (editText.getText().toString().trim().isEmpty()) {
-            return false;
-        }
-        return true;
-    }
-    public static void requestFocus(View view, Context context) {
-        if (view.requestFocus()) {
-            ((Activity) context).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-        }
-    }
+//    static boolean validateInput(EditText editText) {
+//        if (editText.getText().toString().trim().isEmpty()) {
+//            return false;
+//        }
+//        return true;
+//    }
+//    static void requestFocus(View view, Context context) {
+//        if (view.requestFocus()) {
+//            ((Activity) context).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+//        }
+//    }
+//
+//    static void setSpinnerAdapter(Spinner spinner, Context context, String directory, String resourceItems) {
+//        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context, Utility.getResourceId(context, directory, resourceItems), android.R.layout.simple_spinner_item);
+//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        spinner.setAdapter(adapter);
+//    }
 
-    public static void setSpinnerAdapter(Spinner spinner, Context context, String directory, String resourceItems) {
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context, Utility.getResourceId(context, directory, resourceItems), android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-    }
-
-    public static void setSpinnerAdapterByArrayList(Spinner spinner, Context context, List<String> list) {
+    static void setSpinnerAdapterByArrayList(Spinner spinner, Context context, List<String> list) {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_item, list);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
@@ -404,20 +404,20 @@ public class Utility {
 ////        return bundle.getString("1");
 //    }
 
-    public void showInputDialog() {
-//        CustomDialogFragment customDialogFragment = new CustomDialogFragment();
-//        android.app.FragmentManager fragmentManager = getFragmentManager();
-//        customDialogFragment.setStyle(DialogFragment.STYLE_NORMAL,android.R.style.Theme_Light_NoTitleBar_Fullscreen);
-//        customDialogFragment.show(fragmentManager, "DialogFragment");
+//    void showInputDialog() {
+////        CustomDialogFragment customDialogFragment = new CustomDialogFragment();
+////        android.app.FragmentManager fragmentManager = getFragmentManager();
+////        customDialogFragment.setStyle(DialogFragment.STYLE_NORMAL,android.R.style.Theme_Light_NoTitleBar_Fullscreen);
+////        customDialogFragment.show(fragmentManager, "DialogFragment");
+////
+////        customDialogFragment.dismiss();
+//    }
 //
-//        customDialogFragment.dismiss();
-    }
-
-    public void fragment() {
-        // replace fragment
-//        ItemFragment ItemFragment = new ItemFragment();
-//        android.app.FragmentManager fragmentManager = getFragmentManager();
-//        android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//        fragmentTransaction.replace(R.id.fragment, ItemFragment);
-    }
+//    void fragment() {
+//        // replace fragment
+////        ItemFragment ItemFragment = new ItemFragment();
+////        android.app.FragmentManager fragmentManager = getFragmentManager();
+////        android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+////        fragmentTransaction.replace(R.id.fragment, ItemFragment);
+//    }
 }

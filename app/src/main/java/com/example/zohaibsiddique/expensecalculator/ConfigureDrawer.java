@@ -26,7 +26,6 @@ public class ConfigureDrawer extends AppCompatActivity {
 
     DB db;
     private ArrayList<HashMap<String, Object>> arrayList;
-    private AdapterConfigureDrawer adapter;
     RecyclerView recyclerView;
     View addMainTypeView;
     TextInputLayout layoutAddMainType;
@@ -89,7 +88,7 @@ public class ConfigureDrawer extends AppCompatActivity {
 
     private void getReferencesForViewItemsRecyclerView() {
         arrayList = new ArrayList<>();
-        adapter = new AdapterConfigureDrawer(ConfigureDrawer.this, arrayList);
+        AdapterConfigureDrawer adapter = new AdapterConfigureDrawer(ConfigureDrawer.this, arrayList);
         recyclerView = (RecyclerView) findViewById(R.id.configure_drawer_recycle_view);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);

@@ -10,14 +10,14 @@ import android.widget.TextView;
 
 import java.util.List;
 
-public class CustomListAdapter extends ArrayAdapter<String> {
+class CustomListAdapter extends ArrayAdapter<String> {
     private final LayoutInflater inflater;
     private int selectedItemPosition;
     TextView name;
     List<String> list;
 
 
-    public CustomListAdapter(Context context, List<String> list) {
+    CustomListAdapter(Context context, List<String> list) {
         super(context, R.layout.single_list_item_view, list);
         inflater = LayoutInflater.from(context);
         this.list = list;
@@ -41,7 +41,7 @@ public class CustomListAdapter extends ArrayAdapter<String> {
         return convertView;
     }
 
-    public void setSelectedItemPosition(int position) {
+    void setSelectedItemPosition(int position) {
         selectedItemPosition = position;
     }
 }

@@ -27,7 +27,6 @@ public class AddLedger extends AppCompatActivity {
     EditText addTitleEditText, addStartingBalanceEditText, fromDateEditText, toDateEditText;
     String fromDate, toDate;
     DB db;
-    private List<Ledger> ledgerList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

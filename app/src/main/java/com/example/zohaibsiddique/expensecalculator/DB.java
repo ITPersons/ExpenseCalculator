@@ -1,8 +1,5 @@
 package com.example.zohaibsiddique.expensecalculator;
 
-/**
- * Created by Siddique on 17/06/2016.
- */
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -12,7 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-public class DB extends SQLiteOpenHelper {
+class DB extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "expense_calculator.db";
@@ -66,7 +63,7 @@ public class DB extends SQLiteOpenHelper {
             + TO_DATE_LEDGER + " TEXT)";
 
     // Constructor for creating database
-    public DB(Context context) {
+    DB(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -106,7 +103,7 @@ public class DB extends SQLiteOpenHelper {
 //        }
 //    }
 
-    public Cursor selectExpense() {
+    Cursor selectExpense() {
         Cursor cursor = null;
         try {
             SQLiteDatabase db = this.getWritableDatabase();
@@ -120,7 +117,7 @@ public class DB extends SQLiteOpenHelper {
         return cursor;
     }
 
-    public Cursor selectLedger() {
+    Cursor selectLedger() {
         Cursor cursor = null;
         try {
             SQLiteDatabase db = this.getWritableDatabase();
@@ -135,7 +132,7 @@ public class DB extends SQLiteOpenHelper {
     }
 
 
-    public Cursor selectDateOfExpense(String date) {
+    Cursor selectDateOfExpense(String date) {
         Cursor cursor = null;
         try {
             SQLiteDatabase db = this.getWritableDatabase();
@@ -149,7 +146,7 @@ public class DB extends SQLiteOpenHelper {
         return cursor;
     }
 
-    public Cursor selectFromToDate(String from, String to) {
+    Cursor selectFromToDate(String from, String to) {
         Cursor cursor = null;
         try {
             SQLiteDatabase db = this.getWritableDatabase();
@@ -163,7 +160,7 @@ public class DB extends SQLiteOpenHelper {
         return cursor;
     }
 
-    public String selectIdByMainTypeName(String name) {
+    String selectIdByMainTypeName(String name) {
         Cursor cursor = null;
         String id = null;
         try {
@@ -180,7 +177,7 @@ public class DB extends SQLiteOpenHelper {
         return id;
     }
 
-    public Cursor selectExpenseByType(String type) {
+    Cursor selectExpenseByType(String type) {
         Cursor cursor = null;
         try {
             SQLiteDatabase db = this.getWritableDatabase();
@@ -194,7 +191,7 @@ public class DB extends SQLiteOpenHelper {
         return cursor;
     }
 
-    public boolean addMainType(String mainType) {
+    boolean addMainType(String mainType) {
         try {
             SQLiteDatabase db = this.getWritableDatabase();
             ContentValues contentValues = new ContentValues();
@@ -208,7 +205,7 @@ public class DB extends SQLiteOpenHelper {
         return true;
     }
 
-    public boolean addExpense(String name, String value, String date, String keyDate, String type) {
+    boolean addExpense(String name, String value, String date, String keyDate, String type) {
         try {
             SQLiteDatabase db = this.getWritableDatabase();
             ContentValues contentValues = new ContentValues();
@@ -226,7 +223,7 @@ public class DB extends SQLiteOpenHelper {
         return true;
     }
 
-    public boolean addLedger(String title, String startingBalance, String date, String fromDate, String toDate) {
+    boolean addLedger(String title, String startingBalance, String date, String fromDate, String toDate) {
         try {
             SQLiteDatabase db = this.getWritableDatabase();
             ContentValues contentValues = new ContentValues();
@@ -245,19 +242,19 @@ public class DB extends SQLiteOpenHelper {
     }
 
 
-    public boolean deleteExpense(String id) {
+    boolean deleteExpense(String id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DELETE FROM " + TABLE_EXPENSE + " WHERE " + ID_EXPENSE + "='" + id + "'");
         return true;
     }
 
-    public boolean deleteType(String id) {
+    boolean deleteType(String id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DELETE FROM " + TABLE_MAIN_TYPE + " WHERE " + ID_MAIN_TYPE + "='" + id + "'");
         return true;
     }
 
-    public boolean updateExpense(long id, String name, String value, String type) {
+    boolean updateExpense(long id, String name, String value, String type) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(NAME_EXPENSE, name);
@@ -267,7 +264,7 @@ public class DB extends SQLiteOpenHelper {
         return true;
     }
 
-    public boolean updateType(long id, String name) {
+    boolean updateType(long id, String name) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(NAME_MAIN_TYPE, name);
@@ -275,7 +272,7 @@ public class DB extends SQLiteOpenHelper {
         return true;
     }
 
-    public boolean isMainTypeExisted(String inputMainType) {
+    boolean isMainTypeExisted(String inputMainType) {
         Cursor cursor;
         try {
             SQLiteDatabase db = this.getWritableDatabase();
@@ -291,7 +288,7 @@ public class DB extends SQLiteOpenHelper {
         return false;
     }
 
-    public Cursor selectMainType() {
+    Cursor selectMainType() {
         Cursor cursor = null;
         try {
             SQLiteDatabase db = this.getWritableDatabase();
@@ -303,7 +300,7 @@ public class DB extends SQLiteOpenHelper {
         return cursor;
     }
 
-    public String selectTypeById(String id) {
+    String selectTypeById(String id) {
         Cursor cursor = null;
         String name = null;
         try {
@@ -319,7 +316,7 @@ public class DB extends SQLiteOpenHelper {
         return name;
     }
 
-    public String getIdByType(String type) {
+    String getIdByType(String type) {
         Cursor cursor = null;
         String id = null;
         try {

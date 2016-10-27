@@ -13,9 +13,6 @@ import android.widget.DatePicker;
 
 import java.util.Calendar;
 
-/**
- * Created by Zohaib Siddique on 12/08/2016.
- */
 public class FromToDateFragment extends Fragment{
     String fromKeyDate, toKeyDate = null;
     getFromToDateFromFromToDateFragment getDate;

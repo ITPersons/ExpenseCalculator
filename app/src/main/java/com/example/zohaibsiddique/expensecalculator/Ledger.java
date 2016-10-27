@@ -1,11 +1,8 @@
 package com.example.zohaibsiddique.expensecalculator;
 
-/**
- * Created by Zohaib Siddique on 11/10/2016.
- */
 
-public class Ledger {
-    private String id, title, startingBalance, date, fromDate, toDate;
+class Ledger {
+    private String id, title, date, startingBalance,  fromDate, toDate;
 
     public Ledger(String id, String title, String startingBalance, String date, String fromDate, String toDate) {
         this.id = id;
@@ -32,13 +29,13 @@ public class Ledger {
         this.title = title;
     }
 
-    public String getStartingBalance() {
-        return startingBalance;
-    }
-
-    public void setStartingBalance(String startingBalance) {
-        this.startingBalance = startingBalance;
-    }
+//    public String getStartingBalance() {
+//        return startingBalance;
+//    }
+//
+//    public void setStartingBalance(String startingBalance) {
+//        this.startingBalance = startingBalance;
+//    }
 
     public String getDate() {
         return date;
@@ -48,19 +45,19 @@ public class Ledger {
         this.date = date;
     }
 
-    public String getFromDate() {
-        return fromDate;
-    }
-
-    public void setFromDate(String fromDate) {
-        this.fromDate = fromDate;
-    }
-
-    public String getToDate() {
-        return toDate;
-    }
-
-    public void setToDate(String toDate) {
-        this.toDate = toDate;
-    }
+//    public String getFromDate() {
+//        return fromDate;
+//    }
+//
+//    public void setFromDate(String fromDate) {
+//        this.fromDate = fromDate;
+//    }
+//
+//    public String getToDate() {
+//        return toDate;
+//    }
+//
+//    public void setToDate(String toDate) {
+//        this.toDate = toDate;
+//    }
 }

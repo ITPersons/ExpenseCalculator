@@ -11,13 +11,13 @@ import android.widget.TextView;
 import java.util.HashMap;
 import java.util.List;
 
-public class AdapterDrawerItems extends RecyclerView.Adapter<AdapterDrawerItems.MainViewHolder> {
-    LayoutInflater inflater;
+class AdapterDrawerItems extends RecyclerView.Adapter<AdapterDrawerItems.MainViewHolder> {
+    private LayoutInflater inflater;
     List<HashMap<String, Object>> list;
     Context context;
 
 
-    public AdapterDrawerItems(Context context, List<HashMap<String, Object>> list) {
+    AdapterDrawerItems(Context context, List<HashMap<String, Object>> list) {
         inflater = LayoutInflater.from(context);
         this.list = list;
         this.context = context;

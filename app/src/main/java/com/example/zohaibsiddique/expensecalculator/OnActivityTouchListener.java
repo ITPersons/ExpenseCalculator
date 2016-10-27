@@ -2,6 +2,6 @@ package com.example.zohaibsiddique.expensecalculator;
 
 import android.view.MotionEvent;
 
-public interface OnActivityTouchListener {
+interface OnActivityTouchListener {
     void getTouchCoordinates(MotionEvent ev);
 }

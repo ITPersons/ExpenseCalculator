@@ -15,6 +15,8 @@
     <string name="enter_sub_type">Enter sub type</string>
     <string name="save">Save</string>
     <string name="search">Search</string>
+    <string name="cancel">Cancel</string>
+    <string name="clear_all">CLEAR ALL</string>
     <string name="image">image</string>
     <string name="add">Add</string>
     <string name="next">Next</string>
@@ -157,7 +159,7 @@
     <string name="title_activity_add_expense">AddExpense</string>
     <string name="title_activity_add__ledger">Add_Ledger</string>
     <string name="title_activity_filter">Filter</string>
-    <string name="apply">Apply</string>
+    <string name="apply">APPLY</string>
     <string name="to">To</string>
     <string name="from">From</string>
     <string name="total_expense_100">Total Expense: 100</string>

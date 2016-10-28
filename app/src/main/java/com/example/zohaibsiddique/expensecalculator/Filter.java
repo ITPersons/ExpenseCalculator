@@ -3,24 +3,24 @@ package com.example.zohaibsiddique.expensecalculator;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
+import android.view.View;
+import android.widget.Button;
 import java.util.ArrayList;
 
 public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
         TypeFragment.getDataFromTypeFragment, DateFragment.getDateFromDateFragment,
-        FromToDateFragment.getFromToDateFromFromToDateFragment{
+        FromToDateFragment.getFromToDateFromFromToDateFragment, View.OnClickListener{
 
     DB db;
     ArrayList<String> arrayList;
     String date, fromDate, toDate;
+    Button applyButton, clearAllButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,16 +29,40 @@ public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(android.R.drawable.ic_menu_close_clear_cancel);
 
         db = new DB(Filter.this);
         arrayList = new ArrayList<>();
+        applyButton = (Button) findViewById(R.id.apply_button);
+        applyButton.setOnClickListener(this);
+        clearAllButton = (Button) findViewById(R.id.clear_all_button);
+        clearAllButton.setOnClickListener(this);
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         TypeFragment fragment = new TypeFragment();
         fragmentTransaction.replace(R.id.right_fragment_filter, fragment);
         fragmentTransaction.commit();
+    }
+
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+        switch (id) {
+            case R.id.apply_button:
+                Utility.shortToast(Filter.this, "apply btn");
+                break;
+            case R.id.clear_all_button:
+                clearAllValues();
+                Utility.shortToast(Filter.this, "clear btn");
+                break;
+        }
+    }
+
+    private void clearAllValues() {
+        arrayList.clear();
+        date = null;
+        fromDate = null;
+        toDate = null;
     }
 
     @Override
@@ -99,28 +123,6 @@ public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
             finish();
             return true;
         }
-        if (id == R.id.save_filter) {
-            try {
-                if(arrayList.isEmpty()) {
-                    Utility.shortToast(Filter.this, "Please choose a filter or close");
-                } else {
-                    Intent intent = new Intent();
-                    intent.putExtra("arrayListOfFilter", arrayList);
-                    intent.putExtra("date", date);
-                    intent.putExtra("fromDate", fromDate);
-                    intent.putExtra("toDate", toDate);
-                    setResult(RESULT_OK, intent);
-
-                    deleteFilterStates();
-
-                    finish();
-                    return true;
-                }
-            }catch (Exception e) {
-                Log.d("saveFilter", e.getMessage());
-            }
-
-        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -161,4 +163,6 @@ public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
         deleteFilterStates();
         finish();
     }
+
+
 }

@@ -5,15 +5,14 @@ import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
         TypeFragment.getDataFromTypeFragment, DateFragment.getDateFromDateFragment,
@@ -30,7 +29,10 @@ public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
         setContentView(R.layout.activity_filter);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         db = new DB(Filter.this);
         arrayList = new ArrayList<>();
@@ -92,9 +94,13 @@ public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
 
     @Override
     public void getTypes(ArrayList<String> data) {
-//        LeftFragmentFilter fragment = (LeftFragmentFilter) getFragmentManager().findFragmentById(R.id.left_fragment_filter);
-//        fragment.makeBold();
         arrayList = data;
+        LeftFragmentFilter fragment = (LeftFragmentFilter) getFragmentManager().findFragmentById(R.id.left_fragment_filter);
+        if(arrayList.isEmpty()) {
+            fragment.makeStyleBold(false);
+        } else {
+            fragment.makeStyleBold(true);
+        }
     }
 
     @Override

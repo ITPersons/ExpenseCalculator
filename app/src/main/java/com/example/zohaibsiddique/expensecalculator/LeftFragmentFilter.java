@@ -64,9 +64,9 @@ public class LeftFragmentFilter extends ListFragment implements AdapterView.OnIt
         get.getData(position);
     }
 
-//    void makeBold() {
-//        adapter.boldPosition(0);
-//        adapter.notifyDataSetChanged();
-//    }
+    void makeStyleBold(boolean check) {
+        adapter.makeStyleBold(check);
+        adapter.notifyDataSetChanged();
+    }
 }
 

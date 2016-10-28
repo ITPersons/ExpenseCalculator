@@ -30,6 +30,8 @@ public class ConfigureDrawer extends AppCompatActivity {
     View addMainTypeView;
     TextInputLayout layoutAddMainType;
     EditText addMainType;
+    final String ID = "id";
+    final String NAME = "name";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,8 +99,8 @@ public class ConfigureDrawer extends AppCompatActivity {
 
     private void addValuesToArrayList(Cursor cursor) {
         HashMap<String, Object> hm = new HashMap<>();
-        hm.put("id", cursor.getString(cursor.getColumnIndex("id")));
-        hm.put("name", cursor.getString(cursor.getColumnIndex("name")));
+        hm.put(ID, cursor.getString(cursor.getColumnIndex(ID)));
+        hm.put(NAME, cursor.getString(cursor.getColumnIndex(NAME)));
         arrayList.add(hm);
     }
 
@@ -110,12 +112,12 @@ public class ConfigureDrawer extends AppCompatActivity {
                     @Override
                     public void onSwipeOptionClicked(int viewID, int position) {
                         if (viewID == R.id.delete) {
-                            final String idExpense = arrayList.get(position).get("name").toString();
-                            deleteType(idExpense);
+                            final String id = arrayList.get(position).get(ID).toString();
+                            deleteType(id);
 
                         } else if(viewID == R.id.edit) {
-                            String id = arrayList.get(position).get("id").toString();
-                            String name = arrayList.get(position).get("name").toString();
+                            String id = arrayList.get(position).get(ID).toString();
+                            String name = arrayList.get(position).get(NAME).toString();
                             updateType(id, name);
                         }
                     }
@@ -123,7 +125,7 @@ public class ConfigureDrawer extends AppCompatActivity {
         recyclerView.addOnItemTouchListener(onTouchListener);
     }
 
-    private void deleteType(final String idExpense) {
+    private void deleteType(final String idType) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(ConfigureDrawer.this);
         alertDialogBuilder.setTitle("Confirmation");
         alertDialogBuilder.setMessage("Do you want to delete?");
@@ -137,10 +139,10 @@ public class ConfigureDrawer extends AppCompatActivity {
                 .setPositiveButton("YES",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                if (db.deleteType(idExpense)) {
+                                if (db.deleteType(idType)) {
                                     Utility.successSnackBar(recyclerView, "Expense deleted", ConfigureDrawer.this);
                                     viewItems();
-                                } else if (!db.deleteType(idExpense)) {
+                                } else if (!db.deleteType(idType)) {
                                     Utility.failSnackBar(recyclerView, "Error, Expense not deleted, try again", ConfigureDrawer.this);
                                 }
                             }

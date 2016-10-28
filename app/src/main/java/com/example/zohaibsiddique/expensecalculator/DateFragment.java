@@ -28,9 +28,10 @@ public class DateFragment extends Fragment{
 
 
     public interface getDateFromDateFragment{
-        void getDateFromDateFragment(String date);
+        void getDate(String date);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -58,7 +59,7 @@ public class DateFragment extends Fragment{
         int year = datePicker.getYear();
 
         keyDate = String.valueOf(new StringBuilder().append(day).append("/").append(month).append("/").append(year));
-        getDate.getDateFromDateFragment(keyDate);
+        getDate.getDate(keyDate);
 
         SharedPreferences editor = getActivity().getSharedPreferences(PREFERENCES_FILTER, Context.MODE_PRIVATE);
         if(editor.contains(DATE_KEY_PREFERENCES) && editor.contains(MONTH_KEY_PREFERENCES) && editor.contains(YEAR_KEY_PREFERENCES)) {
@@ -89,7 +90,7 @@ public class DateFragment extends Fragment{
         int year = datePicker.getYear();
 
         keyDate = String.valueOf(new StringBuilder().append(day).append("/").append(month).append("/").append(year));
-        getDate.getDateFromDateFragment(keyDate);
+        getDate.getDate(keyDate);
 
         sessionManager.setDatePreferences(getActivity(), PREFERENCES_FILTER, DATE_KEY_PREFERENCES, String.valueOf(day));
         sessionManager.setDatePreferences(getActivity(), PREFERENCES_FILTER, MONTH_KEY_PREFERENCES, String.valueOf(month));

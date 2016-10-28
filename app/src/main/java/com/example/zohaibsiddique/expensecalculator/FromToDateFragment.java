@@ -28,10 +28,11 @@ public class FromToDateFragment extends Fragment{
     final String YEAR_KEY_PREFERENCES_TO = "year_key_to";
 
     public interface getFromToDateFromFromToDateFragment{
-        void getFromDateFromDateFragment(String fromDate);
-        void getToDateFromDateFragment(String toDate);
+        void getFromDate(String fromDate);
+        void getToDate(String toDate);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -65,8 +66,8 @@ public class FromToDateFragment extends Fragment{
         fromKeyDate = String.valueOf(new StringBuilder().append(fromDay).append("/").append(fromMonth).append("/").append(fromYear));
         toKeyDate = String.valueOf(new StringBuilder().append(toDay).append("/").append(toMonth).append("/").append(toYear));
 
-        getDate.getFromDateFromDateFragment(fromKeyDate);
-        getDate.getToDateFromDateFragment(toKeyDate);
+        getDate.getFromDate(fromKeyDate);
+        getDate.getToDate(toKeyDate);
 
         SharedPreferences editor = getActivity().getSharedPreferences(PREFERENCES_FILTER, Context.MODE_PRIVATE);
 
@@ -119,7 +120,7 @@ public class FromToDateFragment extends Fragment{
         int year = fromDatePicker.getYear();
 
         fromKeyDate = String.valueOf(new StringBuilder().append(day).append("/").append(month).append("/").append(year));
-        getDate.getFromDateFromDateFragment(fromKeyDate);
+        getDate.getFromDate(fromKeyDate);
 
         sessionManager.setDatePreferences(getActivity(), PREFERENCES_FILTER, DATE_KEY_PREFERENCES_FROM, String.valueOf(day));
         sessionManager.setDatePreferences(getActivity(), PREFERENCES_FILTER, MONTH_KEY_PREFERENCES_FROM, String.valueOf(month));
@@ -132,7 +133,7 @@ public class FromToDateFragment extends Fragment{
         int year = toDatePicker.getYear();
 
         toKeyDate = String.valueOf(new StringBuilder().append(day).append("/").append(month).append("/").append(year));
-        getDate.getToDateFromDateFragment(toKeyDate);
+        getDate.getToDate(toKeyDate);
 
         sessionManager.setDatePreferences(getActivity(), PREFERENCES_FILTER, DATE_KEY_PREFERENCES_TO, String.valueOf(day));
         sessionManager.setDatePreferences(getActivity(), PREFERENCES_FILTER, MONTH_KEY_PREFERENCES_TO, String.valueOf(month));

@@ -63,24 +63,24 @@ public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
     }
 
     @Override
-    public void getDataFromTypeFragment(ArrayList<String> data) {
+    public void getTypes(ArrayList<String> data) {
         arrayList = data;
     }
 
     @Override
-    public void getDateFromDateFragment(String date) {
+    public void getDate(String date) {
         this.date = date;
 //        Utility.shortToast(Filter.this, date);
     }
 
     @Override
-    public void getFromDateFromDateFragment(String fromDate) {
+    public void getFromDate(String fromDate) {
         this.fromDate = fromDate;
 //        Utility.shortToast(Filter.this, fromDate);
     }
 
     @Override
-    public void getToDateFromDateFragment(String toDate) {
+    public void getToDate(String toDate) {
         this.toDate = toDate;
     }
 

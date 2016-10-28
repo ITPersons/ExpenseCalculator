@@ -36,9 +36,10 @@ public class TypeFragment extends ListFragment implements AdapterView.OnItemClic
     final String KEY_PREFERENCES = "arrayList";
 
     public interface getDataFromTypeFragment{
-        void getDataFromTypeFragment(ArrayList<String> data);
+        void getTypes(ArrayList<String> data);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -104,13 +105,11 @@ public class TypeFragment extends ListFragment implements AdapterView.OnItemClic
             }
 
         }
-        getData.getDataFromTypeFragment(selectedItems);
+        getData.getTypes(selectedItems);
 
         saveState();
 
     }
-
-
 
     private void viewTypes() {
         try {
@@ -130,11 +129,11 @@ public class TypeFragment extends ListFragment implements AdapterView.OnItemClic
         }
     }
 
-    public void saveState() {
+    private void saveState() {
         sessionManager.setPreferences(getActivity(), PREFERENCES_FILTER, KEY_PREFERENCES, positionsList);
     }
 
-    public List<String> getState() {
+    private List<String> getState() {
         return sessionManager.getPreferences(getActivity(), PREFERENCES_FILTER, KEY_PREFERENCES);
     }
 }

@@ -338,6 +338,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             public void onClick(DialogInterface dialog, int id) {
                                 if (db.deleteExpense(idExpense)) {
                                     Utility.successSnackBar(recyclerView, "Expense deleted", MainActivity.this);
+                                    initializeSumValue();
                                     viewItems();
                                 } else if (!db.deleteExpense(idExpense)) {
                                     Utility.failSnackBar(recyclerView, "Error, Expense not deleted, try again", MainActivity.this);

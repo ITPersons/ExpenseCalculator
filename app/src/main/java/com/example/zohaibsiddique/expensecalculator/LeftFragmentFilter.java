@@ -21,7 +21,7 @@ public class LeftFragmentFilter extends ListFragment implements AdapterView.OnIt
     public interface Get {
         void getData(int s);
     }
-
+    @SuppressWarnings("deprecation")
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -63,5 +63,10 @@ public class LeftFragmentFilter extends ListFragment implements AdapterView.OnIt
         adapter.notifyDataSetChanged();
         get.getData(position);
     }
+
+//    void makeBold() {
+//        adapter.boldPosition(0);
+//        adapter.notifyDataSetChanged();
+//    }
 }
 

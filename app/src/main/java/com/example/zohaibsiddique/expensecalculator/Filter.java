@@ -7,11 +7,13 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
         TypeFragment.getDataFromTypeFragment, DateFragment.getDateFromDateFragment,
@@ -52,13 +54,15 @@ public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
                 Utility.shortToast(Filter.this, "apply btn");
                 break;
             case R.id.clear_all_button:
-                clearAllValues();
-                Utility.shortToast(Filter.this, "clear btn");
+                clearStates();
                 break;
         }
     }
 
-    private void clearAllValues() {
+    private void clearStates() {
+        TypeFragment fragment = (TypeFragment) getFragmentManager().findFragmentById(R.id.right_fragment_filter);
+        fragment.retainStateCheckOrUnCheckListView(false);
+        deleteFilterStates();
         arrayList.clear();
         date = null;
         fromDate = null;
@@ -88,6 +92,8 @@ public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
 
     @Override
     public void getTypes(ArrayList<String> data) {
+//        LeftFragmentFilter fragment = (LeftFragmentFilter) getFragmentManager().findFragmentById(R.id.left_fragment_filter);
+//        fragment.makeBold();
         arrayList = data;
     }
 

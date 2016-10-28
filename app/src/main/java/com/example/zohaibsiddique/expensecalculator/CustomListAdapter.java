@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-
 import java.util.List;
 
 class CustomListAdapter extends ArrayAdapter<String> {
@@ -15,6 +14,7 @@ class CustomListAdapter extends ArrayAdapter<String> {
     private int selectedItemPosition;
     TextView name;
     List<String> list;
+//    int boldPosition;
 
 
     CustomListAdapter(Context context, List<String> list) {
@@ -32,6 +32,10 @@ class CustomListAdapter extends ArrayAdapter<String> {
 
         name.setText(list.get(position));
 
+//        if(position == boldPosition) {
+//            setTypeFace(convertView, Typeface.BOLD);
+//        }
+
         if (position == selectedItemPosition) {
             convertView.setBackgroundColor(Color.WHITE);
         } else {
@@ -44,4 +48,36 @@ class CustomListAdapter extends ArrayAdapter<String> {
     void setSelectedItemPosition(int position) {
         selectedItemPosition = position;
     }
+
+//    void boldPosition(int position) {
+//        boldPosition = position;
+//    }
+//
+//    void setTypeFace(View convertView, int style) {
+//        TextView name = (TextView) convertView.findViewById(R.id.list_item_left_filter_contents);
+//        name.setTypeface(null, style);
+//    }
+
+//    void makeBold(View convertView, int style) {
+//        final String PREFERENCES_FILTER = "filter";
+//        final String KEY_PREFERENCES = "arrayList";
+//        List<String> stateList;
+//        SessionManager sessionManager = new SessionManager();
+//        SharedPreferences editor = getContext().getSharedPreferences(PREFERENCES_FILTER, Context.MODE_PRIVATE);
+//
+//        if(editor.contains(KEY_PREFERENCES)) {
+//            if(sessionManager.getPreferences(getContext(), PREFERENCES_FILTER, KEY_PREFERENCES).isEmpty()) {
+//
+//                Utility.shortToast(getContext(), String.valueOf("state empty"));
+//
+//            } else {
+//                stateList = sessionManager.getPreferences(getContext(), PREFERENCES_FILTER, KEY_PREFERENCES);
+//                if(stateList.isEmpty()) {
+//                    Utility.shortToast(getContext(), "empty");
+//                } else {
+//                    setTypeFace(convertView, style);
+//                }
+//            }
+//        }
+//    }
 }

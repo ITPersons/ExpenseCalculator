@@ -28,10 +28,9 @@ public class TypeFragment extends ListFragment implements AdapterView.OnItemClic
     View view;
     ListView listView;
     ArrayAdapter<String> adapter;
-    ArrayList<String> selectedItems;
+    ArrayList<String> selectedItemsList;
     SessionManager sessionManager;
-    List<String> list = new ArrayList<>();
-    List<String> positionsList;
+    List<String> selectedPositionList;
     final String PREFERENCES_FILTER = "filter";
     final String KEY_PREFERENCES = "arrayList";
 
@@ -73,42 +72,45 @@ public class TypeFragment extends ListFragment implements AdapterView.OnItemClic
 
         listView.setOnItemClickListener(this);
 
+        retainStateCheckOrUnCheckListView(true);
+    }
+
+    public void retainStateCheckOrUnCheckListView(boolean state) {
+        List<String> stateList;
+        SessionManager sessionManager = new SessionManager();
         SharedPreferences editor = getActivity().getSharedPreferences(PREFERENCES_FILTER, Context.MODE_PRIVATE);
         if(editor.contains(KEY_PREFERENCES)) {
-            if(getState().isEmpty()) {
+            if(sessionManager.getPreferences(getActivity(), PREFERENCES_FILTER, KEY_PREFERENCES).isEmpty()) {
                 Utility.shortToast(getActivity(), String.valueOf("state empty"));
             } else {
-                list = getState();
-                if(list.isEmpty()) {
+                stateList = sessionManager.getPreferences(getActivity(), PREFERENCES_FILTER, KEY_PREFERENCES);
+                if(stateList.isEmpty()) {
                     Utility.shortToast(getActivity(), "empty");
                 } else {
-                    for(int j = 0; j<list.size(); j++) {
-                        listView.setItemChecked(Integer.valueOf(list.get(j)), true);
+                    for(int j = 0; j<stateList.size(); j++) {
+                        listView.setItemChecked(Integer.valueOf(stateList.get(j)), state);
                     }
                 }
             }
         }
-
     }
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         SparseBooleanArray checked = listView.getCheckedItemPositions();
-        positionsList = new ArrayList<>();
-        selectedItems = new ArrayList<>();
+        selectedPositionList = new ArrayList<>();
+        selectedItemsList = new ArrayList<>();
         int position;
         for (int j = 0; j < checked.size(); j++) {
             position = checked.keyAt(j);
             if (checked.valueAt(j)) {
-                selectedItems.add(adapter.getItem(position));
-                positionsList.add(String.valueOf(position));
+                selectedItemsList.add(adapter.getItem(position));
+                selectedPositionList.add(String.valueOf(position));
             }
-
         }
-        getData.getTypes(selectedItems);
+        getData.getTypes(selectedItemsList);
 
         saveState();
-
     }
 
     private void viewTypes() {
@@ -130,11 +132,7 @@ public class TypeFragment extends ListFragment implements AdapterView.OnItemClic
     }
 
     private void saveState() {
-        sessionManager.setPreferences(getActivity(), PREFERENCES_FILTER, KEY_PREFERENCES, positionsList);
-    }
-
-    private List<String> getState() {
-        return sessionManager.getPreferences(getActivity(), PREFERENCES_FILTER, KEY_PREFERENCES);
+        sessionManager.setPreferences(getActivity(), PREFERENCES_FILTER, KEY_PREFERENCES, selectedPositionList);
     }
 }
 

@@ -32,10 +32,11 @@
                 android:id="@+id/show_value_expense"
                 android:layout_marginTop="@dimen/two_margin"
                 android:layout_marginBottom="@dimen/three_margin"
+                android:layout_marginStart="@dimen/eight_margin"
                 android:layout_marginLeft="@dimen/eight_margin"
                 android:textSize="@dimen/fourteen_font_size"
                 android:textColor="@color/white"
-                android:text="Total Expense: 100"/>
+                android:text="@string/total_expense_100"/>
         </LinearLayout>
 
     </android.support.design.widget.AppBarLayout>

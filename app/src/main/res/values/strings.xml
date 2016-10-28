@@ -160,4 +160,8 @@
     <string name="apply">Apply</string>
     <string name="to">To</string>
     <string name="from">From</string>
+    <string name="total_expense_100">Total Expense: 100</string>
+    <string name="dummy_value">1452124</string>
+    <string name="date">Date</string>
+    <string name="add_ledger">Add Ledger</string>
 </resources>

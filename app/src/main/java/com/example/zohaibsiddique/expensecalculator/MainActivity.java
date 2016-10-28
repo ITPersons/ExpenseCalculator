@@ -1,8 +1,6 @@
 package com.example.zohaibsiddique.expensecalculator;
 
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -24,16 +22,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -41,16 +35,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private View addExpenseView;
     private TextInputLayout layoutAddMainType, layoutExpenseName, layoutExpenseValue;
-    private EditText addMainType, addExpenseName, addExpenseValue = null;
+    private EditText addMainType, addExpenseName, addExpenseValue;
     private RecyclerView recyclerView, recyclerViewDrawer;
-    private ArrayList<HashMap<String, Object>> arrayList, arrayListDrawer;
+    private ArrayList<HashMap<String, Object>> arrayListExpense, arrayListDrawer;
     private DB db;
     private RecyclerTouchListener onTouchListener;
     private List<String> arrayListType;
     private String idType, nameMainType, typeId;
     private static long sum = 0;
     private TextView showValueExpense;
-    private EditText fromDatePickerEditText, toDatePickerEditText;
     private final int CONFIGURE_DRAWER_REQUEST_CODE = 1;
     private final int TYPE_FILTER_REQUEST_CODE = 2;
     final String ID_EXPENSE = "id";
@@ -73,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         db = new DB(MainActivity.this);
         showValueExpense = (TextView) findViewById(R.id.show_value_expense);
-        initializeValueOfExpense();
+        initializeSumValue();
 
         viewDrawerItems();
         viewItems();
@@ -91,8 +84,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         drawer(toolbar);
     }
 
-    // Show Block list from database
-    public void viewItems() {
+    private void viewItems() {
         try {
             getReferencesForViewItemsRecyclerView();
 
@@ -115,8 +107,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
 
-    // Show Block list from database
-    public void viewDrawerItems() {
+    private void viewDrawerItems() {
         try {
             getReferencesForDrawerItemsRecyclerView();
 
@@ -144,10 +135,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         arrayListDrawer.add(hm);
     }
 
-    public void viewItemsByType() {
+    private void viewItemsByType() {
         try {
             getReferencesForViewItemsRecyclerView();
-            initializeValueOfExpense();
+            initializeSumValue();
 
             Cursor cursor = db.selectExpenseByType(typeId);
             cursor.moveToFirst();
@@ -167,72 +158,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-    private void chooseFromToDate() {
-        LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
-        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linear_layout_from_to_date_picker);
-        View fromToDatePickerView = layoutInflater.inflate(R.layout.from_to_date_picker, linearLayout);
-        Button fromDatePickerButton = (Button) fromToDatePickerView.findViewById(R.id.from_date_picker);
-        fromDatePickerEditText = (EditText) fromToDatePickerView.findViewById(R.id.from_date_picker_editText);
-        fromDatePickerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDialog(2);
-            }
-        });
-
-        Button toDatePickerButton = (Button) fromToDatePickerView.findViewById(R.id.to_date_picker);
-        toDatePickerEditText = (EditText) fromToDatePickerView.findViewById(R.id.to_date_picker_editText);
-        toDatePickerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDialog(3);
-            }
-        });
-
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
-        alertDialogBuilder.setTitle("Choose date");
-        alertDialogBuilder.setView(fromToDatePickerView);
-
-        alertDialogBuilder.setCancelable(true)
-                .setNegativeButton("CANCEL",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        })
-                .setPositiveButton("SUBMIT",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                String to = toDatePickerEditText.getText().toString();
-                                String from = fromDatePickerEditText.getText().toString();
-
-                                String fromDate = Utility.simpleDateFormat(Utility.milliseconds(from));
-                                String toDate = Utility.simpleDateFormat(Utility.milliseconds(to));
-
-                                Cursor cursor = db.selectFromToDate(fromDate, toDate);
-                                initializeValueOfExpense();
-                                getReferencesForViewItemsRecyclerView();
-                                cursor.moveToFirst();
-                                if (cursor.getCount() == 0) {
-                                    Toast.makeText(MainActivity.this, "Empty list", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    for (int i = 0; i < cursor.getCount(); i++) {
-                                        addValuesToArrayList(cursor);
-                                        cursor.moveToNext();
-                                    }
-                                    cursor.close();
-                                }
-                                enableSwipe();
-                            }
-                        });
-        AlertDialog alert = alertDialogBuilder.create();
-        alert.show();
-    }
-
     private void addType() {
         LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linear_layout_add_main_type) ;
-        View addMainTypeView = layoutInflater.inflate(R.layout.add_main_type, linearLayout);
+        View addMainTypeView = layoutInflater.inflate(R.layout.add_type, linearLayout);
         layoutAddMainType = (TextInputLayout) addMainTypeView.findViewById(R.id.text_input_layout_add_main_type);
         addMainType = (EditText) addMainTypeView.findViewById(R.id.add_main_type);
         addMainType.addTextChangedListener(new addNewItemTextWatcher(addMainType));
@@ -285,7 +214,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
-                                initializeValueOfExpense();
+                                initializeSumValue();
                                 viewItems();
 
                             }
@@ -316,8 +245,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         alert.show();
     }
 
-
-
     private void showExpense(long expense) {
         sum = sum + expense;
         String messageSum = getString(R.string.sum, String.valueOf(sum));
@@ -325,8 +252,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void getReferencesForViewItemsRecyclerView() {
-        arrayList = new ArrayList<>();
-        AdapterViewItems adapter = new AdapterViewItems(MainActivity.this, arrayList);
+        arrayListExpense = new ArrayList<>();
+        AdapterViewItems adapter = new AdapterViewItems(MainActivity.this, arrayListExpense);
         recyclerView = (RecyclerView) findViewById(R.id.view_item_recycle_view);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
@@ -345,7 +272,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         hm.put(DATE_EXPENSE, Utility.dateFormat(cursor.getLong(cursor.getColumnIndex(DATE_EXPENSE))));
         String id = cursor.getString(cursor.getColumnIndex(TYPE_ID_EXPENSE));
         hm.put("type", db.selectTypeById(id));
-        arrayList.add(hm);
+        arrayListExpense.add(hm);
     }
 
     private void getReferencesForDrawerItemsRecyclerView() {
@@ -381,13 +308,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     @Override
                     public void onSwipeOptionClicked(int viewID, int position) {
                         if (viewID == R.id.delete) {
-                            final String idExpense = arrayList.get(position).get(ID_EXPENSE).toString();
+                            final String idExpense = arrayListExpense.get(position).get(ID_EXPENSE).toString();
                             deleteExpense(idExpense);
 
                         } else if (viewID == R.id.edit) {
-                            String id = arrayList.get(position).get(ID_EXPENSE).toString();
-                            String name = arrayList.get(position).get(NAME_EXPENSE).toString();
-                            String value = arrayList.get(position).get(VALUE_EXPENSE).toString();
+                            String id = arrayListExpense.get(position).get(ID_EXPENSE).toString();
+                            String name = arrayListExpense.get(position).get(NAME_EXPENSE).toString();
+                            String value = arrayListExpense.get(position).get(VALUE_EXPENSE).toString();
                             updateExpense(id, name, value);
                         }
                     }
@@ -422,35 +349,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         alert.show();
     }
 
-    private void DrawerClickListener() {
-        final String NAME_TYPE = "name";
-        onTouchListener = new RecyclerTouchListener(this, recyclerViewDrawer);
-        onTouchListener
-                .setClickable(new RecyclerTouchListener.OnRowClickListener() {
-                    @Override
-                    public void onRowClicked(int position) {
-                        nameMainType = arrayListDrawer.get(position).get(NAME_TYPE).toString();
-                        if (nameMainType.contains("all") || nameMainType.equals("all")) {
-                            initializeValueOfExpense();
-                            viewItems();
-                            closeDrawer();
-                        } else {
-                            typeId = db.selectIdByMainTypeName(nameMainType);
-                            initializeValueOfExpense();
-                            viewItemsByType();
-                            closeDrawer();
-                        }
-
-                    }
-
-                    @Override
-                    public void onIndependentViewClicked(int independentViewID, int position) {
-                        Utility.shortToast(getApplicationContext(), "Button in row " + (position + 1) + " clicked!");
-                    }
-                });
-        recyclerViewDrawer.addOnItemTouchListener(onTouchListener);
-    }
-
     private void getTypes() {
         final String NAME_TYPE = "name";
         Cursor cursor = db.selectMainType();
@@ -460,54 +358,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             cursor.moveToNext();
         }
         cursor.close();
-    }
-
-
-    private class addNewItemTextWatcher implements TextWatcher {
-        private View view;
-
-        private addNewItemTextWatcher(View view) {
-            this.view = view;
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable editable) {
-            switch (view.getId()) {
-                case R.id.name_expense:
-                    Utility.validateEditText(addExpenseName, layoutExpenseName, "Enter valid name");
-                    break;
-                case R.id.value_expense:
-                    Utility.validateEditText(addExpenseValue, layoutExpenseValue, "Enter valid value");
-                    break;
-                case R.id.add_main_type:
-                    Utility.validateEditText(addMainType, layoutAddMainType, "Enter valid type");
-                    break;
-            }
-
-        }
-    }
-
-    private boolean validateInput() {
-        return Utility.validateEditText(addExpenseName, layoutExpenseName, "Enter valid name") &&
-                Utility.validateEditText(addExpenseValue, layoutExpenseValue, "Enter valid value");
-    }
-
-    private void drawer(Toolbar toolbar) {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
     }
 
     private void updateExpense(final String idExpense, String name, String value) {
@@ -567,83 +417,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Utility.setSpinnerAdapterByArrayList(typeSpinner, MainActivity.this, arrayListType);
     }
 
-    private void initializeValueOfExpense() {
+    private void initializeSumValue() {
         sum = 0;
         String messageSum = getString(R.string.sum, String.valueOf(sum));
         showValueExpense.setText(messageSum);
     }
 
-
-    @Override
-    protected Dialog onCreateDialog(int id) {
-
-        final Calendar c = Calendar.getInstance();
-        int year = c.get(Calendar.YEAR);
-        int month = c.get(Calendar.MONTH);
-        int day = c.get(Calendar.DAY_OF_MONTH);
-
-        if (id == 1) {
-            return new DatePickerDialog(this, singleDatePicker, year, month, day);
-        }
-        if (id == 2) {
-            return new DatePickerDialog(this, fromDatePicker, year, month, day);
-        }
-        if (id == 3) {
-            return new DatePickerDialog(this, toDatePicker, year, month, day);
-        }
-        return null;
-    }
-
-    private DatePickerDialog.OnDateSetListener singleDatePicker = new DatePickerDialog.OnDateSetListener() {
-        @Override
-        public void onDateSet(DatePicker view, int year, int month, int day) {
-            int months = month + 1;
-            if (view.isShown()) {
-                String keyDate = String.valueOf(new StringBuilder().append(day).append("/").append(months).append("/").append(year));
-                initializeValueOfExpense();
-                Cursor cursor = db.selectDateOfExpense(Utility.simpleDateFormat(Utility.milliseconds(keyDate)));
-                getReferencesForViewItemsRecyclerView();
-                cursor.moveToFirst();
-                if (cursor.getCount() == 0) {
-                    Toast.makeText(MainActivity.this, "Empty list", Toast.LENGTH_SHORT).show();
-                } else {
-                    for (int i = 0; i < cursor.getCount(); i++) {
-                        addValuesToArrayList(cursor);
-                        cursor.moveToNext();
-                    }
-                    cursor.close();
-                }
-                enableSwipe();
-            }
-        }
-        };
-
-    private DatePickerDialog.OnDateSetListener fromDatePicker = new DatePickerDialog.OnDateSetListener() {
-        @Override
-        public void onDateSet(DatePicker view, int year, int month, int day) {
-            int months = month + 1;
-
-            if (view.isShown()) {
-                String fromDateKey = String.valueOf(new StringBuilder().append(day).append("/").append(months).append("/").append(year));
-                fromDatePickerEditText.setText(fromDateKey);
-            }
-        }
-    };
-
-    private DatePickerDialog.OnDateSetListener toDatePicker = new DatePickerDialog.OnDateSetListener() {
-        @Override
-        public void onDateSet(DatePicker view, int year, int month, int day) {
-            int months = month + 1;
-            if (view.isShown()) {
-                String toDateKey = String.valueOf(new StringBuilder().append(day).append("/").append(months).append("/").append(year));
-                toDatePickerEditText.setText(toDateKey);
-            }
-        }
-    };
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.add_menu, menu);
+        getMenuInflater().inflate(R.menu.main_activity, menu);
         return true;
     }
 
@@ -651,21 +433,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.add_main_type_menu) {
+        if (id == R.id.add_type_menu) {
             addType();
             return true;
         }
         if (id == R.id.configure_drawer) {
             Intent intent = new Intent(MainActivity.this, ConfigureDrawer.class);
             startActivityForResult(intent, CONFIGURE_DRAWER_REQUEST_CODE);
-            return true;
-        }
-        if (id == R.id.date_picker) {
-            showDialog(1);
-            return true;
-        }
-        if (id == R.id.from_to_date_picker) {
-            chooseFromToDate();
             return true;
         }
         if (id == R.id.add_ledger) {
@@ -744,5 +518,81 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
 
         }
+    }
+
+    private boolean validateInput() {
+        return Utility.validateEditText(addExpenseName, layoutExpenseName, "Enter valid name") &&
+                Utility.validateEditText(addExpenseValue, layoutExpenseValue, "Enter valid value");
+    }
+
+    private class addNewItemTextWatcher implements TextWatcher {
+        private View view;
+
+        private addNewItemTextWatcher(View view) {
+            this.view = view;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            switch (view.getId()) {
+                case R.id.name_expense:
+                    Utility.validateEditText(addExpenseName, layoutExpenseName, "Enter valid name");
+                    break;
+                case R.id.value_expense:
+                    Utility.validateEditText(addExpenseValue, layoutExpenseValue, "Enter valid value");
+                    break;
+                case R.id.add_main_type:
+                    Utility.validateEditText(addMainType, layoutAddMainType, "Enter valid type");
+                    break;
+            }
+
+        }
+    }
+
+    private void DrawerClickListener() {
+        final String NAME_TYPE = "name";
+        onTouchListener = new RecyclerTouchListener(this, recyclerViewDrawer);
+        onTouchListener
+                .setClickable(new RecyclerTouchListener.OnRowClickListener() {
+                    @Override
+                    public void onRowClicked(int position) {
+                        nameMainType = arrayListDrawer.get(position).get(NAME_TYPE).toString();
+                        if (nameMainType.contains("all") || nameMainType.equals("all")) {
+                            initializeSumValue();
+                            viewItems();
+                            closeDrawer();
+                        } else {
+                            typeId = db.selectIdByMainTypeName(nameMainType);
+                            initializeSumValue();
+                            viewItemsByType();
+                            closeDrawer();
+                        }
+
+                    }
+
+                    @Override
+                    public void onIndependentViewClicked(int independentViewID, int position) {
+                        Utility.shortToast(getApplicationContext(), "Button in row " + (position + 1) + " clicked!");
+                    }
+                });
+        recyclerViewDrawer.addOnItemTouchListener(onTouchListener);
+    }
+
+    private void drawer(Toolbar toolbar) {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
     }
 }

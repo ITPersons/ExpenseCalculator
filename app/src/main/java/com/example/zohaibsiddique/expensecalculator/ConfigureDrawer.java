@@ -46,7 +46,7 @@ public class ConfigureDrawer extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.add_menu, menu);
+        getMenuInflater().inflate(R.menu.main_activity, menu);
         return true;
     }
 
@@ -152,7 +152,7 @@ public class ConfigureDrawer extends AppCompatActivity {
 
     private void updateType(final String idType, String name) {
         LayoutInflater layoutInflater = LayoutInflater.from(ConfigureDrawer.this);
-        addMainTypeView = layoutInflater.inflate(R.layout.add_main_type, null);
+        addMainTypeView = layoutInflater.inflate(R.layout.add_type, null);
         layoutAddMainType = (TextInputLayout) addMainTypeView.findViewById(R.id.text_input_layout_add_main_type);
         addMainType = (EditText) addMainTypeView.findViewById(R.id.add_main_type);
         addMainType.addTextChangedListener(new addNewItemTextWatcher(addMainType));

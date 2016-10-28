@@ -86,7 +86,7 @@ public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.filter_menu, menu);
+        getMenuInflater().inflate(R.menu.filter_activity, menu);
         return true;
     }
 

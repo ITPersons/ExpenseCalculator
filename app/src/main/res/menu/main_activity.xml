@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/filter"
+        android:title="@string/choose_date"
+        android:icon="@android:drawable/ic_menu_my_calendar"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/add_ledger"
+        android:title="@string/choose_date"
+        android:icon="@android:drawable/ic_menu_my_calendar"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/add_type_menu"
+        android:orderInCategory="100"
+        android:title="@string/add_type"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/configure_drawer"
+        android:orderInCategory="100"
+        android:title="@string/configure_drawer"
+        app:showAsAction="never" />
+
+</menu>

@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+
 import java.util.ArrayList;
 
 public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
@@ -64,6 +65,10 @@ public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
     private void clearStates() {
         TypeFragment fragment = (TypeFragment) getFragmentManager().findFragmentById(R.id.right_fragment_filter);
         fragment.retainStateCheckOrUnCheckListView(false);
+
+        LeftFragmentFilter leftFragment = (LeftFragmentFilter) getFragmentManager().findFragmentById(R.id.left_fragment_filter);
+        leftFragment.makeStyleBold(false);
+
         deleteFilterStates();
         arrayList.clear();
         date = null;
@@ -100,6 +105,7 @@ public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
             fragment.makeStyleBold(false);
         } else {
             fragment.makeStyleBold(true);
+            fragment.countSelection(arrayList.size());
         }
     }
 

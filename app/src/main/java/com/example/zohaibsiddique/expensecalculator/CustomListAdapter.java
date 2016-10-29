@@ -16,6 +16,7 @@ class CustomListAdapter extends ArrayAdapter<String> {
     TextView name;
     List<String> list;
     private boolean boldCheck;
+    private int count;
 
     CustomListAdapter(Context context, List<String> list) {
         super(context, R.layout.single_list_item_view, list);
@@ -27,7 +28,8 @@ class CustomListAdapter extends ArrayAdapter<String> {
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.single_list_item_view, parent, false);
-            name = (TextView) convertView.findViewById(R.id.list_item_left_filter_contents);
+            name = (TextView) convertView.findViewById(R.id.name_single_list_item_view);
+
         }
 
         name.setText(list.get(position));
@@ -35,10 +37,12 @@ class CustomListAdapter extends ArrayAdapter<String> {
         if(boldCheck) {
             if(position == 0) {
                 setTypeFace(convertView, Typeface.BOLD);
+                showCounts(convertView, "("+String.valueOf(count)+")");
             }
         } else {
             if(position == 0) {
                 setTypeFace(convertView, Typeface.NORMAL);
+                showCounts(convertView, "");
             }
         }
 
@@ -59,8 +63,18 @@ class CustomListAdapter extends ArrayAdapter<String> {
         boldCheck = check;
     }
 
+    void countSelection(int count) {
+        this.count = count;
+    }
+
     private void setTypeFace(View convertView, int style) {
-        TextView name = (TextView) convertView.findViewById(R.id.list_item_left_filter_contents);
+        TextView name = (TextView) convertView.findViewById(R.id.name_single_list_item_view);
         name.setTypeface(null, style);
+    }
+
+    private void showCounts(View convertView, String count) {
+        TextView counts = (TextView) convertView.findViewById(R.id.counts_single_list_item_view);
+        counts.setText(count);
+        counts.setTypeface(null, Typeface.BOLD);
     }
 }

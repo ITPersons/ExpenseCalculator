@@ -21,6 +21,7 @@ public class LeftFragmentFilter extends ListFragment implements AdapterView.OnIt
     public interface Get {
         void getData(int s);
     }
+
     @SuppressWarnings("deprecation")
     @Override
     public void onAttach(Activity activity) {
@@ -68,5 +69,11 @@ public class LeftFragmentFilter extends ListFragment implements AdapterView.OnIt
         adapter.makeStyleBold(check);
         adapter.notifyDataSetChanged();
     }
+
+    void countSelection(int count) {
+        adapter.countSelection(count);
+        adapter.notifyDataSetChanged();
+    }
+
 }
 

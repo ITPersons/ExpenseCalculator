@@ -72,10 +72,10 @@ public class TypeFragment extends ListFragment implements AdapterView.OnItemClic
 
         listView.setOnItemClickListener(this);
 
-        retainStateCheckOrUnCheckListView(true);
+        retainStateListView(true);
     }
 
-    public void retainStateCheckOrUnCheckListView(boolean state) {
+    public void retainStateListView(boolean state) {
         List<String> stateList;
         SessionManager sessionManager = new SessionManager();
         SharedPreferences editor = getActivity().getSharedPreferences(PREFERENCES_FILTER, Context.MODE_PRIVATE);

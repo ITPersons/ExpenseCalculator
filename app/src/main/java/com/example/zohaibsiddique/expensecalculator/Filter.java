@@ -1,5 +1,6 @@
 package com.example.zohaibsiddique.expensecalculator;
 
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -63,8 +64,11 @@ public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
     }
 
     private void clearStates() {
-        TypeFragment fragment = (TypeFragment) getFragmentManager().findFragmentById(R.id.right_fragment_filter);
-        fragment.retainStateCheckOrUnCheckListView(false);
+        Fragment mFragment = getFragmentManager().findFragmentById(R.id.right_fragment_filter);
+        if (mFragment instanceof TypeFragment) {
+            TypeFragment typeFragment = (TypeFragment) getFragmentManager().findFragmentById(R.id.right_fragment_filter);
+            typeFragment.retainStateListView(false);
+        }
 
         LeftFragmentFilter leftFragment = (LeftFragmentFilter) getFragmentManager().findFragmentById(R.id.left_fragment_filter);
         leftFragment.makeStyleBold(false);

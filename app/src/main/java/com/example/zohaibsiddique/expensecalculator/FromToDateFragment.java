@@ -82,14 +82,7 @@ public class FromToDateFragment extends Fragment{
                 }
             });
         } else {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(System.currentTimeMillis());
-            fromDatePicker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), new DatePicker.OnDateChangedListener() {
-                @Override
-                public void onDateChanged(DatePicker datePicker, int y, int m, int d) {
-                    fromOnDateChange();
-                }
-            });
+            resetStateOfFromDate();
         }
 
         if(editor.contains(DATE_KEY_PREFERENCES_TO) && editor.contains(MONTH_KEY_PREFERENCES_TO) && editor.contains(YEAR_KEY_PREFERENCES_TO)) {
@@ -103,14 +96,7 @@ public class FromToDateFragment extends Fragment{
                 }
             });
         } else {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(System.currentTimeMillis());
-            toDatePicker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), new DatePicker.OnDateChangedListener() {
-                @Override
-                public void onDateChanged(DatePicker datePicker, int y, int m, int d) {
-                    toOnDateChange();
-                }
-            });
+            resetStateOfToDate();
         }
     }
 
@@ -138,6 +124,28 @@ public class FromToDateFragment extends Fragment{
         sessionManager.setDatePreferences(getActivity(), PREFERENCES_FILTER, DATE_KEY_PREFERENCES_TO, String.valueOf(day));
         sessionManager.setDatePreferences(getActivity(), PREFERENCES_FILTER, MONTH_KEY_PREFERENCES_TO, String.valueOf(month));
         sessionManager.setDatePreferences(getActivity(), PREFERENCES_FILTER, YEAR_KEY_PREFERENCES_TO, String.valueOf(year));
+    }
+
+    void resetStateOfToDate() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        toDatePicker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), new DatePicker.OnDateChangedListener() {
+            @Override
+            public void onDateChanged(DatePicker datePicker, int y, int m, int d) {
+                toOnDateChange();
+            }
+        });
+    }
+
+    void resetStateOfFromDate() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        fromDatePicker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), new DatePicker.OnDateChangedListener() {
+            @Override
+            public void onDateChanged(DatePicker datePicker, int y, int m, int d) {
+                fromOnDateChange();
+            }
+        });
     }
 }
 

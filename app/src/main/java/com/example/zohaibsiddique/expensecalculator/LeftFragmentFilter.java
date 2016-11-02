@@ -65,8 +65,18 @@ public class LeftFragmentFilter extends ListFragment implements AdapterView.OnIt
         get.getData(position);
     }
 
-    void makeStyleBold(boolean check) {
-        adapter.makeStyleBold(check);
+    void makeStyleBoldAtFirstPosition(boolean check) {
+        adapter.makeStyleBoldAtFirstPosition(check);
+        adapter.notifyDataSetChanged();
+    }
+
+    void makeStyleBoldAtSecondPosition(boolean check) {
+        adapter.makeStyleBoldAtSecondPosition(check);
+        adapter.notifyDataSetChanged();
+    }
+
+    void makeStyleBoldAtThirdPosition(boolean check) {
+        adapter.makeStyleBoldAtThirdPosition(check);
         adapter.notifyDataSetChanged();
     }
 
@@ -74,6 +84,7 @@ public class LeftFragmentFilter extends ListFragment implements AdapterView.OnIt
         adapter.countSelection(count);
         adapter.notifyDataSetChanged();
     }
+
 
 }
 

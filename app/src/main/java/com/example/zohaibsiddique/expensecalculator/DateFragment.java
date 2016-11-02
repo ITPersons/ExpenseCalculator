@@ -21,9 +21,9 @@ public class DateFragment extends Fragment{
     DatePicker datePicker;
     SessionManager sessionManager;
     final String PREFERENCES_FILTER = "filter";
-    final String DATE_KEY_PREFERENCES = "date_key_date";
-    final String MONTH_KEY_PREFERENCES = "month_key_date";
-    final String YEAR_KEY_PREFERENCES = "year_key_date";
+    final String KEY_DATE_PREFERENCES = "date_key_date";
+    final String KEY_MONTH_PREFERENCES = "month_key_date";
+    final String KEY_YEAR_PREFERENCES = "year_key_date";
     List<String> list = new ArrayList<>();
 
 
@@ -62,10 +62,10 @@ public class DateFragment extends Fragment{
         getDate.getDate(keyDate);
 
         SharedPreferences editor = getActivity().getSharedPreferences(PREFERENCES_FILTER, Context.MODE_PRIVATE);
-        if(editor.contains(DATE_KEY_PREFERENCES) && editor.contains(MONTH_KEY_PREFERENCES) && editor.contains(YEAR_KEY_PREFERENCES)) {
-            String d = sessionManager.getDatePreferences(getActivity(), PREFERENCES_FILTER, DATE_KEY_PREFERENCES);
-            String m = sessionManager.getDatePreferences(getActivity(), PREFERENCES_FILTER, MONTH_KEY_PREFERENCES);
-            String y = sessionManager.getDatePreferences(getActivity(), PREFERENCES_FILTER, YEAR_KEY_PREFERENCES);
+        if(editor.contains(KEY_DATE_PREFERENCES) && editor.contains(KEY_MONTH_PREFERENCES) && editor.contains(KEY_YEAR_PREFERENCES)) {
+            String d = sessionManager.getDatePreferences(getActivity(), PREFERENCES_FILTER, KEY_DATE_PREFERENCES);
+            String m = sessionManager.getDatePreferences(getActivity(), PREFERENCES_FILTER, KEY_MONTH_PREFERENCES);
+            String y = sessionManager.getDatePreferences(getActivity(), PREFERENCES_FILTER, KEY_YEAR_PREFERENCES);
             datePicker.init(Integer.valueOf(y), Integer.valueOf(m), Integer.valueOf(d), new DatePicker.OnDateChangedListener() {
                 @Override
                 public void onDateChanged(DatePicker datePicker, int y, int m, int d) {
@@ -73,14 +73,7 @@ public class DateFragment extends Fragment{
                 }
             });
         } else {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(System.currentTimeMillis());
-            datePicker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), new DatePicker.OnDateChangedListener() {
-                @Override
-                public void onDateChanged(DatePicker datePicker, int y, int m, int d) {
-                    onDateChange();
-                }
-            });
+            resetState();
         }
     }
 
@@ -92,9 +85,21 @@ public class DateFragment extends Fragment{
         keyDate = String.valueOf(new StringBuilder().append(day).append("/").append(month).append("/").append(year));
         getDate.getDate(keyDate);
 
-        sessionManager.setDatePreferences(getActivity(), PREFERENCES_FILTER, DATE_KEY_PREFERENCES, String.valueOf(day));
-        sessionManager.setDatePreferences(getActivity(), PREFERENCES_FILTER, MONTH_KEY_PREFERENCES, String.valueOf(month));
-        sessionManager.setDatePreferences(getActivity(), PREFERENCES_FILTER, YEAR_KEY_PREFERENCES, String.valueOf(year));
+        sessionManager.setDatePreferences(getActivity(), PREFERENCES_FILTER, KEY_DATE_PREFERENCES, String.valueOf(day));
+        sessionManager.setDatePreferences(getActivity(), PREFERENCES_FILTER, KEY_MONTH_PREFERENCES, String.valueOf(month));
+        sessionManager.setDatePreferences(getActivity(), PREFERENCES_FILTER, KEY_YEAR_PREFERENCES, String.valueOf(year));
+    }
+
+    void resetState() {
+        datePicker = (DatePicker) getActivity().findViewById(R.id.date_picker_filter);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        datePicker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), new DatePicker.OnDateChangedListener() {
+            @Override
+            public void onDateChanged(DatePicker datePicker, int y, int m, int d) {
+                onDateChange();
+            }
+        });
     }
 }
 

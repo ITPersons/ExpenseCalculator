@@ -15,7 +15,7 @@ class CustomListAdapter extends ArrayAdapter<String> {
     private int selectedItemPosition;
     TextView name;
     List<String> list;
-    private boolean boldCheck;
+    private boolean firstPositionCheck, secondPositionCheck, thirdPositionCheck;
     private int count;
 
     CustomListAdapter(Context context, List<String> list) {
@@ -34,7 +34,7 @@ class CustomListAdapter extends ArrayAdapter<String> {
 
         name.setText(list.get(position));
 
-        if(boldCheck) {
+        if(firstPositionCheck) {
             if(position == 0) {
                 setTypeFace(convertView, Typeface.BOLD);
                 showCounts(convertView, "("+String.valueOf(count)+")");
@@ -43,6 +43,26 @@ class CustomListAdapter extends ArrayAdapter<String> {
             if(position == 0) {
                 setTypeFace(convertView, Typeface.NORMAL);
                 showCounts(convertView, "");
+            }
+        }
+
+        if(secondPositionCheck) {
+            if(position == 1) {
+                setTypeFace(convertView, Typeface.BOLD);
+            }
+        } else {
+            if(position == 1) {
+                setTypeFace(convertView, Typeface.NORMAL);
+            }
+        }
+
+        if(thirdPositionCheck) {
+            if(position == 2) {
+                setTypeFace(convertView, Typeface.BOLD);
+            }
+        } else {
+            if(position == 2) {
+                setTypeFace(convertView, Typeface.NORMAL);
             }
         }
 
@@ -59,8 +79,16 @@ class CustomListAdapter extends ArrayAdapter<String> {
         selectedItemPosition = position;
     }
 
-    void makeStyleBold(boolean check) {
-        boldCheck = check;
+    void makeStyleBoldAtFirstPosition(boolean check) {
+        firstPositionCheck = check;
+    }
+
+    void makeStyleBoldAtSecondPosition(boolean check) {
+        secondPositionCheck = check;
+    }
+
+    void makeStyleBoldAtThirdPosition(boolean check) {
+        thirdPositionCheck = check;
     }
 
     void countSelection(int count) {

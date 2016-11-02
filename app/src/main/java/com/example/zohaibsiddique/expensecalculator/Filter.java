@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,8 +22,6 @@ public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
         FromToDateFragment.getFromToDateFromFromToDateFragment, View.OnClickListener{
 
     DB db;
-    ArrayList<String> arrayList;
-    String date, fromDate, toDate;
     Button applyButton, clearAllButton;
 
     @Override
@@ -37,11 +36,12 @@ public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
         }
 
         db = new DB(Filter.this);
-        arrayList = new ArrayList<>();
         applyButton = (Button) findViewById(R.id.apply_button);
         applyButton.setOnClickListener(this);
         clearAllButton = (Button) findViewById(R.id.clear_all_button);
         clearAllButton.setOnClickListener(this);
+
+        removeSharedPreferences();
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -69,15 +69,22 @@ public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
             TypeFragment typeFragment = (TypeFragment) getFragmentManager().findFragmentById(R.id.right_fragment_filter);
             typeFragment.retainStateListView(false);
         }
+        if(mFragment instanceof DateFragment) {
+            DateFragment dateFragment = (DateFragment) getFragmentManager().findFragmentById(R.id.right_fragment_filter);
+            dateFragment.resetState();
+        }
+        if(mFragment instanceof FromToDateFragment) {
+            FromToDateFragment fromToDateFragment = (FromToDateFragment) getFragmentManager().findFragmentById(R.id.right_fragment_filter);
+            fromToDateFragment.resetStateOfToDate();
+            fromToDateFragment.resetStateOfFromDate();
+        }
 
         LeftFragmentFilter leftFragment = (LeftFragmentFilter) getFragmentManager().findFragmentById(R.id.left_fragment_filter);
-        leftFragment.makeStyleBold(false);
+        leftFragment.makeStyleBoldAtFirstPosition(false);
+        leftFragment.makeStyleBoldAtSecondPosition(false);
+        leftFragment.makeStyleBoldAtThirdPosition(false);
 
-        deleteFilterStates();
-        arrayList.clear();
-        date = null;
-        fromDate = null;
-        toDate = null;
+        removeSharedPreferences();
     }
 
     @Override
@@ -103,31 +110,43 @@ public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
 
     @Override
     public void getTypes(ArrayList<String> data) {
-        arrayList = data;
         LeftFragmentFilter fragment = (LeftFragmentFilter) getFragmentManager().findFragmentById(R.id.left_fragment_filter);
-        if(arrayList.isEmpty()) {
-            fragment.makeStyleBold(false);
+        if(data.isEmpty()) {
+            fragment.makeStyleBoldAtFirstPosition(false);
         } else {
-            fragment.makeStyleBold(true);
-            fragment.countSelection(arrayList.size());
+            fragment.makeStyleBoldAtFirstPosition(true);
+            fragment.countSelection(data.size());
         }
     }
 
     @Override
     public void getDate(String date) {
-        this.date = date;
-//        Utility.shortToast(Filter.this, date);
+        LeftFragmentFilter fragment = (LeftFragmentFilter) getFragmentManager().findFragmentById(R.id.left_fragment_filter);
+        if(date.equals("")) {
+            fragment.makeStyleBoldAtSecondPosition(false);
+        } else {
+            fragment.makeStyleBoldAtSecondPosition(true);
+        }
     }
 
     @Override
     public void getFromDate(String fromDate) {
-        this.fromDate = fromDate;
-//        Utility.shortToast(Filter.this, fromDate);
+        LeftFragmentFilter fragment = (LeftFragmentFilter) getFragmentManager().findFragmentById(R.id.left_fragment_filter);
+        if(fromDate.equals("")) {
+            fragment.makeStyleBoldAtThirdPosition(false);
+        } else {
+            fragment.makeStyleBoldAtThirdPosition(true);
+        }
     }
 
     @Override
     public void getToDate(String toDate) {
-        this.toDate = toDate;
+        LeftFragmentFilter fragment = (LeftFragmentFilter) getFragmentManager().findFragmentById(R.id.left_fragment_filter);
+        if(toDate.equals("")) {
+            fragment.makeStyleBoldAtThirdPosition(false);
+        } else {
+            fragment.makeStyleBoldAtThirdPosition(true);
+        }
     }
 
     @Override
@@ -141,7 +160,7 @@ public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
         int id = item.getItemId();
 
         if (id == android.R.id.home) {
-            deleteFilterStates();
+            removeSharedPreferences();
             finish();
             return true;
         }
@@ -149,42 +168,40 @@ public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
     }
 
 
-    private void deleteFilterStates() {
+    private void removeSharedPreferences() {
         final String PREFERENCES_FILTER = "filter";
         final String KEY_PREFERENCES = "arrayList";
-        final String DATE_KEY_PREFERENCES_DATE = "date_key_date";
-        final String MONTH_KEY_PREFERENCES_DATE = "month_key_date";
-        final String YEAR_KEY_PREFERENCES_DATE = "year_key_date";
-        final String DATE_KEY_PREFERENCES_FROM = "date_key_from";
-        final String MONTH_KEY_PREFERENCES_FROM = "month_key_from";
-        final String YEAR_KEY_PREFERENCES_FROM = "year_key_from";
-        final String DATE_KEY_PREFERENCES_TO = "date_key_to";
-        final String MONTH_KEY_PREFERENCES_TO = "month_key_to";
-        final String YEAR_KEY_PREFERENCES_TO = "year_key_to";
+        final String KEY_DATE_DATE = "date_key_date";
+        final String KEY_MONTH_DATE = "month_key_date";
+        final String KEY_YEAR_DATE = "year_key_date";
+        final String KEY_DATE_FROM = "date_key_from";
+        final String KEY_MONTH_FROM = "month_key_from";
+        final String KEY_YEAR_FROM = "year_key_from";
+        final String KEY_DATE_TO = "date_key_to";
+        final String KEY_MONTH_TO = "month_key_to";
+        final String KEY_YEAR_TO = "year_key_to";
 
         SharedPreferences.Editor preferences = getSharedPreferences(PREFERENCES_FILTER, Context.MODE_PRIVATE).edit();
         preferences.remove(KEY_PREFERENCES);
 
-        preferences.remove(DATE_KEY_PREFERENCES_DATE);
-        preferences.remove(MONTH_KEY_PREFERENCES_DATE);
-        preferences.remove(YEAR_KEY_PREFERENCES_DATE);
+        preferences.remove(KEY_DATE_DATE);
+        preferences.remove(KEY_MONTH_DATE);
+        preferences.remove(KEY_YEAR_DATE);
 
-        preferences.remove(DATE_KEY_PREFERENCES_FROM);
-        preferences.remove(MONTH_KEY_PREFERENCES_FROM);
-        preferences.remove(YEAR_KEY_PREFERENCES_FROM);
+        preferences.remove(KEY_DATE_FROM);
+        preferences.remove(KEY_MONTH_FROM);
+        preferences.remove(KEY_YEAR_FROM);
 
-        preferences.remove(DATE_KEY_PREFERENCES_TO);
-        preferences.remove(MONTH_KEY_PREFERENCES_TO);
-        preferences.remove(YEAR_KEY_PREFERENCES_TO);
+        preferences.remove(KEY_DATE_TO);
+        preferences.remove(KEY_MONTH_TO);
+        preferences.remove(KEY_YEAR_TO);
 
         preferences.apply();
     }
 
     @Override
     public void onBackPressed() {
-        deleteFilterStates();
+        removeSharedPreferences();
         finish();
     }
-
-
 }

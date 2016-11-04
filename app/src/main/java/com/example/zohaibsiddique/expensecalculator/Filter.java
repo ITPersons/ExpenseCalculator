@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,8 +17,8 @@ import android.widget.Button;
 import java.util.ArrayList;
 
 public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
-        TypeFragment.getDataFromTypeFragment, DateFragment.getDateFromDateFragment,
-        FromToDateFragment.getFromToDateFromFromToDateFragment, View.OnClickListener{
+        TypeFragment.getDataFromTypeFragment, DateFragment.getDateFromDateFragment, View.OnClickListener,
+        FromDatePicker.getFromDate, ToDatePicker.getToDate{
 
     DB db;
     Button applyButton, clearAllButton;
@@ -130,7 +129,13 @@ public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
     }
 
     @Override
-    public void getFromDate(String fromDate) {
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.filter_activity, menu);
+        return true;
+    }
+
+    @Override
+    public void fromDate(String fromDate) {
         LeftFragmentFilter fragment = (LeftFragmentFilter) getFragmentManager().findFragmentById(R.id.left_fragment_filter);
         if(fromDate.equals("")) {
             fragment.makeStyleBoldAtThirdPosition(false);
@@ -140,7 +145,7 @@ public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
     }
 
     @Override
-    public void getToDate(String toDate) {
+    public void toDate(String toDate) {
         LeftFragmentFilter fragment = (LeftFragmentFilter) getFragmentManager().findFragmentById(R.id.left_fragment_filter);
         if(toDate.equals("")) {
             fragment.makeStyleBoldAtThirdPosition(false);
@@ -149,37 +154,18 @@ public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.filter_activity, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == android.R.id.home) {
-            removeSharedPreferences();
-            finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-
     private void removeSharedPreferences() {
         final String PREFERENCES_FILTER = "filter";
         final String KEY_PREFERENCES = "arrayList";
         final String KEY_DATE_DATE = "date_key_date";
         final String KEY_MONTH_DATE = "month_key_date";
         final String KEY_YEAR_DATE = "year_key_date";
-        final String KEY_DATE_FROM = "date_key_from";
-        final String KEY_MONTH_FROM = "month_key_from";
-        final String KEY_YEAR_FROM = "year_key_from";
-        final String KEY_DATE_TO = "date_key_to";
-        final String KEY_MONTH_TO = "month_key_to";
-        final String KEY_YEAR_TO = "year_key_to";
+        final String KEY_DATE_FROM = "key_date_from";
+        final String KEY_MONTH_FROM = "key_month_from";
+        final String KEY_YEAR_FROM = "key_year_from";
+        final String KEY_DATE_TO = "key_date_to";
+        final String KEY_MONTH_TO = "key_month_to";
+        final String KEY_YEAR_TO = "key_year_to";
 
         SharedPreferences.Editor preferences = getSharedPreferences(PREFERENCES_FILTER, Context.MODE_PRIVATE).edit();
         preferences.remove(KEY_PREFERENCES);
@@ -197,6 +183,18 @@ public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
         preferences.remove(KEY_YEAR_TO);
 
         preferences.apply();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            removeSharedPreferences();
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

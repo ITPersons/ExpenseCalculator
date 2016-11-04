@@ -166,4 +166,5 @@
     <string name="dummy_value">1452124</string>
     <string name="date">Date</string>
     <string name="add_ledger">Add Ledger</string>
+    <string name="date_sample">28/7/2016</string>
 </resources>

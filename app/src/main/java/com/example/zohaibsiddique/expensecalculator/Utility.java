@@ -37,6 +37,15 @@ class Utility {
         return String.valueOf(calendar.getTimeInMillis());
     }
 
+    static String currentTimeInDateFormat() {
+        Calendar c = Calendar.getInstance();
+        c.getTimeInMillis();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        return String.valueOf(new StringBuilder().append(day).append("/").append(month+1).append("/").append(year));
+    }
+
     static String simpleDateFormat(long timeInMills) {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         return formatter.format(new Date(timeInMills));

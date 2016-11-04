@@ -1,51 +1,47 @@
 package com.example.zohaibsiddique.expensecalculator;
 
-
-import android.app.Activity;
+import android.app.DialogFragment;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.DatePicker;
+import android.widget.TextView;
 
-import java.util.Calendar;
-
-public class FromToDateFragment extends Fragment{
-    String fromKeyDate, toKeyDate = null;
-    getFromToDateFromFromToDateFragment getDate;
+public class FromToDateFragment extends Fragment implements View.OnClickListener{
     SessionManager sessionManager;
-    DatePicker fromDatePicker;
-    DatePicker toDatePicker;
+    TextView fromDateTextView;
+    TextView toDateTextView;
     final String PREFERENCES_FILTER = "filter";
-    final String DATE_KEY_PREFERENCES_FROM = "date_key_from";
-    final String MONTH_KEY_PREFERENCES_FROM = "month_key_from";
-    final String YEAR_KEY_PREFERENCES_FROM = "year_key_from";
-    final String DATE_KEY_PREFERENCES_TO = "date_key_to";
-    final String MONTH_KEY_PREFERENCES_TO = "month_key_to";
-    final String YEAR_KEY_PREFERENCES_TO = "year_key_to";
-
-    public interface getFromToDateFromFromToDateFragment{
-        void getFromDate(String fromDate);
-        void getToDate(String toDate);
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            getDate = (getFromToDateFromFromToDateFragment) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString());
-        }
-    }
+    final String DATE_KEY_PREFERENCES_FROM = "key_date_from";
+    final String MONTH_KEY_PREFERENCES_FROM = "key_month_from";
+    final String YEAR_KEY_PREFERENCES_FROM = "key_year_from";
+    final String DATE_KEY_PREFERENCES_TO = "key_date_to";
+    final String MONTH_KEY_PREFERENCES_TO = "key_month_to";
+    final String YEAR_KEY_PREFERENCES_TO = "key_year_to";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.from_to_date_fragment, container, false);
+    }
+
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+        FragmentManager manager = getFragmentManager();
+        switch (id) {
+            case R.id.from_date:
+                DialogFragment from = new FromDatePicker();
+                from.show(manager, "fromDatePicker");
+                break;
+            case R.id.to_date:
+                DialogFragment to = new ToDatePicker();
+                to.show(manager, "toDatePicker");
+                break;
+        }
     }
 
     @Override
@@ -54,98 +50,39 @@ public class FromToDateFragment extends Fragment{
 
         sessionManager = new SessionManager();
 
-        fromDatePicker = (DatePicker) getActivity().findViewById(R.id.from_date_picker_filter);
-        toDatePicker = (DatePicker) getActivity().findViewById(R.id.to_date_picker_filter);
-        int fromDay = fromDatePicker.getDayOfMonth();
-        int fromMonth = fromDatePicker.getMonth() + 1;
-        int fromYear = fromDatePicker.getYear();
-        int toDay = toDatePicker.getDayOfMonth();
-        int toMonth = toDatePicker.getMonth() + 1;
-        int toYear = toDatePicker.getYear();
-
-        fromKeyDate = String.valueOf(new StringBuilder().append(fromDay).append("/").append(fromMonth).append("/").append(fromYear));
-        toKeyDate = String.valueOf(new StringBuilder().append(toDay).append("/").append(toMonth).append("/").append(toYear));
-
-        getDate.getFromDate(fromKeyDate);
-        getDate.getToDate(toKeyDate);
+        fromDateTextView = (TextView) getActivity().findViewById(R.id.from_date);
+        fromDateTextView.setText(Utility.currentTimeInDateFormat());
+        fromDateTextView.setOnClickListener(this);
+        toDateTextView = (TextView) getActivity().findViewById(R.id.to_date);
+        toDateTextView.setText(Utility.currentTimeInDateFormat());
+        toDateTextView.setOnClickListener(this);
 
         SharedPreferences editor = getActivity().getSharedPreferences(PREFERENCES_FILTER, Context.MODE_PRIVATE);
-
         if(editor.contains(DATE_KEY_PREFERENCES_FROM) && editor.contains(MONTH_KEY_PREFERENCES_FROM) && editor.contains(YEAR_KEY_PREFERENCES_FROM)) {
             String d = sessionManager.getDatePreferences(getActivity(), PREFERENCES_FILTER, DATE_KEY_PREFERENCES_FROM);
             String m = sessionManager.getDatePreferences(getActivity(), PREFERENCES_FILTER, MONTH_KEY_PREFERENCES_FROM);
             String y = sessionManager.getDatePreferences(getActivity(), PREFERENCES_FILTER, YEAR_KEY_PREFERENCES_FROM);
-            fromDatePicker.init(Integer.valueOf(y), Integer.valueOf(m), Integer.valueOf(d), new DatePicker.OnDateChangedListener() {
-                @Override
-                public void onDateChanged(DatePicker datePicker, int y, int m, int d) {
-                    fromOnDateChange();
-                }
-            });
-        } else {
-            resetStateOfFromDate();
+
+            String date = String.valueOf(new StringBuilder().append(d).append("/").append(m).append("/").append(y));
+            fromDateTextView.setText(date);
         }
 
         if(editor.contains(DATE_KEY_PREFERENCES_TO) && editor.contains(MONTH_KEY_PREFERENCES_TO) && editor.contains(YEAR_KEY_PREFERENCES_TO)) {
             String d = sessionManager.getDatePreferences(getActivity(), PREFERENCES_FILTER, DATE_KEY_PREFERENCES_TO);
             String m = sessionManager.getDatePreferences(getActivity(), PREFERENCES_FILTER, MONTH_KEY_PREFERENCES_TO);
             String y = sessionManager.getDatePreferences(getActivity(), PREFERENCES_FILTER, YEAR_KEY_PREFERENCES_TO);
-            toDatePicker.init(Integer.valueOf(y), Integer.valueOf(m), Integer.valueOf(d), new DatePicker.OnDateChangedListener() {
-                @Override
-                public void onDateChanged(DatePicker datePicker, int y, int m, int d) {
-                    toOnDateChange();
-                }
-            });
-        } else {
-            resetStateOfToDate();
+
+            String date = String.valueOf(new StringBuilder().append(d).append("/").append(m).append("/").append(y));
+            toDateTextView.setText(date);
         }
     }
 
-    private void fromOnDateChange() {
-        int day = fromDatePicker.getDayOfMonth();
-        int month = fromDatePicker.getMonth();
-        int year = fromDatePicker.getYear();
-
-        fromKeyDate = String.valueOf(new StringBuilder().append(day).append("/").append(month).append("/").append(year));
-        getDate.getFromDate(fromKeyDate);
-
-        sessionManager.setDatePreferences(getActivity(), PREFERENCES_FILTER, DATE_KEY_PREFERENCES_FROM, String.valueOf(day));
-        sessionManager.setDatePreferences(getActivity(), PREFERENCES_FILTER, MONTH_KEY_PREFERENCES_FROM, String.valueOf(month));
-        sessionManager.setDatePreferences(getActivity(), PREFERENCES_FILTER, YEAR_KEY_PREFERENCES_FROM, String.valueOf(year));
-    }
-
-    private void toOnDateChange() {
-        int day = toDatePicker.getDayOfMonth();
-        int month = toDatePicker.getMonth();
-        int year = toDatePicker.getYear();
-
-        toKeyDate = String.valueOf(new StringBuilder().append(day).append("/").append(month).append("/").append(year));
-        getDate.getToDate(toKeyDate);
-
-        sessionManager.setDatePreferences(getActivity(), PREFERENCES_FILTER, DATE_KEY_PREFERENCES_TO, String.valueOf(day));
-        sessionManager.setDatePreferences(getActivity(), PREFERENCES_FILTER, MONTH_KEY_PREFERENCES_TO, String.valueOf(month));
-        sessionManager.setDatePreferences(getActivity(), PREFERENCES_FILTER, YEAR_KEY_PREFERENCES_TO, String.valueOf(year));
-    }
-
     void resetStateOfToDate() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        toDatePicker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), new DatePicker.OnDateChangedListener() {
-            @Override
-            public void onDateChanged(DatePicker datePicker, int y, int m, int d) {
-                toOnDateChange();
-            }
-        });
+        toDateTextView.setText(Utility.currentTimeInDateFormat());
     }
 
     void resetStateOfFromDate() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        fromDatePicker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), new DatePicker.OnDateChangedListener() {
-            @Override
-            public void onDateChanged(DatePicker datePicker, int y, int m, int d) {
-                fromOnDateChange();
-            }
-        });
+        fromDateTextView.setText(Utility.currentTimeInDateFormat());
     }
 }
 

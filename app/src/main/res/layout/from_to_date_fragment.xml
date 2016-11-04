@@ -9,22 +9,28 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/from_date"/>
-    <DatePicker
-        android:id="@+id/from_date_picker_filter"
+    <TextView
+        android:id="@+id/from_date"
         android:layout_width="wrap_content"
-        android:layout_height="200dp">
-
-    </DatePicker>
+        android:layout_height="wrap_content"
+        android:text="@string/date_sample"
+        android:gravity="center"
+        android:drawableRight="@android:drawable/ic_menu_my_calendar"
+        android:drawableEnd="@android:drawable/ic_menu_my_calendar"
+        android:drawablePadding="@dimen/_8sdp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/to_date"/>
-    <DatePicker
-        android:id="@+id/to_date_picker_filter"
+    <TextView
+        android:id="@+id/to_date"
         android:layout_width="wrap_content"
-        android:layout_height="200dp">
-
-    </DatePicker>
+        android:layout_height="wrap_content"
+        android:text="@string/date_sample"
+        android:gravity="center"
+        android:drawableRight="@android:drawable/ic_menu_my_calendar"
+        android:drawableEnd="@android:drawable/ic_menu_my_calendar"
+        android:drawablePadding="@dimen/_8sdp"/>
 
 </LinearLayout>

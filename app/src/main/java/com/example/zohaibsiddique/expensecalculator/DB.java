@@ -125,6 +125,7 @@ class DB extends SQLiteOpenHelper {
                     + NAME_EXPENSE + ","
                     + VALUE_EXPENSE + ","
                     + DATE_EXPENSE + ","
+                    + KEY_SEARCH_DATE + ","
                     + TYPE_ID_EXPENSE + " FROM " + TABLE_EXPENSE
                     + " WHERE " + TYPE_ID_EXPENSE + "='" + type + "' AND "
                     + KEY_SEARCH_DATE + "='" + date + "'"
@@ -144,6 +145,7 @@ class DB extends SQLiteOpenHelper {
                     + NAME_EXPENSE + ","
                     + VALUE_EXPENSE + ","
                     + DATE_EXPENSE + ","
+                    + KEY_SEARCH_DATE + ","
                     + TYPE_ID_EXPENSE + " FROM " + TABLE_EXPENSE
                     + " WHERE " + TYPE_ID_EXPENSE + "='" + type + "' AND "
                     + KEY_SEARCH_DATE + " BETWEEN '" + fromDate + "' AND '" + toDate + "'"

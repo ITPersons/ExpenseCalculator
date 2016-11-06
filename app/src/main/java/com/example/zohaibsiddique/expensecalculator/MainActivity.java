@@ -521,14 +521,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
                         if(!typeArrayList.isEmpty() && date!=null) {
                             for (int i = 0; i<typeArrayList.size(); i++) {
-                                Cursor cursor = db.selectExpenseByTypeAndDate(typeArrayList.get(i), date);
+                                Cursor cursor = db.selectExpenseByTypeAndDate(db.getIdByType(typeArrayList.get(i)), date);
                                 addValuesToArrayList(cursor);
                             }
                         }
 
                         if(!typeArrayList.isEmpty() && toDate!=null && fromDate!=null) {
                             for (int i = 0; i<typeArrayList.size(); i++) {
-                                Cursor cursor = db.selectExpenseByTypeAndFromToDate(typeArrayList.get(i), fromDate, toDate);
+                                Cursor cursor = db.selectExpenseByTypeAndFromToDate(db.getIdByType(typeArrayList.get(i)), fromDate, toDate);
                                 addValuesToArrayList(cursor);
                             }
                         }

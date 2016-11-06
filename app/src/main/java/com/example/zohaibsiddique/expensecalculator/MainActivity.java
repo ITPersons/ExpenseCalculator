@@ -45,15 +45,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private static long sum = 0;
     private TextView showValueExpense;
     private final int CONFIGURE_DRAWER_REQUEST_CODE = 1;
-    private final int TYPE_FILTER_REQUEST_CODE = 2;
+    private final int FILTER_REQUEST_CODE = 2;
     final String ID_EXPENSE = "id";
     final String NAME_EXPENSE = "name";
     final String VALUE_EXPENSE = "value";
     final String DATE_EXPENSE = "date";
     final String TYPE_ID_EXPENSE = "type_id";
-//    private final int DATE_FILTER_REQUEST_CODE = 3;
-//    private final int FROM_DATE_FILTER_REQUEST_CODE = 4;
-//    private final int TO_DATE_FILTER_REQUEST_CODE = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +58,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        Utility.startAnActivity(MainActivity.this, Filter.class);
 
         db = new DB(MainActivity.this);
         showValueExpense = (TextView) findViewById(R.id.show_value_expense);
@@ -87,20 +82,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private void viewItems() {
         try {
             getReferencesForViewItemsRecyclerView();
-
+            initializeSumValue();
             Cursor cursor = db.selectExpense();
-            cursor.moveToFirst();
-            if (cursor.getCount() == 0) {
-                Toast.makeText(this, "Empty list", Toast.LENGTH_SHORT).show();
-            } else {
-                for (int i = 0; i < cursor.getCount(); i++) {
-                    addValuesToArrayList(cursor);
-                    cursor.moveToNext();
-                }
-                cursor.close();
-            }
-            enableSwipe();
-
+            addValuesToArrayList(cursor);
         } catch (Exception e) {
             Log.d("showItems", " failed " + e.getMessage());
         }
@@ -261,18 +245,28 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void addValuesToArrayList(Cursor cursor) {
-        HashMap<String, Object> hm = new HashMap<>();
-        hm.put(ID_EXPENSE, cursor.getString(cursor.getColumnIndex(ID_EXPENSE)));
-        hm.put(NAME_EXPENSE, cursor.getString(cursor.getColumnIndex(NAME_EXPENSE)));
+        cursor.moveToFirst();
+        if (cursor.getCount() == 0) {
+            Toast.makeText(this, "Empty list", Toast.LENGTH_SHORT).show();
+        } else {
+            for (int i = 0; i < cursor.getCount(); i++) {
+                HashMap<String, Object> hm = new HashMap<>();
+                hm.put(ID_EXPENSE, cursor.getString(cursor.getColumnIndex(ID_EXPENSE)));
+                hm.put(NAME_EXPENSE, cursor.getString(cursor.getColumnIndex(NAME_EXPENSE)));
 
-        long valueExpense = cursor.getLong(cursor.getColumnIndex(VALUE_EXPENSE));
-        showExpense(valueExpense);
+                long valueExpense = cursor.getLong(cursor.getColumnIndex(VALUE_EXPENSE));
+                showExpense(valueExpense);
 
-        hm.put(VALUE_EXPENSE, String.valueOf(valueExpense));
-        hm.put(DATE_EXPENSE, Utility.dateFormat(cursor.getLong(cursor.getColumnIndex(DATE_EXPENSE))));
-        String id = cursor.getString(cursor.getColumnIndex(TYPE_ID_EXPENSE));
-        hm.put("type", db.selectTypeById(id));
-        arrayListExpense.add(hm);
+                hm.put(VALUE_EXPENSE, String.valueOf(valueExpense));
+                hm.put(DATE_EXPENSE, Utility.dateFormat(cursor.getLong(cursor.getColumnIndex(DATE_EXPENSE))));
+                String id = cursor.getString(cursor.getColumnIndex(TYPE_ID_EXPENSE));
+                hm.put("type", db.selectTypeById(id));
+                arrayListExpense.add(hm);
+                cursor.moveToNext();
+            }
+            cursor.close();
+        }
+        enableSwipe();
     }
 
     private void getReferencesForDrawerItemsRecyclerView() {
@@ -448,7 +442,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             return true;
         }
         if (id == R.id.filter) {
-            Utility.startAnActivityForResult(MainActivity.this, MainActivity.this, Filter.class, TYPE_FILTER_REQUEST_CODE);
+            Utility.startAnActivityForResult(MainActivity.this, MainActivity.this, Filter.class, FILTER_REQUEST_CODE);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -497,25 +491,53 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 case CONFIGURE_DRAWER_REQUEST_CODE:
                     viewDrawerItems();
                     break;
-                case TYPE_FILTER_REQUEST_CODE:
-                        @SuppressWarnings("unchecked")
-                        ArrayList<String> stringArrayList = (ArrayList<String>) data.getSerializableExtra("arrayListOfFilter");
-//                    String a = data.getExtras().getString("date");
-                        Utility.shortToast(MainActivity.this, stringArrayList.get(0));
-                        break;
+                case FILTER_REQUEST_CODE:
+                    @SuppressWarnings("unchecked")
+                    ArrayList<String> typeArrayList = (ArrayList<String>) data.getSerializableExtra("arrayListOfFilter");
+                    String date = data.getStringExtra("date");
+                    String toDate = data.getStringExtra("toDate");
+                    String fromDate = data.getStringExtra("fromDate");
 
-//                case DATE_FILTER_REQUEST_CODE:
-////                    stringArrayList = (ArrayList<String>) data.getSerializableExtra("arrayListOfFilter");
-//                    Utility.shortToast(MainActivity.this, "date");
-//                    break;
-//                case FROM_DATE_FILTER_REQUEST_CODE:
-////                    stringArrayList = (ArrayList<String>) data.getSerializableExtra("arrayListOfFilter");
-//                    Utility.shortToast(MainActivity.this, "from date");
-//                    break;
-//                case TO_DATE_FILTER_REQUEST_CODE:
-////                    stringArrayList = (ArrayList<String>) data.getSerializableExtra("arrayListOfFilter");
-//                    Utility.shortToast(MainActivity.this, "to date");
-//                    break;
+                    try {
+                        getReferencesForViewItemsRecyclerView();
+                        initializeSumValue();
+
+                        if(date==null && toDate==null && fromDate==null) {
+                            for (int j = 0; j<typeArrayList.size(); j++) {
+                                Cursor cursor = db.selectExpenseByType(db.getIdByType(typeArrayList.get(j)));
+                                addValuesToArrayList(cursor);
+                            }
+                        }
+
+                        if(toDate==null && fromDate==null && typeArrayList.isEmpty()) {
+                            Cursor cursor = db.selectExpenseByDate(date);
+                            addValuesToArrayList(cursor);
+                        }
+
+                        if(date==null && typeArrayList.isEmpty()) {
+                            Cursor cursor = db.selectFromToDate(fromDate, toDate);
+                            addValuesToArrayList(cursor);
+                        }
+
+                        if(!typeArrayList.isEmpty() && date!=null) {
+                            for (int i = 0; i<typeArrayList.size(); i++) {
+                                Cursor cursor = db.selectExpenseByTypeAndDate(typeArrayList.get(i), date);
+                                addValuesToArrayList(cursor);
+                            }
+                        }
+
+                        if(!typeArrayList.isEmpty() && toDate!=null && fromDate!=null) {
+                            for (int i = 0; i<typeArrayList.size(); i++) {
+                                Cursor cursor = db.selectExpenseByTypeAndFromToDate(typeArrayList.get(i), fromDate, toDate);
+                                addValuesToArrayList(cursor);
+                            }
+                        }
+
+                    } catch (Exception e) {
+                        Log.d("showItemsByFilter", " failed " + e.getMessage());
+                    }
+
+                    break;
             }
 
         }

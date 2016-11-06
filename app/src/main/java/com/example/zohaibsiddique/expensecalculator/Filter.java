@@ -1,19 +1,21 @@
 package com.example.zohaibsiddique.expensecalculator;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-
 import java.util.ArrayList;
 
 public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
@@ -22,6 +24,8 @@ public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
 
     DB db;
     Button applyButton, clearAllButton;
+    ArrayList<String> arrayListTypes = new ArrayList<>();
+    String date, toDate, fromDate = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +58,15 @@ public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
         int id = view.getId();
         switch (id) {
             case R.id.apply_button:
-                Utility.shortToast(Filter.this, "apply btn");
+                Intent intent = new Intent();
+                Bundle b =new Bundle();
+                b.putStringArrayList("arrayListOfFilter", arrayListTypes);
+                b.putString("date", date);
+                b.putString("toDate", toDate);
+                b.putString("fromDate", fromDate);
+                intent.putExtras(b);
+                setResult(Activity.RESULT_OK, intent);
+                finish();
                 break;
             case R.id.clear_all_button:
                 clearStates();
@@ -83,6 +95,10 @@ public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
         leftFragment.makeStyleBoldAtSecondPosition(false);
         leftFragment.makeStyleBoldAtThirdPosition(false);
 
+        date = null;
+        fromDate = null;
+        toDate = null;
+
         removeSharedPreferences();
     }
 
@@ -109,6 +125,7 @@ public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
 
     @Override
     public void getTypes(ArrayList<String> data) {
+        arrayListTypes = data;
         LeftFragmentFilter fragment = (LeftFragmentFilter) getFragmentManager().findFragmentById(R.id.left_fragment_filter);
         if(data.isEmpty()) {
             fragment.makeStyleBoldAtFirstPosition(false);
@@ -120,11 +137,51 @@ public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
 
     @Override
     public void getDate(String date) {
-        LeftFragmentFilter fragment = (LeftFragmentFilter) getFragmentManager().findFragmentById(R.id.left_fragment_filter);
-        if(date.equals("")) {
-            fragment.makeStyleBoldAtSecondPosition(false);
+        try {
+            if(fromDate==null || toDate==null) {
+                this.date = date;
+                LeftFragmentFilter fragment = (LeftFragmentFilter) getFragmentManager().findFragmentById(R.id.left_fragment_filter);
+                if(date.equals("")) {
+                    fragment.makeStyleBoldAtSecondPosition(false);
+                } else {
+                    fragment.makeStyleBoldAtSecondPosition(true);
+                }
+            } else {
+                Utility.alertDialog(Filter.this, "Alert!", "You can choose only one from DATE and FROM-TO DATE");
+            }
+        } catch (Exception e) {
+            Log.d("getDate", e.getMessage());
+        }
+
+    }
+
+    @Override
+    public void fromDate(String fromDate) {
+        if(date==null) {
+            this.fromDate = fromDate;
+            LeftFragmentFilter fragment = (LeftFragmentFilter) getFragmentManager().findFragmentById(R.id.left_fragment_filter);
+            if(fromDate.equals("")) {
+                fragment.makeStyleBoldAtThirdPosition(false);
+            } else {
+                fragment.makeStyleBoldAtThirdPosition(true);
+            }
         } else {
-            fragment.makeStyleBoldAtSecondPosition(true);
+            Utility.alertDialog(Filter.this, "Alert!", "You can choose only one from DATE and FROM-TO DATE");
+        }
+    }
+
+    @Override
+    public void toDate(String toDate) {
+        if(date==null) {
+            this.toDate = toDate;
+            LeftFragmentFilter fragment = (LeftFragmentFilter) getFragmentManager().findFragmentById(R.id.left_fragment_filter);
+            if(toDate.equals("")) {
+                fragment.makeStyleBoldAtThirdPosition(false);
+            } else {
+                fragment.makeStyleBoldAtThirdPosition(true);
+            }
+        } else {
+            Utility.alertDialog(Filter.this, "Alert!", "You can choose only one from DATE and FROM-TO DATE");
         }
     }
 
@@ -132,26 +189,6 @@ public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.filter_activity, menu);
         return true;
-    }
-
-    @Override
-    public void fromDate(String fromDate) {
-        LeftFragmentFilter fragment = (LeftFragmentFilter) getFragmentManager().findFragmentById(R.id.left_fragment_filter);
-        if(fromDate.equals("")) {
-            fragment.makeStyleBoldAtThirdPosition(false);
-        } else {
-            fragment.makeStyleBoldAtThirdPosition(true);
-        }
-    }
-
-    @Override
-    public void toDate(String toDate) {
-        LeftFragmentFilter fragment = (LeftFragmentFilter) getFragmentManager().findFragmentById(R.id.left_fragment_filter);
-        if(toDate.equals("")) {
-            fragment.makeStyleBoldAtThirdPosition(false);
-        } else {
-            fragment.makeStyleBoldAtThirdPosition(true);
-        }
     }
 
     private void removeSharedPreferences() {

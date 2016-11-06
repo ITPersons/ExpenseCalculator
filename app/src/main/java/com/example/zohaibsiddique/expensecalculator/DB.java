@@ -117,6 +117,44 @@ class DB extends SQLiteOpenHelper {
         return cursor;
     }
 
+    Cursor selectExpenseByTypeAndDate(String type, String date) {
+        Cursor cursor = null;
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            cursor = db.rawQuery("SELECT " + ID_EXPENSE + ","
+                    + NAME_EXPENSE + ","
+                    + VALUE_EXPENSE + ","
+                    + DATE_EXPENSE + ","
+                    + TYPE_ID_EXPENSE + " FROM " + TABLE_EXPENSE
+                    + " WHERE " + TYPE_ID_EXPENSE + "='" + type + "' AND "
+                    + KEY_SEARCH_DATE + "='" + date + "'"
+                    + " ORDER BY " + DATE_EXPENSE + " DESC", null);
+        } catch (Exception e) {
+            Log.d("selectExpenses", " error " + e.getMessage());
+        }
+
+        return cursor;
+    }
+
+    Cursor selectExpenseByTypeAndFromToDate(String type, String fromDate, String toDate) {
+        Cursor cursor = null;
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            cursor = db.rawQuery("SELECT " + ID_EXPENSE + ","
+                    + NAME_EXPENSE + ","
+                    + VALUE_EXPENSE + ","
+                    + DATE_EXPENSE + ","
+                    + TYPE_ID_EXPENSE + " FROM " + TABLE_EXPENSE
+                    + " WHERE " + TYPE_ID_EXPENSE + "='" + type + "' AND "
+                    + KEY_SEARCH_DATE + " BETWEEN '" + fromDate + "' AND '" + toDate + "'"
+                    + " ORDER BY " + DATE_EXPENSE + " DESC", null);
+        } catch (Exception e) {
+            Log.d("selectExpenses", " error " + e.getMessage());
+        }
+
+        return cursor;
+    }
+
     Cursor selectLedger() {
         Cursor cursor = null;
         try {
@@ -131,27 +169,16 @@ class DB extends SQLiteOpenHelper {
         return cursor;
     }
 
-
-    Cursor selectDateOfExpense(String date) {
-        Cursor cursor = null;
-        try {
-            SQLiteDatabase db = this.getWritableDatabase();
-            cursor = db.rawQuery("SELECT " + ID_EXPENSE + "," + NAME_EXPENSE + "," + VALUE_EXPENSE
-                    + "," + DATE_EXPENSE + "," + TYPE_ID_EXPENSE + " FROM " + TABLE_EXPENSE
-                    + " WHERE " + KEY_SEARCH_DATE + "='" + date + "'", null);
-        } catch (Exception e) {
-            Log.d("selectDateOfExpense", " error " + e.getMessage());
-        }
-
-        return cursor;
-    }
-
     Cursor selectFromToDate(String from, String to) {
         Cursor cursor = null;
         try {
             SQLiteDatabase db = this.getWritableDatabase();
-            cursor = db.rawQuery("SELECT " + ID_EXPENSE + "," + NAME_EXPENSE + "," + VALUE_EXPENSE
-                    + "," + DATE_EXPENSE + "," + TYPE_ID_EXPENSE + " FROM " + TABLE_EXPENSE
+            cursor = db.rawQuery("SELECT " + ID_EXPENSE + ","
+                    + NAME_EXPENSE + ","
+                    + VALUE_EXPENSE + ","
+                    + DATE_EXPENSE + ","
+                    + KEY_SEARCH_DATE + ","
+                    + TYPE_ID_EXPENSE + " FROM " + TABLE_EXPENSE
                     + " WHERE " + KEY_SEARCH_DATE + " BETWEEN '" + from + "' AND '" + to + "'", null);
         } catch (Exception e) {
             Log.d("selectFromToDate", " error " + e.getMessage());
@@ -181,13 +208,35 @@ class DB extends SQLiteOpenHelper {
         Cursor cursor = null;
         try {
             SQLiteDatabase db = this.getWritableDatabase();
-            cursor = db.rawQuery("SELECT " + ID_EXPENSE + "," + NAME_EXPENSE + "," + VALUE_EXPENSE
-                    + "," + DATE_EXPENSE + "," + TYPE_ID_EXPENSE + " FROM " + TABLE_EXPENSE
+            cursor = db.rawQuery("SELECT " + ID_EXPENSE + ","
+                    + NAME_EXPENSE + ","
+                    + VALUE_EXPENSE + ","
+                    + DATE_EXPENSE + ","
+                    + TYPE_ID_EXPENSE + " FROM " + TABLE_EXPENSE
                     + " WHERE " + TYPE_ID_EXPENSE + "='" + type + "'"
                     + " ORDER BY " + DATE_EXPENSE + " DESC", null);
         } catch (Exception e) {
             Log.d("selectExpenseByType", " error is " + e.getMessage());
         }
+        return cursor;
+    }
+
+    Cursor selectExpenseByDate(String date) {
+        Cursor cursor = null;
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            cursor = db.rawQuery("SELECT " + ID_EXPENSE + ","
+                    + NAME_EXPENSE + ","
+                    + VALUE_EXPENSE + ","
+                    + DATE_EXPENSE + ","
+                    + TYPE_ID_EXPENSE + ","
+                    + KEY_SEARCH_DATE +" FROM " + TABLE_EXPENSE
+                    + " WHERE " + KEY_SEARCH_DATE + "='" + date + "'"
+                    + " ORDER BY " + DATE_EXPENSE + " DESC", null);
+        } catch (Exception e) {
+            Log.d("selectDateOfExpense", " error " + e.getMessage());
+        }
+
         return cursor;
     }
 

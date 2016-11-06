@@ -91,19 +91,36 @@ class Utility {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 
+    static void sendStringArrayListToOnActivityResult(Activity activity, String key, ArrayList<String> list) {
+        Intent intent = new Intent();
+        Bundle b =new Bundle();
+        b.putStringArrayList(key, list);
+        intent.putExtras(b);
+        activity.setResult(Activity.RESULT_OK, intent);
+        activity.finish();
+    }
+
+    static void sendStringOnActivityResult(Activity activity, String key, String data) {
+        Intent intent = new Intent();
+        Bundle b =new Bundle();
+        b.putString(key, data);
+        intent.putExtras(b);
+        activity.setResult(Activity.RESULT_OK, intent);
+        activity.finish();
+    }
     //Long Toast
 //    static void longToast(Context context, String message) {
 //        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
 //    }
 //
-//    static void alertDialog(Context context, String title, String message) {
-//        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-//        alertDialog.setTitle(title);
-//        alertDialog.setCancelable(true);
-//        alertDialog.setMessage(message);
-//        alertDialog.create();
-//        alertDialog.show();
-//    }
+    static void alertDialog(Context context, String title, String message) {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+        alertDialog.setTitle(title);
+        alertDialog.setCancelable(true);
+        alertDialog.setMessage(message);
+        alertDialog.create();
+        alertDialog.show();
+    }
 
 
 //    static void customeSnackBar(Context context, View view, String message) {
@@ -318,115 +335,4 @@ class Utility {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//    private void showTabs() {
-//        tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-//        tabLayout.addTab(tabLayout.newTab().setText("Item"));
-//        tabLayout.addTab(tabLayout.newTab().setText("Type"));
-//        tabLayout.addTab(tabLayout.newTab().setText("Consignment"));
-//
-//        tabLayout.getTabAt(0).setIcon(android.R.drawable.ic_input_add);
-//        tabLayout.getTabAt(1).setIcon(android.R.drawable.ic_input_add);
-//        tabLayout.getTabAt(2).setIcon(android.R.drawable.ic_input_add);
-//
-//
-//        final ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
-//        final TabAdapter adapter = new TabAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
-//        viewPager.setAdapter(adapter);
-//        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-//        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-//            @Override
-//            public void onTabSelected(TabLayout.Tab tab) {
-//                viewPager.setCurrentItem(tab.getPosition());
-//                if(tabLayout.getTabAt(0).isSelected()) {
-//                    actionBar.setTitle("Add new Item");
-//                } else if(tabLayout.getTabAt(1).isSelected()) {
-//                    actionBar.setTitle("Add new Type");
-//                } else if(tabLayout.getTabAt(2).isSelected()) {
-//                    actionBar.setTitle("Add new Consignment");
-//                }
-//            }
-//
-//            @Override
-//            public void onTabUnselected(TabLayout.Tab tab) {
-//
-//            }
-//
-//            @Override
-//            public void onTabReselected(TabLayout.Tab tab) {
-//
-//            }
-//        });
-//    public static String getValueFromBundle(Context context, String key) {
-////        Intent in = context.getIntent();
-////
-////        Bundle bundle = intent.getExtras();
-////        return bundle.getString("1");
-//    }
-
-//    void showInputDialog() {
-////        CustomDialogFragment customDialogFragment = new CustomDialogFragment();
-////        android.app.FragmentManager fragmentManager = getFragmentManager();
-////        customDialogFragment.setStyle(DialogFragment.STYLE_NORMAL,android.R.style.Theme_Light_NoTitleBar_Fullscreen);
-////        customDialogFragment.show(fragmentManager, "DialogFragment");
-////
-////        customDialogFragment.dismiss();
-//    }
-//
-//    void fragment() {
-//        // replace fragment
-////        ItemFragment ItemFragment = new ItemFragment();
-////        android.app.FragmentManager fragmentManager = getFragmentManager();
-////        android.app.FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-////        fragmentTransaction.replace(R.id.fragment, ItemFragment);
-//    }
 }

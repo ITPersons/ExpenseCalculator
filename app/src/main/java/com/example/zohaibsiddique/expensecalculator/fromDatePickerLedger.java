@@ -15,25 +15,6 @@ import java.util.Calendar;
 public class fromDatePickerLedger extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {
 
-    String keyDate;
-//    getFromDate getDate;
-
-
-//    public interface getFromDate{
-//        void fromDate(String fromDate);
-//    }
-//
-//    @SuppressWarnings("deprecation")
-//    @Override
-//    public void onAttach(Activity activity) {
-//        super.onAttach(activity);
-//        try {
-//            getDate = (getFromDate) activity;
-//        } catch (ClassCastException e) {
-//            throw new ClassCastException(activity.toString());
-//        }
-//    }
-
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final Calendar c = Calendar.getInstance();

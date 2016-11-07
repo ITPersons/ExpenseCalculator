@@ -6,4 +6,4 @@
     android:textSize="@dimen/thirty_font"
     android:layout_margin="@dimen/five_margin"
     android:text="@string/add"
-    android:id="@+id/name_type"/>
+    android:id="@+id/name_ledger"/>

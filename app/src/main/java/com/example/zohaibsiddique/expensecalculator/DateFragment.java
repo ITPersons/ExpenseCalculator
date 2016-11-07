@@ -54,12 +54,6 @@ public class DateFragment extends Fragment{
         sessionManager = new SessionManager();
 
         datePicker = (DatePicker) getActivity().findViewById(R.id.date_picker_filter);
-        int day = datePicker.getDayOfMonth();
-        int month = datePicker.getMonth() + 1;
-        int year = datePicker.getYear();
-
-//        keyDate = String.valueOf(new StringBuilder().append(day<10?"0"+day:day).append("/").append(month<10?"0"+month:month).append("/").append(year));
-//        getDate.getDate(keyDate);
 
         SharedPreferences editor = getActivity().getSharedPreferences(PREFERENCES_FILTER, Context.MODE_PRIVATE);
         if(editor.contains(KEY_DATE_PREFERENCES) && editor.contains(KEY_MONTH_PREFERENCES) && editor.contains(KEY_YEAR_PREFERENCES)) {
@@ -82,7 +76,7 @@ public class DateFragment extends Fragment{
         int month = datePicker.getMonth() + 1;
         int year = datePicker.getYear();
 
-        keyDate = String.valueOf(new StringBuilder().append(day<10?"0"+day:day).append("/").append(month<10?"0"+month:month).append("/").append(year));
+        keyDate = String.valueOf(new StringBuilder().append(day<10?"0"+day:day).append(month<10?"0"+month:month).append(year));
         getDate.getDate(keyDate);
 
         sessionManager.setDatePreferences(getActivity(), PREFERENCES_FILTER, KEY_DATE_PREFERENCES, String.valueOf(day));

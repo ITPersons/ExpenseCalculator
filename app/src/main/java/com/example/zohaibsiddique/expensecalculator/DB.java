@@ -3,8 +3,6 @@ package com.example.zohaibsiddique.expensecalculator;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -161,9 +159,8 @@ class DB extends SQLiteOpenHelper {
         Cursor cursor = null;
         try {
             SQLiteDatabase db = this.getWritableDatabase();
-            cursor = db.rawQuery("SELECT " + ID_LEDGER + "," + TITLE_LEDGER + "," + STARTING_BALANCE_LEDGER
-                    + "," + DATE_LEDGER + "," + FROM_DATE_LEDGER + "," + TO_DATE_LEDGER + " FROM " + TABLE_LEDGER
-                    + " ORDER BY " + DATE_LEDGER + " DESC", null);
+            cursor = db.rawQuery("SELECT " + TITLE_LEDGER  + " FROM " + TABLE_LEDGER
+                    + " ORDER BY " + ID_LEDGER + " DESC", null);
         } catch (Exception e) {
             Log.d("selectLedger", " error " + e.getMessage());
         }
@@ -189,18 +186,18 @@ class DB extends SQLiteOpenHelper {
         return cursor;
     }
 
-    String selectIdByMainTypeName(String name) {
+    String selectIdByLedgerName(String name) {
         Cursor cursor = null;
         String id = null;
         try {
             SQLiteDatabase db = this.getWritableDatabase();
-            cursor = db.rawQuery("SELECT " + ID_MAIN_TYPE + " FROM " + TABLE_MAIN_TYPE + " WHERE " + NAME_MAIN_TYPE + "='" + name + "'", null);
+            cursor = db.rawQuery("SELECT " + ID_LEDGER + " FROM " + TITLE_LEDGER + " WHERE " + TITLE_LEDGER + "='" + name + "'", null);
             cursor.moveToFirst();
         } catch (Exception e) {
             Log.d("selectIdByMainTypeName", " error is " + e.getMessage());
         }
         if(cursor != null && cursor.moveToFirst()) {
-            id = cursor.getString(cursor.getColumnIndex(ID_MAIN_TYPE));
+            id = cursor.getString(cursor.getColumnIndex(ID_LEDGER));
             cursor.close();
         }
         return id;
@@ -296,7 +293,8 @@ class DB extends SQLiteOpenHelper {
         Cursor cursor;
         try {
             SQLiteDatabase db = this.getWritableDatabase();
-            cursor = db.rawQuery("SELECT " + TITLE_LEDGER + " FROM " + TABLE_LEDGER + " WHERE " + TITLE_LEDGER + "='" + title + "'", null);
+            cursor = db.rawQuery("SELECT " + TITLE_LEDGER + " FROM " + TABLE_LEDGER
+                    + " WHERE " + TITLE_LEDGER + "='" + title + "'", null);
             if(cursor != null && cursor.moveToFirst()) {
                 cursor.getString(cursor.getColumnIndex(TITLE_LEDGER));
                 cursor.close();

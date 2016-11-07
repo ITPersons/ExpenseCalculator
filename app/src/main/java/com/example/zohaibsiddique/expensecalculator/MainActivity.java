@@ -37,15 +37,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private TextInputLayout layoutAddMainType, layoutExpenseName, layoutExpenseValue;
     private EditText addMainType, addExpenseName, addExpenseValue;
     private RecyclerView recyclerView, recyclerViewDrawer;
-    private ArrayList<HashMap<String, Object>> arrayListExpense, arrayListDrawer;
+    private ArrayList<HashMap<String, Object>> arrayListExpense;
+    private ArrayList<Ledger> arrayListDrawer;
     private DB db;
     private RecyclerTouchListener onTouchListener;
     private List<String> arrayListType;
-    private String idType, nameMainType, typeId;
+    private String idType, nameLedger, ledgerId;
     private static long sum = 0;
     private TextView showValueExpense;
     private final int CONFIGURE_DRAWER_REQUEST_CODE = 1;
     private final int FILTER_REQUEST_CODE = 2;
+    private final int ADD_LEDGER_REQUEST_CODE = 3;
     final String ID_EXPENSE = "id";
     final String NAME_EXPENSE = "name";
     final String VALUE_EXPENSE = "value";
@@ -90,18 +92,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-
     private void viewDrawerItems() {
         try {
             getReferencesForDrawerItemsRecyclerView();
-
-            Cursor cursor = db.selectMainType();
+            Cursor cursor = db.selectLedger();
             cursor.moveToFirst();
             if (cursor.getCount() == 0) {
-                Toast.makeText(this, "Empty list", Toast.LENGTH_SHORT).show();
+                Utility.shortToast(MainActivity.this, "Empty list");
             } else {
                 for (int i = 0; i < cursor.getCount(); i++) {
-                    addValueToDrawerArrayList(cursor);
+                    String title = cursor.getString(cursor.getColumnIndex("title"));
+                    Ledger ledger = new Ledger(title);
+                    arrayListDrawer.add(ledger);
                     cursor.moveToNext();
                 }
                 cursor.close();
@@ -111,35 +113,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-    private void addValueToDrawerArrayList(Cursor cursor) {
-        HashMap<String, Object> hm = new HashMap<>();
-        final String ID_TYPE = "id", NAME_TYPE = "name";
-        hm.put(ID_TYPE, cursor.getString(cursor.getColumnIndex(ID_TYPE)));
-        hm.put(NAME_TYPE, cursor.getString(cursor.getColumnIndex(NAME_TYPE)));
-        arrayListDrawer.add(hm);
-    }
-
-    private void viewItemsByType() {
-        try {
-            getReferencesForViewItemsRecyclerView();
-            initializeSumValue();
-
-            Cursor cursor = db.selectExpenseByType(typeId);
-            cursor.moveToFirst();
-            if (cursor.getCount() == 0) {
-                Toast.makeText(this, "Empty list", Toast.LENGTH_SHORT).show();
-            } else {
-                for (int i = 0; i < cursor.getCount(); i++) {
-                    addValuesToArrayList(cursor);
-                    cursor.moveToNext();
-                }
-                cursor.close();
-            }
-            enableSwipe();
-
-        } catch (Exception e) {
-            Log.d("viewItemsByType", " failed " + e.getMessage());
-        }
+    private void viewLedger() {
+//        try {
+//            getReferencesForViewItemsRecyclerView();
+//            initializeSumValue();
+//
+//            Cursor cursor = db.selectLedgerByName(ledgerId);
+//            cursor.moveToFirst();
+//        } catch (Exception e) {
+//            Log.d("viewLedger", " failed " + e.getMessage());
+//        }
     }
 
     private void addType() {
@@ -287,7 +270,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         recyclerViewDrawer.setClickable(true);
                         recyclerViewDrawer.setSelected(true);
                     }
-
                     @Override
                     public void onIndependentViewClicked(int independentViewID, int position) {
                     }
@@ -440,7 +422,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             return true;
         }
         if (id == R.id.add_ledger) {
-            Utility.startAnActivity(MainActivity.this, AddLedger.class);
+            Utility.startAnActivityForResult(MainActivity.this, MainActivity.this, AddLedger.class, ADD_LEDGER_REQUEST_CODE);
             return true;
         }
         if (id == R.id.filter) {
@@ -491,6 +473,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if (resultCode == RESULT_OK && data != null) {
             switch (requestCode) {
                 case CONFIGURE_DRAWER_REQUEST_CODE:
+                    viewDrawerItems();
+                    break;
+                case ADD_LEDGER_REQUEST_CODE:
                     viewDrawerItems();
                     break;
                 case FILTER_REQUEST_CODE:
@@ -591,26 +576,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void DrawerClickListener() {
-        final String NAME_TYPE = "name";
         onTouchListener = new RecyclerTouchListener(this, recyclerViewDrawer);
         onTouchListener
                 .setClickable(new RecyclerTouchListener.OnRowClickListener() {
                     @Override
                     public void onRowClicked(int position) {
-                        nameMainType = arrayListDrawer.get(position).get(NAME_TYPE).toString();
-                        if (nameMainType.contains("all") || nameMainType.equals("all")) {
-                            initializeSumValue();
-                            viewItems();
-                            closeDrawer();
-                        } else {
-                            typeId = db.selectIdByMainTypeName(nameMainType);
-                            initializeSumValue();
-                            viewItemsByType();
-                            closeDrawer();
-                        }
-
+                        nameLedger = arrayListDrawer.get(position).getTitle();
+                        ledgerId = db.selectIdByLedgerName(nameLedger);
+                        initializeSumValue();
+                        viewItems();
+                        viewLedger();
+                        closeDrawer();
                     }
-
                     @Override
                     public void onIndependentViewClicked(int independentViewID, int position) {
                         Utility.shortToast(getApplicationContext(), "Button in row " + (position + 1) + " clicked!");

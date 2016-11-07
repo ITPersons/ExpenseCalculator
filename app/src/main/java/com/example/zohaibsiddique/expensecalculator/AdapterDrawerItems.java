@@ -13,11 +13,11 @@ import java.util.List;
 
 class AdapterDrawerItems extends RecyclerView.Adapter<AdapterDrawerItems.MainViewHolder> {
     private LayoutInflater inflater;
-    List<HashMap<String, Object>> list;
+    List<Ledger> list;
     Context context;
 
 
-    AdapterDrawerItems(Context context, List<HashMap<String, Object>> list) {
+    AdapterDrawerItems(Context context, List<Ledger> list) {
         inflater = LayoutInflater.from(context);
         this.list = list;
         this.context = context;
@@ -33,8 +33,7 @@ class AdapterDrawerItems extends RecyclerView.Adapter<AdapterDrawerItems.MainVie
     @Override
     public void onBindViewHolder(MainViewHolder holder, int position) {
         try {
-            final String NAME_TYPE = "name";
-            holder.name.setText(list.get(position).get(NAME_TYPE).toString());
+            holder.name.setText(list.get(position).getTitle());
         } catch (NullPointerException e) {
             Log.d("onBindViewHolder", " error is" + e.getMessage());
         }
@@ -50,7 +49,7 @@ class AdapterDrawerItems extends RecyclerView.Adapter<AdapterDrawerItems.MainVie
 
         private MainViewHolder(View itemView) {
             super(itemView);
-            name = (TextView) itemView.findViewById(R.id.name_type);
+            name = (TextView) itemView.findViewById(R.id.name_ledger);
         }
     }
 }

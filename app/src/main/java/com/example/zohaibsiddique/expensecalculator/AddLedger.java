@@ -1,8 +1,9 @@
 package com.example.zohaibsiddique.expensecalculator;
 
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
-import android.database.Cursor;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -14,9 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class AddLedger extends AppCompatActivity {
 
@@ -31,7 +29,7 @@ public class AddLedger extends AppCompatActivity {
         setContentView(R.layout.activity_add_ledger);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        if(getSupportActionBar() != null) {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeAsUpIndicator(android.R.drawable.ic_menu_close_clear_cancel);
         }
@@ -39,28 +37,7 @@ public class AddLedger extends AppCompatActivity {
         db = new DB(AddLedger.this);
         getLayoutReferences();
 
-        List<Ledger> ledgerList = new ArrayList<>();
-        Cursor cursor = db.selectLedger();
-        cursor.moveToFirst();
-        if (cursor.getCount() == 0) {
-            Utility.shortToast(AddLedger.this, "Empty list");
-        } else {
-            for (int i = 0; i < cursor.getCount(); i++) {
-                final String ID = "id";final String TITLE = "title";final String STARTING_BALANCE = "starting_balance";final String DATE = "date";final String FROM_DATE = "from_date";final String TO_DATE = "to_date";
-                String id = cursor.getString(cursor.getColumnIndex(ID));
-                String title = cursor.getString(cursor.getColumnIndex(TITLE));
-                String startingBalance = cursor.getString(cursor.getColumnIndex(STARTING_BALANCE));
-                String date = cursor.getString(cursor.getColumnIndex(DATE));
-                String fromDate = cursor.getString(cursor.getColumnIndex(FROM_DATE));
-                String toDate = cursor.getString(cursor.getColumnIndex(TO_DATE));
-
-                Ledger ledger = new Ledger(id, title, startingBalance, date, fromDate, toDate);
-                ledgerList.add(ledger);
-                cursor.moveToNext();
-            }
-            cursor.close();
-            }
-        }
+    }
 
     private void getLayoutReferences() {
         layoutLedgerTitle = (TextInputLayout) findViewById(R.id.text_input_layout_ledger_title);
@@ -164,6 +141,10 @@ public class AddLedger extends AppCompatActivity {
                 } else {
                     Utility.failSnackBar(layoutFromDate, "Error, try again", AddLedger.this);
                 }
+
+                Intent intent = new Intent();
+                setResult(Activity.RESULT_OK, intent);
+                finish();
                 return true;
             } else if(!validateEditText()) {
                 Utility.failSnackBar(layoutFromDate, "Error, please remove error", AddLedger.this);

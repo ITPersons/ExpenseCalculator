@@ -209,8 +209,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                                 String expenseName = addExpenseName.getText().toString().trim();
                                 String expenseValue = addExpenseValue.getText().toString().trim();
                                 if (validateInput()) {
-                                    if (db.addExpense(expenseName, expenseValue, Utility.currentTimeInMillis()
-                                            , Utility.simpleDateFormat(Long.valueOf(Utility.currentTimeInMillis())), idType)) {
+                                    if (db.addExpense(expenseName, expenseValue,
+                                            Utility.currentTimeInMillis(),
+                                            Utility.simpleDateFormat(Long.valueOf(Utility.currentTimeInMillis())),
+                                            idType)) {
                                         Utility.successSnackBar(recyclerView, "Expense added", MainActivity.this);
                                         addExpense();
                                     } else {
@@ -503,9 +505,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         initializeSumValue();
 
                         if(date==null && toDate==null && fromDate==null) {
-                            for (int j = 0; j<typeArrayList.size(); j++) {
-                                Cursor cursor = db.selectExpenseByType(db.getIdByType(typeArrayList.get(j)));
-                                addValuesToArrayList(cursor);
+                            String allKeyWord = typeArrayList.get(0);
+                            if(typeArrayList.size() == 1 && allKeyWord.equals("all")) {
+                                    Cursor cursor = db.selectExpense();
+                                    addValuesToArrayList(cursor);
+                            } else {
+                                for (int j = 0; j<typeArrayList.size(); j++) {
+                                    Cursor cursor = db.selectExpenseByType(db.getIdByType(typeArrayList.get(j)));
+                                    addValuesToArrayList(cursor);
+                                }
                             }
                         }
 

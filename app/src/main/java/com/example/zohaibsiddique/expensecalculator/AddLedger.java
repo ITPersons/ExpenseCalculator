@@ -1,7 +1,7 @@
 package com.example.zohaibsiddique.expensecalculator;
 
-import android.app.DatePickerDialog;
-import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
@@ -13,19 +13,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 public class AddLedger extends AppCompatActivity {
 
     TextInputLayout layoutLedgerTitle, layoutStartingBalance, layoutFromDate, layoutToDate;
     Button fromDateButton, toDateButton;
-    EditText addTitleEditText, addStartingBalanceEditText, fromDateEditText, toDateEditText;
-    String fromDate, toDate;
+    EditText titleEditText, startingBalanceEditText, fromDateEditText, toDateEditText;
     DB db;
 
     @Override
@@ -34,8 +31,10 @@ public class AddLedger extends AppCompatActivity {
         setContentView(R.layout.activity_add_ledger);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(android.R.drawable.ic_menu_close_clear_cancel);
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeAsUpIndicator(android.R.drawable.ic_menu_close_clear_cancel);
+        }
 
         db = new DB(AddLedger.this);
         getLayoutReferences();
@@ -72,10 +71,10 @@ public class AddLedger extends AppCompatActivity {
         fromDateButton.setOnClickListener(new OnClickListener());
         toDateButton = (Button) findViewById(R.id.to_date_ledger);
         toDateButton.setOnClickListener(new OnClickListener());
-        addTitleEditText = (EditText) findViewById(R.id.title_ledger);
-        addTitleEditText.addTextChangedListener(new addNewItemTextWatcher(addTitleEditText));
-        addStartingBalanceEditText = (EditText) findViewById(R.id.starting_balance_ledger);
-        addStartingBalanceEditText.addTextChangedListener(new addNewItemTextWatcher(addStartingBalanceEditText));
+        titleEditText = (EditText) findViewById(R.id.title_ledger);
+        titleEditText.addTextChangedListener(new addNewItemTextWatcher(titleEditText));
+        startingBalanceEditText = (EditText) findViewById(R.id.starting_balance_ledger);
+        startingBalanceEditText.addTextChangedListener(new addNewItemTextWatcher(startingBalanceEditText));
         fromDateEditText = (EditText) findViewById(R.id.from_date_edit_text_ledger);
         fromDateEditText.addTextChangedListener(new addNewItemTextWatcher(fromDateEditText));
         toDateEditText = (EditText) findViewById(R.id.to_date_edit_text_ledger);
@@ -85,11 +84,14 @@ public class AddLedger extends AppCompatActivity {
     private class OnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
+            FragmentManager manager = getFragmentManager();
             if(view.getId() == R.id.from_date_ledger) {
-                showDialog(1);
+                DialogFragment dialog = new fromDatePickerLedger();
+                dialog.show(manager, "fromDatePickerLedger");
             }
             if(view.getId() == R.id.to_date_ledger) {
-                showDialog(2);
+                DialogFragment dialog = new toDatePickerLedger();
+                dialog.show(manager, "toDatePickerLedger");
             }
         }
 
@@ -116,10 +118,10 @@ public class AddLedger extends AppCompatActivity {
         public void afterTextChanged(Editable editable) {
             switch (view.getId()) {
                 case R.id.title_ledger:
-                    Utility.validateEditText(addTitleEditText, layoutLedgerTitle, "Enter valid title");
+                    Utility.validateEditText(titleEditText, layoutLedgerTitle, "Enter valid title");
                     break;
                 case R.id.starting_balance_ledger:
-                    Utility.validateEditText(addStartingBalanceEditText, layoutStartingBalance, "Enter valid starting balance");
+                    Utility.validateEditText(startingBalanceEditText, layoutStartingBalance, "Enter valid starting balance");
                     break;
                 case R.id.from_date_edit_text_ledger:
                     Utility.validateEditText(fromDateEditText, layoutFromDate, "Please choose date");
@@ -131,45 +133,6 @@ public class AddLedger extends AppCompatActivity {
 
         }
     }
-
-    @Override
-    protected Dialog onCreateDialog(int id) {
-
-        final Calendar c = Calendar.getInstance();
-        int year = c.get(Calendar.YEAR);
-        int month = c.get(Calendar.MONTH);
-        int day = c.get(Calendar.DAY_OF_MONTH);
-
-        if (id == 1) {
-            return new DatePickerDialog(this, fromDatePicker, year, month, day);
-        }
-        if (id == 2) {
-            return new DatePickerDialog(this, toDatePicker, year, month, day);
-        }
-        return null;
-    }
-
-    private DatePickerDialog.OnDateSetListener fromDatePicker = new DatePickerDialog.OnDateSetListener() {
-        @Override
-        public void onDateSet(DatePicker view, int year, int month, int day) {
-            int months = month + 1;
-            if (view.isShown()) {
-                fromDate = String.valueOf(new StringBuilder().append(day).append("/").append(months).append("/").append(year));
-                fromDateEditText.setText(fromDate);
-            }
-        }
-    };
-
-    private DatePickerDialog.OnDateSetListener toDatePicker = new DatePickerDialog.OnDateSetListener() {
-        @Override
-        public void onDateSet(DatePicker view, int year, int month, int day) {
-            int months = month + 1;
-            if (view.isShown()) {
-                toDate = String.valueOf(new StringBuilder().append(day).append("/").append(months).append("/").append(year));
-                toDateEditText.setText(toDate);
-            }
-        }
-    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -187,8 +150,16 @@ public class AddLedger extends AppCompatActivity {
         }
         if (id == R.id.save) {
             if(validateEditText()) {
-                if(db.addLedger(addTitleEditText.getText().toString(), addStartingBalanceEditText.getText().toString(),
-                        Utility.currentTimeInMillis(), fromDateEditText.getText().toString(), toDateEditText.getText().toString())) {
+
+                if(db.isLedgerExist(titleEditText.getText().toString())) {
+                    Utility.failSnackBar(layoutFromDate, "Error, ledger already existed", AddLedger.this);
+
+                } else if (db.addLedger(titleEditText.getText().toString(),
+                        startingBalanceEditText.getText().toString(),
+                        Utility.currentTimeInMillis(),
+                        Utility.simpleDateFormat(Utility.dateInMilliSecond(fromDateEditText.getText().toString())),
+                        Utility.simpleDateFormat(Utility.dateInMilliSecond(toDateEditText.getText().toString())))) {
+
                     Utility.successSnackBar(layoutFromDate, "Ledger saved", AddLedger.this);
                 } else {
                     Utility.failSnackBar(layoutFromDate, "Error, try again", AddLedger.this);
@@ -203,8 +174,8 @@ public class AddLedger extends AppCompatActivity {
     }
 
     private boolean validateEditText() {
-        return Utility.validateEditText(addTitleEditText, layoutLedgerTitle, "Enter valid title") &&
-                Utility.validateEditText(addStartingBalanceEditText, layoutStartingBalance, "Enter valid starting balance")
+        return Utility.validateEditText(titleEditText, layoutLedgerTitle, "Enter valid title") &&
+                Utility.validateEditText(startingBalanceEditText, layoutStartingBalance, "Enter valid starting balance")
                 && Utility.validateEditText(fromDateEditText, layoutFromDate, "Please choose date") &&
                 Utility.validateEditText(toDateEditText, layoutToDate, "Please choose date");
     }

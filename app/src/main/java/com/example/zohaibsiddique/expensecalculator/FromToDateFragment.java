@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -79,10 +80,12 @@ public class FromToDateFragment extends Fragment implements View.OnClickListener
 
     void resetStateOfToDate() {
         toDateTextView.setText(Utility.currentTimeInDateFormat());
+        toDateTextView.setTypeface(null, Typeface.NORMAL);
     }
 
     void resetStateOfFromDate() {
         fromDateTextView.setText(Utility.currentTimeInDateFormat());
+        fromDateTextView.setTypeface(null, Typeface.NORMAL);
     }
 }
 

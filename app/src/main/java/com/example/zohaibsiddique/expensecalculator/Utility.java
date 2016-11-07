@@ -47,11 +47,11 @@ class Utility {
     }
 
     static String simpleDateFormat(long timeInMills) {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat formatter = new SimpleDateFormat("ddMMyyyy");
         return formatter.format(new Date(timeInMills));
     }
 
-    static long milliseconds(String date) {
+    static long dateInMilliSecond(String date) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         try {
             Date mDate = sdf.parse(date);

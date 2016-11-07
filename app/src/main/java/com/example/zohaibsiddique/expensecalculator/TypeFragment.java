@@ -115,7 +115,7 @@ public class TypeFragment extends ListFragment implements AdapterView.OnItemClic
 
     private void viewTypes() {
         try {
-            Cursor cursor = db.selectMainType();
+            Cursor cursor = db.selectAllMainTypes();
             cursor.moveToFirst();
             if (cursor.getCount() == 0) {
                 Toast.makeText(getActivity(), "Empty list", Toast.LENGTH_SHORT).show();

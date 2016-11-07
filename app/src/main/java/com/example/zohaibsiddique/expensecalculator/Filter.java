@@ -58,16 +58,20 @@ public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
         int id = view.getId();
         switch (id) {
             case R.id.apply_button:
-                Intent intent = new Intent();
-                Bundle b =new Bundle();
-                b.putStringArrayList("arrayListOfFilter", arrayListTypes);
-                b.putString("date", date);
-                b.putString("toDate", toDate);
-                b.putString("fromDate", fromDate);
-                intent.putExtras(b);
-                setResult(Activity.RESULT_OK, intent);
-                finish();
-                break;
+                if(arrayListTypes.isEmpty() && date==null && toDate==null && fromDate==null) {
+                    Utility.shortToast(Filter.this, "Choose a filter or go to back");
+                } else {
+                    Intent intent = new Intent();
+                    Bundle b =new Bundle();
+                    b.putStringArrayList("arrayListOfFilter", arrayListTypes);
+                    b.putString("date", date);
+                    b.putString("toDate", toDate);
+                    b.putString("fromDate", fromDate);
+                    intent.putExtras(b);
+                    setResult(Activity.RESULT_OK, intent);
+                    finish();
+                    break;
+                }
             case R.id.clear_all_button:
                 clearStates();
                 break;
@@ -162,6 +166,8 @@ public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
             LeftFragmentFilter fragment = (LeftFragmentFilter) getFragmentManager().findFragmentById(R.id.left_fragment_filter);
             if(fromDate.equals("")) {
                 fragment.makeStyleBoldAtThirdPosition(false);
+            } else if(toDate==null) {
+
             } else {
                 fragment.makeStyleBoldAtThirdPosition(true);
             }
@@ -177,6 +183,8 @@ public class Filter extends AppCompatActivity implements LeftFragmentFilter.Get,
             LeftFragmentFilter fragment = (LeftFragmentFilter) getFragmentManager().findFragmentById(R.id.left_fragment_filter);
             if(toDate.equals("")) {
                 fragment.makeStyleBoldAtThirdPosition(false);
+            } else if(fromDate==null) {
+
             } else {
                 fragment.makeStyleBoldAtThirdPosition(true);
             }

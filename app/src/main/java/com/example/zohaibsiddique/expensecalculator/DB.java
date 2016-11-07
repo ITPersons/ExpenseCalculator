@@ -292,6 +292,22 @@ class DB extends SQLiteOpenHelper {
         return true;
     }
 
+    boolean isLedgerExist(String title) {
+        Cursor cursor;
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            cursor = db.rawQuery("SELECT " + TITLE_LEDGER + " FROM " + TABLE_LEDGER + " WHERE " + TITLE_LEDGER + "='" + title + "'", null);
+            if(cursor != null && cursor.moveToFirst()) {
+                cursor.getString(cursor.getColumnIndex(TITLE_LEDGER));
+                cursor.close();
+                return true;
+            }
+        } catch (Exception e) {
+            Log.d("isLedgerExist", " error " + e.getMessage());
+        }
+        return false;
+    }
+
 
     boolean deleteExpense(String id) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -344,9 +360,23 @@ class DB extends SQLiteOpenHelper {
         try {
             SQLiteDatabase db = this.getWritableDatabase();
             cursor = db.rawQuery("SELECT " + ID_MAIN_TYPE + "," + NAME_MAIN_TYPE + " FROM " + TABLE_MAIN_TYPE
+                    + " WHERE " + ID_MAIN_TYPE + " NOT IN (SELECT " + ID_MAIN_TYPE + " FROM " + TABLE_MAIN_TYPE
+                    + " WHERE " + ID_MAIN_TYPE + "= '1')"
                     + " ORDER BY " + ID_MAIN_TYPE + " DESC", null);
         } catch (Exception e) {
             Log.d("selectMainType", " error is " + e.getMessage());
+        }
+        return cursor;
+    }
+
+    Cursor selectAllMainTypes() {
+        Cursor cursor = null;
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            cursor = db.rawQuery("SELECT " + ID_MAIN_TYPE + "," + NAME_MAIN_TYPE + " FROM " + TABLE_MAIN_TYPE
+                    + " ORDER BY " + ID_MAIN_TYPE + " DESC", null);
+        } catch (Exception e) {
+            Log.d("selectAllMainTypes", " error is " + e.getMessage());
         }
         return cursor;
     }

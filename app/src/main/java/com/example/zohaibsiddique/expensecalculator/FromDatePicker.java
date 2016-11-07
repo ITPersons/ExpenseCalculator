@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.widget.DatePicker;
 import android.widget.TextView;
@@ -44,10 +45,12 @@ public class FromDatePicker extends DialogFragment
 
     public void onDateSet(DatePicker view, int year, int month, int day) {
         if(view.isShown()) {
-            keyDate = String.valueOf(new StringBuilder().append(day<10?"0"+day:day).append("/").append(month<10?"0"+month:month).append("/").append(year));
+            keyDate = String.valueOf(new StringBuilder().append(day<10?"0"+day:day).append(month<10?"0"+month:month).append(year));
             getDate.fromDate(keyDate);
             TextView fromDate = (TextView) getActivity().findViewById(R.id.from_date);
-            fromDate.setText(keyDate);
+            String date = String.valueOf(new StringBuilder().append(day).append("/").append(month).append("/").append(year));
+            fromDate.setText(date);
+            fromDate.setTypeface(null, Typeface.BOLD);
 
             SessionManager sessionManager = new SessionManager();
             final String PREFERENCES_FILTER = "filter";

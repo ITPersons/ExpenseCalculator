@@ -306,6 +306,22 @@ class DB extends SQLiteOpenHelper {
         return false;
     }
 
+    boolean isExpenseExist(String title) {
+        Cursor cursor;
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            cursor = db.rawQuery("SELECT " + NAME_EXPENSE + " FROM " + TABLE_EXPENSE
+                    + " WHERE " + NAME_EXPENSE + "='" + title + "'", null);
+            if(cursor != null && cursor.moveToFirst()) {
+                cursor.getString(cursor.getColumnIndex(NAME_EXPENSE));
+                cursor.close();
+                return true;
+            }
+        } catch (Exception e) {
+            Log.d("isExpenseExist", " error " + e.getMessage());
+        }
+        return false;
+    }
 
     boolean deleteExpense(String id) {
         SQLiteDatabase db = this.getWritableDatabase();

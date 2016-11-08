@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#f14d12</color>
-    <color name="colorPrimaryDark">#8e4024</color>
+    <color name="colorPrimary">#292787</color>
+    <color name="colorPrimaryDark">#292787</color>
     <color name="warning">#FFFF9800</color>
     <color name="failure">#bbB71C1C</color>
     <color name="success">#FF689F38</color>
@@ -9,9 +9,8 @@
     <color name="off_white">#eee</color>
     <color name="white_shade">#99ffffff</color>
     <color name="white">#fff</color>
-    <color name="black">#111</color>
-
-
+    <color name="blue">#292787</color>
+    <color name="black">#88000000</color>
 
     <color name="colorAccent">#aeea00</color>
     <color name="grey_highlight">#EEEEEE</color>

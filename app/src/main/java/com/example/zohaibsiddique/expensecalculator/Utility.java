@@ -32,6 +32,10 @@ class Utility {
         return new SimpleDateFormat("dd-MM-yyyy hh:mm a").format(dateF);
     }
 
+    static void setResultActivity(Activity activity) {
+        Intent intent = new Intent();
+        activity.setResult(activity.RESULT_OK, intent);
+    }
     static String currentTimeInMillis() {
         Calendar calendar = Calendar.getInstance();
         return String.valueOf(calendar.getTimeInMillis());
@@ -121,19 +125,6 @@ class Utility {
         alertDialog.create();
         alertDialog.show();
     }
-
-
-//    static void customeSnackBar(Context context, View view, String message) {
-//        Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG);
-//        Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
-//        TextView textView = (TextView) layout.findViewById(android.support.design.R.id.snackbar_text);
-//        textView.setVisibility(View.INVISIBLE);
-//
-//        LayoutInflater layoutInflater = LayoutInflater.from(context);
-//        View view2 = layoutInflater.inflate(R.layout.add_expense, null);
-//        layout.addView(view2);
-//        snackbar.show();
-//    }
 
     static void failSnackBar(View view, String message, Context context) {
         Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG);
@@ -286,16 +277,11 @@ class Utility {
         return context.getResources().getIdentifier(resourceItem , directory, context.getPackageName());
     }
 
-//    static boolean hintEnable(EditText editText, TextInputLayout textInputLayout) {
-//        if (editText.getText().toString().trim().isEmpty()) {
-//            textInputLayout.setHintAnimationEnabled(true);
-//            textInputLayout.setHintEnabled(false);
-//        } else {
-//            textInputLayout.setHintAnimationEnabled(true);
-//            textInputLayout.setHintEnabled(true);
-//        }
-//        return true;
-//    }
+    static boolean hintDisable(EditText editText, TextInputLayout textInputLayout) {
+        textInputLayout.setErrorEnabled(false);
+        textInputLayout.setHintEnabled(true);
+        return true;
+    }
 
     static boolean validateEditText(EditText editText, TextInputLayout textInputLayout, String errorMessage) {
             if (editText.getText().toString().trim().isEmpty()) {
@@ -318,11 +304,11 @@ class Utility {
 //        }
 //        return true;
 //    }
-//    static void requestFocus(View view, Context context) {
-//        if (view.requestFocus()) {
-//            ((Activity) context).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-//        }
-//    }
+    static void requestFocus(View view, Context context) {
+        if (view.requestFocus()) {
+            ((Activity) context).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        }
+    }
 //
 //    static void setSpinnerAdapter(Spinner spinner, Context context, String directory, String resourceItems) {
 //        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(context, Utility.getResourceId(context, directory, resourceItems), android.R.layout.simple_spinner_item);

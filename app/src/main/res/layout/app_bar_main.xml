@@ -18,38 +18,20 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimaryDark"
-            app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/success"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/show_value_expense"
-                android:layout_marginTop="@dimen/two_margin"
-                android:layout_marginBottom="@dimen/three_margin"
-                android:layout_marginStart="@dimen/eight_margin"
-                android:layout_marginLeft="@dimen/eight_margin"
-                android:textSize="@dimen/fourteen_font_size"
-                android:textColor="@color/white"
-                android:text="@string/total_expense_100"/>
-        </LinearLayout>
 
     </android.support.design.widget.AppBarLayout>
 
-        <include layout="@layout/content_main" />
+    <include layout="@layout/content_main" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+    <Button
+        android:id="@+id/add_new_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/ic_input_add"
-        android:tint="@color/white"/>
+        android:text="@string/add_new"
+        android:layout_gravity="bottom|center"
+        android:layout_margin="@dimen/_5sdp"
+        android:textColor="@color/white"
+        android:background="@color/failure"/>
 
 </android.support.design.widget.CoordinatorLayout>

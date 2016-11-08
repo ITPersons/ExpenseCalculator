@@ -1,67 +1,60 @@
 package com.example.zohaibsiddique.expensecalculator;
 
-import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class AddLedger extends AppCompatActivity {
+public class AddLedgerFragment extends Fragment {
 
     TextInputLayout layoutLedgerTitle, layoutStartingBalance, layoutFromDate, layoutToDate;
-    Button fromDateButton, toDateButton;
+    Button fromDateButton, toDateButton, saveButton;
     EditText titleEditText, startingBalanceEditText, fromDateEditText, toDateEditText;
     DB db;
+    View view;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_ledger);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setHomeAsUpIndicator(android.R.drawable.ic_menu_close_clear_cancel);
-        }
-
-        db = new DB(AddLedger.this);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.add_ledger_fragment, container, false);
+        db = new DB(getActivity());
         getLayoutReferences();
+        return view;
 
     }
 
     private void getLayoutReferences() {
-        layoutLedgerTitle = (TextInputLayout) findViewById(R.id.text_input_layout_ledger_title);
-        layoutStartingBalance = (TextInputLayout) findViewById(R.id.text_input_layout_starting_balance);
-        layoutFromDate = (TextInputLayout) findViewById(R.id.text_input_layout_from_date_ledger);
-        layoutToDate = (TextInputLayout) findViewById(R.id.text_input_layout_to_date_ledger);
-        fromDateButton = (Button) findViewById(R.id.from_date_ledger);
+        layoutLedgerTitle = (TextInputLayout) view.findViewById(R.id.text_input_layout_ledger_title);
+        layoutStartingBalance = (TextInputLayout) view.findViewById(R.id.text_input_layout_starting_balance);
+        layoutFromDate = (TextInputLayout) view.findViewById(R.id.text_input_layout_from_date_ledger);
+        layoutToDate = (TextInputLayout) view.findViewById(R.id.text_input_layout_to_date_ledger);
+        fromDateButton = (Button) view.findViewById(R.id.from_date_ledger);
         fromDateButton.setOnClickListener(new OnClickListener());
-        toDateButton = (Button) findViewById(R.id.to_date_ledger);
+        toDateButton = (Button) view.findViewById(R.id.to_date_ledger);
         toDateButton.setOnClickListener(new OnClickListener());
-        titleEditText = (EditText) findViewById(R.id.title_ledger);
+        titleEditText = (EditText) view.findViewById(R.id.title_ledger);
         titleEditText.addTextChangedListener(new addNewItemTextWatcher(titleEditText));
-        startingBalanceEditText = (EditText) findViewById(R.id.starting_balance_ledger);
+        startingBalanceEditText = (EditText) view.findViewById(R.id.starting_balance_ledger);
         startingBalanceEditText.addTextChangedListener(new addNewItemTextWatcher(startingBalanceEditText));
-        fromDateEditText = (EditText) findViewById(R.id.from_date_edit_text_ledger);
+        fromDateEditText = (EditText) view.findViewById(R.id.from_date_edit_text_ledger);
         fromDateEditText.addTextChangedListener(new addNewItemTextWatcher(fromDateEditText));
-        toDateEditText = (EditText) findViewById(R.id.to_date_edit_text_ledger);
+        toDateEditText = (EditText) view.findViewById(R.id.to_date_edit_text_ledger);
         toDateEditText.addTextChangedListener(new addNewItemTextWatcher(toDateEditText));
+        saveButton = (Button) view.findViewById(R.id.save_ledger);
+        saveButton.setOnClickListener(new OnClickListener());
     }
 
     private class OnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            FragmentManager manager = getFragmentManager();
+            FragmentManager manager = getActivity().getFragmentManager();
             if(view.getId() == R.id.from_date_ledger) {
                 DialogFragment dialog = new fromDatePickerLedger();
                 dialog.show(manager, "fromDatePickerLedger");
@@ -69,6 +62,35 @@ public class AddLedger extends AppCompatActivity {
             if(view.getId() == R.id.to_date_ledger) {
                 DialogFragment dialog = new toDatePickerLedger();
                 dialog.show(manager, "toDatePickerLedger");
+            }
+            if(view.getId() == R.id.save_ledger) {
+                if(validateEditText()) {
+
+                    if(db.isLedgerExist(titleEditText.getText().toString())) {
+                        Utility.failSnackBar(layoutFromDate, "Error, ledger already existed", getActivity());
+
+                    } else if (db.addLedger(titleEditText.getText().toString(),
+                            startingBalanceEditText.getText().toString(),
+                            Utility.currentTimeInMillis(),
+                            Utility.simpleDateFormat(Utility.dateInMilliSecond(fromDateEditText.getText().toString())),
+                            Utility.simpleDateFormat(Utility.dateInMilliSecond(toDateEditText.getText().toString())))) {
+
+                        Utility.successSnackBar(layoutFromDate, "Ledger saved", getActivity());
+                        titleEditText.setText("");
+                        startingBalanceEditText.setText("");
+                        fromDateEditText.setText("");
+                        toDateEditText.setText("");
+                        Utility.requestFocus(titleEditText, getActivity());
+                        Utility.hintDisable(titleEditText, layoutLedgerTitle);
+                        Utility.hintDisable(startingBalanceEditText, layoutStartingBalance);
+                        Utility.hintDisable(fromDateEditText, layoutFromDate);
+                        Utility.hintDisable(toDateEditText, layoutToDate);
+                    } else {
+                        Utility.failSnackBar(layoutFromDate, "Error, try again", getActivity());
+                    }
+                } else if(!validateEditText()) {
+                    Utility.failSnackBar(layoutFromDate, "Error, please remove error", getActivity());
+                }
             }
         }
 
@@ -109,49 +131,6 @@ public class AddLedger extends AppCompatActivity {
             }
 
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.ledger, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == android.R.id.home) {
-            finish();
-            return true;
-        }
-        if (id == R.id.save) {
-            if(validateEditText()) {
-
-                if(db.isLedgerExist(titleEditText.getText().toString())) {
-                    Utility.failSnackBar(layoutFromDate, "Error, ledger already existed", AddLedger.this);
-
-                } else if (db.addLedger(titleEditText.getText().toString(),
-                        startingBalanceEditText.getText().toString(),
-                        Utility.currentTimeInMillis(),
-                        Utility.simpleDateFormat(Utility.dateInMilliSecond(fromDateEditText.getText().toString())),
-                        Utility.simpleDateFormat(Utility.dateInMilliSecond(toDateEditText.getText().toString())))) {
-
-                    Utility.successSnackBar(layoutFromDate, "Ledger saved", AddLedger.this);
-                } else {
-                    Utility.failSnackBar(layoutFromDate, "Error, try again", AddLedger.this);
-                }
-
-                Intent intent = new Intent();
-                setResult(Activity.RESULT_OK, intent);
-                finish();
-                return true;
-            } else if(!validateEditText()) {
-                Utility.failSnackBar(layoutFromDate, "Error, please remove error", AddLedger.this);
-            }
-
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     private boolean validateEditText() {

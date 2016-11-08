@@ -23,12 +23,16 @@
             android:label="@string/title_activity_configure_drawer"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".AddLedger"
+            android:name=".AddLedgerFragment"
             android:label="@string/title_activity_add__ledger"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Filter"
             android:label="@string/title_activity_filter"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".AddNew"
+            android:label="@string/title_activity_add_new"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

@@ -13,7 +13,7 @@
     <string name="enter_starting_balance">Enter starting balance</string>
     <string name="enter_expense_value">Enter Expense value e.g.1000</string>
     <string name="enter_sub_type">Enter sub type</string>
-    <string name="save">Save</string>
+    <string name="save">SAVE</string>
     <string name="search">Search</string>
     <string name="cancel">Cancel</string>
     <string name="clear_all">CLEAR ALL</string>
@@ -21,7 +21,7 @@
     <string name="add">Add</string>
     <string name="next">Next</string>
     <string name="add_more">Add more</string>
-    <string name="sum">Total Expense: %1$s</string>
+    <string name="sum">Rs.%1$s</string>
     <string name="finish">finish</string>
     <string name="done">Done</string>
     <string name="add_type">Add type</string>
@@ -167,4 +167,15 @@
     <string name="date">Date</string>
     <string name="add_ledger">Add Ledger</string>
     <string name="date_sample">28/7/2016</string>
+    <string name="add_new">Add new</string>
+    <string name="save_amp_add_more"><![CDATA[SAVE & ADD MORE]]></string>
+    <string name="enter_name">Enter name</string>
+    <string name="enter_value">Enter value</string>
+    <string name="note">Note</string>
+    <string name="expense">Expense</string>
+    <string name="value">Rs.1000</string>
+    <string name="income">Income</string>
+    <string name="balance">Balance</string>
+    <string name="remaining">Remaining</string>
+    <string name="total">Total</string>
 </resources>

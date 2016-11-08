@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -22,6 +21,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -37,22 +37,23 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private TextInputLayout layoutAddMainType, layoutExpenseName, layoutExpenseValue;
     private EditText addMainType, addExpenseName, addExpenseValue;
     private RecyclerView recyclerView, recyclerViewDrawer;
-    private ArrayList<HashMap<String, Object>> arrayListExpense;
+    private ArrayList<Object> arrayListExpense;
     private ArrayList<Ledger> arrayListDrawer;
     private DB db;
     private RecyclerTouchListener onTouchListener;
     private List<String> arrayListType;
     private String idType, nameLedger, ledgerId;
-    private static long sum = 0;
-    private TextView showValueExpense;
+    private static long sum, sumIncome = 0;
+    private TextView showValueExpense, showValueIncome;
     private final int CONFIGURE_DRAWER_REQUEST_CODE = 1;
     private final int FILTER_REQUEST_CODE = 2;
     private final int ADD_LEDGER_REQUEST_CODE = 3;
-    final String ID_EXPENSE = "id";
-    final String NAME_EXPENSE = "name";
-    final String VALUE_EXPENSE = "value";
-    final String DATE_EXPENSE = "date";
-    final String TYPE_ID_EXPENSE = "type_id";
+    private final int ADD_NEW_REQUEST_CODE = 4;
+    final String ID = "id";
+    final String NAME = "name";
+    final String VALUE = "value";
+    final String DATE = "date";
+    final String TYPE_ID = "type_id";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         db = new DB(MainActivity.this);
         showValueExpense = (TextView) findViewById(R.id.show_value_expense);
+        showValueIncome = (TextView) findViewById(R.id.show_value_income);
         initializeSumValue();
 
         viewDrawerItems();
@@ -70,11 +72,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         DrawerClickListener();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        Button addNewButton = (Button) findViewById(R.id.add_new_button);
+        addNewButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addExpense();
+                Utility.startAnActivityForResult(MainActivity.this, MainActivity.this, AddNew.class, ADD_NEW_REQUEST_CODE);
             }
         });
 
@@ -85,8 +87,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         try {
             getReferencesForViewItemsRecyclerView();
             initializeSumValue();
-            Cursor cursor = db.selectExpense();
-            addValuesToArrayList(cursor);
+            Cursor cursorExpense = db.selectExpense();
+            addValuesToArrayList(cursorExpense);
         } catch (Exception e) {
             Log.d("showItems", " failed " + e.getMessage());
         }
@@ -168,65 +170,24 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         alert.show();
     }
 
-    private void addExpense() {
-
-        getReferenceOfExpenseDialog();
-
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
-        alertDialogBuilder.setTitle("Add Expense");
-        alertDialogBuilder.setView(addExpenseView);
-
-        alertDialogBuilder.setCancelable(true)
-                .setNegativeButton("CANCEL",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                                initializeSumValue();
-                                viewItems();
-
-                            }
-                        })
-                .setPositiveButton("ADD",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                String expenseName = addExpenseName.getText().toString().trim();
-                                String expenseValue = addExpenseValue.getText().toString().trim();
-                                if (validateInput()) {
-                                    if (db.addExpense(expenseName, expenseValue,
-                                            Utility.currentTimeInMillis(),
-                                            Utility.simpleDateFormat(Long.valueOf(Utility.currentTimeInMillis())),
-                                            idType)) {
-                                        Utility.successSnackBar(recyclerView, "Expense added", MainActivity.this);
-                                        addExpense();
-                                    } else {
-                                        Utility.failSnackBar(recyclerView, "Error, try again", MainActivity.this);
-                                    }
-
-                                } else if (!validateInput()) {
-                                    Utility.failSnackBar(recyclerView, "Error, fields cannot be empty", MainActivity.this);
-                                    addExpense();
-                                }
-
-
-                            }
-                        });
-        AlertDialog alert = alertDialogBuilder.create();
-        alert.show();
-    }
-
     private void showExpense(long expense) {
         sum = sum + expense;
         String messageSum = getString(R.string.sum, String.valueOf(sum));
         showValueExpense.setText(messageSum);
     }
 
+    private void showIncome(long income) {
+        sumIncome = sumIncome + income;
+        String messageSum = getString(R.string.sum, String.valueOf(sumIncome));
+        showValueIncome.setText(messageSum);
+    }
+
     private void getReferencesForViewItemsRecyclerView() {
         arrayListExpense = new ArrayList<>();
-        AdapterViewItems adapter = new AdapterViewItems(MainActivity.this, arrayListExpense);
         recyclerView = (RecyclerView) findViewById(R.id.view_item_recycle_view);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(new ComplexRecyclerViewAdapter(MainActivity.this, arrayListExpense));
     }
 
     private void addValuesToArrayList(Cursor cursor) {
@@ -235,23 +196,23 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             Toast.makeText(this, "Empty list", Toast.LENGTH_SHORT).show();
         } else {
             for (int i = 0; i < cursor.getCount(); i++) {
-                HashMap<String, Object> hm = new HashMap<>();
-                hm.put(ID_EXPENSE, cursor.getString(cursor.getColumnIndex(ID_EXPENSE)));
-                hm.put(NAME_EXPENSE, cursor.getString(cursor.getColumnIndex(NAME_EXPENSE)));
+                String id = cursor.getString(cursor.getColumnIndex(ID));
+                String name = cursor.getString(cursor.getColumnIndex(NAME));
 
-                long valueExpense = cursor.getLong(cursor.getColumnIndex(VALUE_EXPENSE));
+                long valueExpense = cursor.getLong(cursor.getColumnIndex(VALUE));
                 showExpense(valueExpense);
 
-                hm.put(VALUE_EXPENSE, String.valueOf(valueExpense));
-                hm.put(DATE_EXPENSE, Utility.dateFormat(cursor.getLong(cursor.getColumnIndex(DATE_EXPENSE))));
-                String id = cursor.getString(cursor.getColumnIndex(TYPE_ID_EXPENSE));
-                hm.put("type", db.selectTypeById(id));
-                arrayListExpense.add(hm);
+                String value = String.valueOf(valueExpense);
+                String date = Utility.dateFormat(cursor.getLong(cursor.getColumnIndex(DATE)));
+                String type = db.selectTypeById(cursor.getString(cursor.getColumnIndex(TYPE_ID)));
+
+                arrayListExpense.add(new Expense(id, name, value, date, type));
+
                 cursor.moveToNext();
             }
             cursor.close();
         }
-        enableSwipe();
+        enableSwipeExpense();
     }
 
     private void getReferencesForDrawerItemsRecyclerView() {
@@ -278,21 +239,23 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         recyclerViewDrawer.addOnItemTouchListener(touchListener);
     }
 
-    private void enableSwipe() {
-        onTouchListener = new RecyclerTouchListener(this, recyclerView);
+    private void enableSwipeExpense() {
+        RecyclerTouchListener onTouchListener = new RecyclerTouchListener(this, recyclerView);
         onTouchListener
                 .setSwipeOptionViews(R.id.edit, R.id.delete)
                 .setSwipeable(R.id.rowFG, R.id.rowBG, new RecyclerTouchListener.OnSwipeOptionsClickListener() {
                     @Override
                     public void onSwipeOptionClicked(int viewID, int position) {
                         if (viewID == R.id.delete) {
-                            final String idExpense = arrayListExpense.get(position).get(ID_EXPENSE).toString();
+                            Expense expense = (Expense) arrayListExpense.get(position);
+                            final String idExpense = expense.getId();
                             deleteExpense(idExpense);
 
                         } else if (viewID == R.id.edit) {
-                            String id = arrayListExpense.get(position).get(ID_EXPENSE).toString();
-                            String name = arrayListExpense.get(position).get(NAME_EXPENSE).toString();
-                            String value = arrayListExpense.get(position).get(VALUE_EXPENSE).toString();
+                            Expense expense = (Expense) arrayListExpense.get(position);
+                            String id = expense.getId();
+                            String name = expense.getTitle();
+                            String value = expense.getValue();
                             updateExpense(id, name, value);
                         }
                     }
@@ -328,20 +291,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         alert.show();
     }
 
-    private void getTypes() {
-        final String NAME_TYPE = "name";
-        Cursor cursor = db.selectMainType();
-        cursor.moveToFirst();
-        for (int i = 0; i < cursor.getCount(); i++) {
-            arrayListType.add(cursor.getString(cursor.getColumnIndex(NAME_TYPE)));
-            cursor.moveToNext();
-        }
-        cursor.close();
-    }
-
     private void updateExpense(final String idExpense, String name, String value) {
 
-        getReferenceOfExpenseDialog();
+//        getReferenceOfExpenseDialog();
 
         addExpenseName.setText(name);
         addExpenseValue.setText(value);
@@ -375,31 +327,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         alert.show();
     }
 
-    private void getReferenceOfExpenseDialog() {
-        LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
-        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linear_layout_add_expense);
-        addExpenseView = layoutInflater.inflate(R.layout.add_expense, linearLayout);
-
-        layoutExpenseName = (TextInputLayout) addExpenseView.findViewById(R.id.text_input_layout_add_expense_name);
-        addExpenseName = (EditText) addExpenseView.findViewById(R.id.name_expense);
-        addExpenseName.addTextChangedListener(new addNewItemTextWatcher(addExpenseName));
-
-        layoutExpenseValue = (TextInputLayout) addExpenseView.findViewById(R.id.text_input_layout_add_expense_value);
-        addExpenseValue = (EditText) addExpenseView.findViewById(R.id.value_expense);
-        addExpenseValue.addTextChangedListener(new addNewItemTextWatcher(addExpenseValue));
-
-        arrayListType = new ArrayList<>();
-        arrayListType.clear();
-        getTypes();
-        Spinner typeSpinner = (Spinner) addExpenseView.findViewById(R.id.type_spinner);
-        typeSpinner.setOnItemSelectedListener(this);
-        Utility.setSpinnerAdapterByArrayList(typeSpinner, MainActivity.this, arrayListType);
-    }
-
     private void initializeSumValue() {
         sum = 0;
-        String messageSum = getString(R.string.sum, String.valueOf(sum));
-        showValueExpense.setText(messageSum);
+        sumIncome = 0;
+        String expense = getString(R.string.sum, String.valueOf(sum));
+        showValueExpense.setText(expense);
+        String income = getString(R.string.sum, String.valueOf(sumIncome));
+        showValueIncome.setText(income);
     }
 
     @Override
@@ -419,10 +353,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if (id == R.id.configure_drawer) {
             Intent intent = new Intent(MainActivity.this, ConfigureDrawer.class);
             startActivityForResult(intent, CONFIGURE_DRAWER_REQUEST_CODE);
-            return true;
-        }
-        if (id == R.id.add_ledger) {
-            Utility.startAnActivityForResult(MainActivity.this, MainActivity.this, AddLedger.class, ADD_LEDGER_REQUEST_CODE);
             return true;
         }
         if (id == R.id.filter) {
@@ -477,6 +407,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     break;
                 case ADD_LEDGER_REQUEST_CODE:
                     viewDrawerItems();
+                    break;
+                case ADD_NEW_REQUEST_CODE:
+                    viewItems();
                     break;
                 case FILTER_REQUEST_CODE:
                     @SuppressWarnings("unchecked")
@@ -534,11 +467,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
 
         }
-    }
-
-    private boolean validateInput() {
-        return Utility.validateEditText(addExpenseName, layoutExpenseName, "Enter valid name") &&
-                Utility.validateEditText(addExpenseValue, layoutExpenseValue, "Enter valid value");
     }
 
     private class addNewItemTextWatcher implements TextWatcher {

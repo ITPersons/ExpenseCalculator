@@ -58,6 +58,16 @@
         android:id="@+id/type_spinner">
     </Spinner>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/ledger"/>
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ledger_expense_spinner">
+    </Spinner>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

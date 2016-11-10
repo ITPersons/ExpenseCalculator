@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.view.GravityCompat;
@@ -24,36 +25,34 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class MainActivity extends AppCompatActivity{
 
-    private View addExpenseView;
-    private TextInputLayout layoutAddMainType, layoutExpenseName, layoutExpenseValue;
-    private EditText addMainType, addExpenseName, addExpenseValue;
-    private RecyclerView recyclerView, recyclerViewDrawer;
+    private TextInputLayout layoutAddMainType;
+    private EditText addMainType;
+    private RecyclerView recyclerView;
     private ArrayList<Object> arrayListExpense;
     private ArrayList<Ledger> arrayListDrawer;
     private DB db;
-    private RecyclerTouchListener onTouchListener;
-    private List<String> arrayListType;
-    private String idType, nameLedger, ledgerId;
-    private static long sum, sumIncome = 0;
-    private TextView showValueExpense, showValueIncome;
+    private String nameLedger;
+    static String ledgerId;
+    private static long sum, sumLedger = 0;
+    private TextView showValueExpense, showValueIncome, showValueBalance;
     private final int CONFIGURE_DRAWER_REQUEST_CODE = 1;
     private final int FILTER_REQUEST_CODE = 2;
-    private final int ADD_LEDGER_REQUEST_CODE = 3;
     private final int ADD_NEW_REQUEST_CODE = 4;
+    private final int EDIT_EXPENSE_REQUEST_CODE = 5;
     final String ID = "id";
     final String NAME = "name";
     final String VALUE = "value";
     final String DATE = "date";
     final String TYPE_ID = "type_id";
+    AdapterDrawerItems adapter = null;
+    private static int drawerListPosition = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,12 +64,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         db = new DB(MainActivity.this);
         showValueExpense = (TextView) findViewById(R.id.show_value_expense);
         showValueIncome = (TextView) findViewById(R.id.show_value_income);
-        initializeSumValue();
+        showValueBalance = (TextView) findViewById(R.id.show_value_balance);
 
         viewDrawerItems();
-        viewItems();
+        setSelectedItemPositionOfDrawerItem(adapter, drawerListPosition);
 
-        DrawerClickListener();
+        if(db.selectLastIdOfLedger() != null) {
+            ledgerId = db.selectLastIdOfLedger();
+            viewItems(ledgerId);
+        } else {
+
+        }
 
         Button addNewButton = (Button) findViewById(R.id.add_new_button);
         addNewButton.setOnClickListener(new View.OnClickListener() {
@@ -83,12 +87,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         drawer(toolbar);
     }
 
-    private void viewItems() {
+    private void viewItems(String incomeId) {
         try {
             getReferencesForViewItemsRecyclerView();
             initializeSumValue();
-            Cursor cursorExpense = db.selectExpense();
-            addValuesToArrayList(cursorExpense);
+            Cursor cursorExpense = db.selectExpense(incomeId);
+            addValuesToArrayListExpense(cursorExpense);
+            selectAndShowLedgerValue(incomeId);
+            showBalance();
+            setSelectedItemPositionOfDrawerItem(adapter, drawerListPosition);
         } catch (Exception e) {
             Log.d("showItems", " failed " + e.getMessage());
         }
@@ -96,7 +103,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private void viewDrawerItems() {
         try {
-            getReferencesForDrawerItemsRecyclerView();
+            getReferencesForDrawerItemsListView();
+
             Cursor cursor = db.selectLedger();
             cursor.moveToFirst();
             if (cursor.getCount() == 0) {
@@ -115,16 +123,305 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-    private void viewLedger() {
-//        try {
-//            getReferencesForViewItemsRecyclerView();
-//            initializeSumValue();
-//
-//            Cursor cursor = db.selectLedgerByName(ledgerId);
-//            cursor.moveToFirst();
-//        } catch (Exception e) {
-//            Log.d("viewLedger", " failed " + e.getMessage());
-//        }
+    private void selectAndShowLedgerValue(String incomeId) {
+        Cursor cursor = db.selectLedgerValueById(incomeId);
+        cursor.moveToFirst();
+        if (cursor.getCount() == 0) {
+            Utility.shortToast(MainActivity.this, "Empty list");
+        } else {
+            for (int i = 0; i < cursor.getCount(); i++) {
+                long value = cursor.getLong(cursor.getColumnIndex("starting_balance"));
+                showLedger(value);
+                cursor.moveToNext();
+            }
+            cursor.close();
+        }
+    }
+
+    private void showExpense(long expense) {
+        sum = sum + expense;
+        String messageSum = getString(R.string.sum, String.valueOf(sum));
+        showValueExpense.setText(messageSum);
+    }
+
+    private void showLedger(long income) {
+        sumLedger = sumLedger + income;
+        String messageSum = getString(R.string.sum, String.valueOf(sumLedger));
+        showValueIncome.setText(messageSum);
+    }
+
+    private void showBalance() {
+        long balance = sumLedger - sum;
+        String messageSum = getString(R.string.sum, String.valueOf(balance));
+        showValueBalance.setText(messageSum);
+        if(balance < 0) {
+            showValueBalance.setTextColor(Color.RED);
+        } else {
+            showValueBalance.setTextColor(Color.WHITE);
+        }
+    }
+
+    private void getReferencesForViewItemsRecyclerView() {
+        arrayListExpense = new ArrayList<>();
+        recyclerView = (RecyclerView) findViewById(R.id.view_item_recycle_view);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setAdapter(new ComplexRecyclerViewAdapter(MainActivity.this, arrayListExpense));
+    }
+
+    private void addValuesToArrayListExpense(Cursor cursor) {
+        cursor.moveToFirst();
+        if (cursor.getCount() == 0) {
+            Toast.makeText(this, "Empty list", Toast.LENGTH_SHORT).show();
+        } else {
+            for (int i = 0; i < cursor.getCount(); i++) {
+                String id = cursor.getString(cursor.getColumnIndex(ID));
+                String name = cursor.getString(cursor.getColumnIndex(NAME));
+
+                long valueExpense = cursor.getLong(cursor.getColumnIndex(VALUE));
+                showExpense(valueExpense);
+                String value = String.valueOf(valueExpense);
+
+                String date = Utility.dateFormat(cursor.getLong(cursor.getColumnIndex(DATE)));
+                String type = db.selectTypeById(cursor.getString(cursor.getColumnIndex(TYPE_ID)));
+
+                arrayListExpense.add(new Expense(id, name, value, date, type));
+
+                cursor.moveToNext();
+            }
+            cursor.close();
+        }
+        enableSwipeExpense();
+    }
+
+    private void enableSwipeExpense() {
+        RecyclerTouchListener onTouchListener = new RecyclerTouchListener(this, recyclerView);
+        onTouchListener
+                .setSwipeOptionViews(R.id.edit, R.id.delete)
+                .setSwipeable(R.id.rowFG, R.id.rowBG, new RecyclerTouchListener.OnSwipeOptionsClickListener() {
+                    @Override
+                    public void onSwipeOptionClicked(int viewID, int position) {
+                        Expense expense = (Expense) arrayListExpense.get(position);
+                        if (viewID == R.id.delete) {
+                            final String idExpense = expense.getId();
+                            deleteExpense(idExpense);
+
+                        } else if (viewID == R.id.edit) {
+                            SessionManager preference = new SessionManager();
+                            preference.setDatePreferences(MainActivity.this, "edit_expense", "id", expense.getId());
+                            preference.setDatePreferences(MainActivity.this, "edit_expense", "name", expense.getTitle());
+                            preference.setDatePreferences(MainActivity.this, "edit_expense", "value", expense.getValue());
+                            Utility.startAnActivityForResult(MainActivity.this, MainActivity.this, AddNew.class, EDIT_EXPENSE_REQUEST_CODE);
+                        }
+                    }
+                });
+        recyclerView.addOnItemTouchListener(onTouchListener);
+    }
+
+    private void getReferencesForDrawerItemsListView() {
+        arrayListDrawer = new ArrayList<>();
+        ListView drawerListView = (ListView) findViewById(R.id.drawer_items_listview);
+        adapter = new AdapterDrawerItems(MainActivity.this, arrayListDrawer);
+        drawerListView.setAdapter(adapter);
+
+        drawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                drawerListPosition = position;
+                nameLedger = arrayListDrawer.get(position).getTitle();
+                ledgerId = db.selectIdByLedgerName(nameLedger);
+                setSelectedItemPositionOfDrawerItem(adapter, position);
+                viewItems(ledgerId);
+                closeDrawer();
+            }
+
+        });
+    }
+
+    private void setSelectedItemPositionOfDrawerItem(AdapterDrawerItems adapter, int position) {
+        adapter.setSelectedItemPosition(position);
+        adapter.notifyDataSetChanged();
+    }
+
+    private void initializeSumValue() {
+        sum = 0;
+        sumLedger = 0;
+        String expense = getString(R.string.sum, String.valueOf(sum));
+        showValueExpense.setText(expense);
+        String ledger = getString(R.string.sum, String.valueOf(sumLedger));
+        showValueIncome.setText(ledger);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_activity, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.add_type_menu) {
+            addType();
+            return true;
+        }
+        if (id == R.id.configure_drawer) {
+            Utility.startAnActivityForResult(MainActivity.this, MainActivity.this, ConfigureDrawer.class, CONFIGURE_DRAWER_REQUEST_CODE);
+            return true;
+        }
+        if (id == R.id.filter) {
+            Utility.startAnActivityForResult(MainActivity.this, MainActivity.this, Filter.class, FILTER_REQUEST_CODE);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    private void closeDrawer() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK && data != null) {
+            switch (requestCode) {
+                case CONFIGURE_DRAWER_REQUEST_CODE:
+                    viewDrawerItems();
+                    viewItems(ledgerId);
+                    break;
+                case ADD_NEW_REQUEST_CODE:
+                    viewDrawerItems();
+                    viewItems(ledgerId);
+                    break;
+                case EDIT_EXPENSE_REQUEST_CODE:
+                    viewDrawerItems();
+                    viewItems(ledgerId);
+                    break;
+                case FILTER_REQUEST_CODE:
+                    @SuppressWarnings("unchecked")
+                    ArrayList<String> typeArrayList = (ArrayList<String>) data.getSerializableExtra("arrayListOfFilter");
+                    String date = data.getStringExtra("date");
+                    String toDate = data.getStringExtra("toDate");
+                    String fromDate = data.getStringExtra("fromDate");
+
+                    try {
+                        getReferencesForViewItemsRecyclerView();
+
+                        if(date==null && toDate==null && fromDate==null) {
+                            String allKeyWord = typeArrayList.get(0);
+                            if(typeArrayList.size() == 1 && allKeyWord.equals("all")) {
+                                initializeSumValue();
+                                Cursor cursor = db.selectExpense(ledgerId);
+                                addValuesToArrayListExpense(cursor);
+                                selectAndShowLedgerValue(ledgerId);
+                                showBalance();
+                            } else {
+                                initializeSumValue();
+                                for (int j = 0; j<typeArrayList.size(); j++) {
+                                    Cursor cursor = db.selectExpenseByType(db.getIdByType(typeArrayList.get(j)), ledgerId);
+                                    addValuesToArrayListExpense(cursor);
+                                }
+                                selectAndShowLedgerValue(ledgerId);
+                                showBalance();
+                            }
+                        }
+
+                        if(toDate==null && fromDate==null && typeArrayList.isEmpty()) {
+                            initializeSumValue();
+                            Cursor cursor = db.selectExpenseByDate(date, ledgerId);
+                            addValuesToArrayListExpense(cursor);
+                            selectAndShowLedgerValue(ledgerId);
+                            showBalance();
+
+                        }
+
+                        if(date==null && typeArrayList.isEmpty()) {
+                            initializeSumValue();
+                            Cursor cursor = db.selectFromToDate(fromDate, toDate, ledgerId);
+                            addValuesToArrayListExpense(cursor);
+                            selectAndShowLedgerValue(ledgerId);
+                            showBalance();
+                        }
+
+                        if(!typeArrayList.isEmpty() && date!=null) {
+                            initializeSumValue();
+                            for (int i = 0; i<typeArrayList.size(); i++) {
+                                Cursor cursor = db.selectExpenseByTypeAndDate(db.getIdByType(typeArrayList.get(i)), date, ledgerId);
+                                addValuesToArrayListExpense(cursor);
+                            }
+                            selectAndShowLedgerValue(ledgerId);
+                            showBalance();
+                        }
+
+                        if(!typeArrayList.isEmpty() && toDate!=null && fromDate!=null) {
+                            initializeSumValue();
+                            for (int i = 0; i<typeArrayList.size(); i++) {
+                                Cursor cursor = db.selectExpenseByTypeAndFromToDate(db.getIdByType(typeArrayList.get(i)), fromDate, toDate, ledgerId);
+                                addValuesToArrayListExpense(cursor);
+                            }
+                            selectAndShowLedgerValue(ledgerId);
+                            showBalance();
+                        }
+
+                    } catch (Exception e) {
+                        Log.d("showItemsByFilter", " failed " + e.getMessage());
+                    }
+
+                    break;
+            }
+
+        }
+    }
+
+    private class addNewItemTextWatcher implements TextWatcher {
+        private View view;
+
+        private addNewItemTextWatcher(View view) {
+            this.view = view;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            switch (view.getId()) {
+                case R.id.add_main_type:
+                    Utility.validateEditText(addMainType, layoutAddMainType, "Enter valid type");
+                    break;
+            }
+
+        }
+    }
+
+    private void drawer(Toolbar toolbar) {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
     }
 
     private void addType() {
@@ -158,6 +455,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                                     } else {
                                         db.addMainType(mainType);
                                         viewDrawerItems();
+                                        viewItems(ledgerId);
                                         Utility.successSnackBar(recyclerView, "Type added", MainActivity.this);
                                     }
                                 } else if (!Utility.validateEditText(addMainType, layoutAddMainType, "Enter valid type")) {
@@ -170,98 +468,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         alert.show();
     }
 
-    private void showExpense(long expense) {
-        sum = sum + expense;
-        String messageSum = getString(R.string.sum, String.valueOf(sum));
-        showValueExpense.setText(messageSum);
-    }
-
-    private void showIncome(long income) {
-        sumIncome = sumIncome + income;
-        String messageSum = getString(R.string.sum, String.valueOf(sumIncome));
-        showValueIncome.setText(messageSum);
-    }
-
-    private void getReferencesForViewItemsRecyclerView() {
-        arrayListExpense = new ArrayList<>();
-        recyclerView = (RecyclerView) findViewById(R.id.view_item_recycle_view);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setAdapter(new ComplexRecyclerViewAdapter(MainActivity.this, arrayListExpense));
-    }
-
-    private void addValuesToArrayList(Cursor cursor) {
-        cursor.moveToFirst();
-        if (cursor.getCount() == 0) {
-            Toast.makeText(this, "Empty list", Toast.LENGTH_SHORT).show();
-        } else {
-            for (int i = 0; i < cursor.getCount(); i++) {
-                String id = cursor.getString(cursor.getColumnIndex(ID));
-                String name = cursor.getString(cursor.getColumnIndex(NAME));
-
-                long valueExpense = cursor.getLong(cursor.getColumnIndex(VALUE));
-                showExpense(valueExpense);
-
-                String value = String.valueOf(valueExpense);
-                String date = Utility.dateFormat(cursor.getLong(cursor.getColumnIndex(DATE)));
-                String type = db.selectTypeById(cursor.getString(cursor.getColumnIndex(TYPE_ID)));
-
-                arrayListExpense.add(new Expense(id, name, value, date, type));
-
-                cursor.moveToNext();
-            }
-            cursor.close();
-        }
-        enableSwipeExpense();
-    }
-
-    private void getReferencesForDrawerItemsRecyclerView() {
-        arrayListDrawer = new ArrayList<>();
-        recyclerViewDrawer = (RecyclerView) findViewById(R.id.drawer_items_recycle_view);
-        AdapterDrawerItems adapterDrawer = new AdapterDrawerItems(MainActivity.this, arrayListDrawer);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerViewDrawer.setLayoutManager(mLayoutManager);
-        recyclerViewDrawer.setAdapter(adapterDrawer);
-
-        RecyclerTouchListener touchListener = new RecyclerTouchListener(this, recyclerViewDrawer);
-        touchListener
-                .setClickable(new RecyclerTouchListener.OnRowClickListener() {
-                    @Override
-                    public void onRowClicked(int position) {
-                        recyclerViewDrawer.setClickable(true);
-                        recyclerViewDrawer.setSelected(true);
-                    }
-                    @Override
-                    public void onIndependentViewClicked(int independentViewID, int position) {
-                    }
-                });
-
-        recyclerViewDrawer.addOnItemTouchListener(touchListener);
-    }
-
-    private void enableSwipeExpense() {
-        RecyclerTouchListener onTouchListener = new RecyclerTouchListener(this, recyclerView);
-        onTouchListener
-                .setSwipeOptionViews(R.id.edit, R.id.delete)
-                .setSwipeable(R.id.rowFG, R.id.rowBG, new RecyclerTouchListener.OnSwipeOptionsClickListener() {
-                    @Override
-                    public void onSwipeOptionClicked(int viewID, int position) {
-                        if (viewID == R.id.delete) {
-                            Expense expense = (Expense) arrayListExpense.get(position);
-                            final String idExpense = expense.getId();
-                            deleteExpense(idExpense);
-
-                        } else if (viewID == R.id.edit) {
-                            Expense expense = (Expense) arrayListExpense.get(position);
-                            String id = expense.getId();
-                            String name = expense.getTitle();
-                            String value = expense.getValue();
-                            updateExpense(id, name, value);
-                        }
-                    }
-                });
-        recyclerView.addOnItemTouchListener(onTouchListener);
-    }
 
     private void deleteExpense(final String idExpense) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
@@ -280,7 +486,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                                 if (db.deleteExpense(idExpense)) {
                                     Utility.successSnackBar(recyclerView, "Expense deleted", MainActivity.this);
                                     initializeSumValue();
-                                    viewItems();
+                                    viewItems(ledgerId);
                                 } else if (!db.deleteExpense(idExpense)) {
                                     Utility.failSnackBar(recyclerView, "Error, Expense not deleted, try again", MainActivity.this);
                                 }
@@ -289,246 +495,5 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         });
         AlertDialog alert = alertDialogBuilder.create();
         alert.show();
-    }
-
-    private void updateExpense(final String idExpense, String name, String value) {
-
-//        getReferenceOfExpenseDialog();
-
-        addExpenseName.setText(name);
-        addExpenseValue.setText(value);
-
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
-        alertDialogBuilder.setTitle("Update Expense");
-        alertDialogBuilder.setView(addExpenseView);
-
-        alertDialogBuilder.setCancelable(true)
-                .setNegativeButton("CANCEL",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        })
-                .setPositiveButton("UPDATE",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                String expenseName = addExpenseName.getText().toString().trim();
-                                String expenseValue = addExpenseValue.getText().toString().trim();
-
-                                if (db.updateExpense(Long.valueOf(idExpense), expenseName, expenseValue, idType)) {
-                                    Utility.successSnackBar(recyclerView, "updated", MainActivity.this);
-                                    viewItems();
-                                } else if (!db.updateExpense(Long.valueOf(idExpense), expenseName, expenseValue, idType)) {
-                                    Utility.failSnackBar(recyclerView, "not updated", MainActivity.this);
-                                }
-                            }
-                        });
-        AlertDialog alert = alertDialogBuilder.create();
-        alert.show();
-    }
-
-    private void initializeSumValue() {
-        sum = 0;
-        sumIncome = 0;
-        String expense = getString(R.string.sum, String.valueOf(sum));
-        showValueExpense.setText(expense);
-        String income = getString(R.string.sum, String.valueOf(sumIncome));
-        showValueIncome.setText(income);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_activity, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.add_type_menu) {
-            addType();
-            return true;
-        }
-        if (id == R.id.configure_drawer) {
-            Intent intent = new Intent(MainActivity.this, ConfigureDrawer.class);
-            startActivityForResult(intent, CONFIGURE_DRAWER_REQUEST_CODE);
-            return true;
-        }
-        if (id == R.id.filter) {
-            Utility.startAnActivityForResult(MainActivity.this, MainActivity.this, Filter.class, FILTER_REQUEST_CODE);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-
-
-    @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-        Spinner spinner = (Spinner) adapterView;
-
-        if (spinner.getId() == R.id.type_spinner) {
-            String type = String.valueOf(adapterView.getItemAtPosition(i));
-            idType = db.getIdByType(type);
-        }
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
-
-    }
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    private void closeDrawer() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK && data != null) {
-            switch (requestCode) {
-                case CONFIGURE_DRAWER_REQUEST_CODE:
-                    viewDrawerItems();
-                    break;
-                case ADD_LEDGER_REQUEST_CODE:
-                    viewDrawerItems();
-                    break;
-                case ADD_NEW_REQUEST_CODE:
-                    viewItems();
-                    break;
-                case FILTER_REQUEST_CODE:
-                    @SuppressWarnings("unchecked")
-                    ArrayList<String> typeArrayList = (ArrayList<String>) data.getSerializableExtra("arrayListOfFilter");
-                    String date = data.getStringExtra("date");
-                    String toDate = data.getStringExtra("toDate");
-                    String fromDate = data.getStringExtra("fromDate");
-
-                    try {
-                        getReferencesForViewItemsRecyclerView();
-                        initializeSumValue();
-
-                        if(date==null && toDate==null && fromDate==null) {
-                            String allKeyWord = typeArrayList.get(0);
-                            if(typeArrayList.size() == 1 && allKeyWord.equals("all")) {
-                                    Cursor cursor = db.selectExpense();
-                                    addValuesToArrayList(cursor);
-                            } else {
-                                for (int j = 0; j<typeArrayList.size(); j++) {
-                                    Cursor cursor = db.selectExpenseByType(db.getIdByType(typeArrayList.get(j)));
-                                    addValuesToArrayList(cursor);
-                                }
-                            }
-                        }
-
-                        if(toDate==null && fromDate==null && typeArrayList.isEmpty()) {
-                            Cursor cursor = db.selectExpenseByDate(date);
-                            addValuesToArrayList(cursor);
-                        }
-
-                        if(date==null && typeArrayList.isEmpty()) {
-                            Cursor cursor = db.selectFromToDate(fromDate, toDate);
-                            addValuesToArrayList(cursor);
-                        }
-
-                        if(!typeArrayList.isEmpty() && date!=null) {
-                            for (int i = 0; i<typeArrayList.size(); i++) {
-                                Cursor cursor = db.selectExpenseByTypeAndDate(db.getIdByType(typeArrayList.get(i)), date);
-                                addValuesToArrayList(cursor);
-                            }
-                        }
-
-                        if(!typeArrayList.isEmpty() && toDate!=null && fromDate!=null) {
-                            for (int i = 0; i<typeArrayList.size(); i++) {
-                                Cursor cursor = db.selectExpenseByTypeAndFromToDate(db.getIdByType(typeArrayList.get(i)), fromDate, toDate);
-                                addValuesToArrayList(cursor);
-                            }
-                        }
-
-                    } catch (Exception e) {
-                        Log.d("showItemsByFilter", " failed " + e.getMessage());
-                    }
-
-                    break;
-            }
-
-        }
-    }
-
-    private class addNewItemTextWatcher implements TextWatcher {
-        private View view;
-
-        private addNewItemTextWatcher(View view) {
-            this.view = view;
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable editable) {
-            switch (view.getId()) {
-                case R.id.name_expense:
-                    Utility.validateEditText(addExpenseName, layoutExpenseName, "Enter valid name");
-                    break;
-                case R.id.value_expense:
-                    Utility.validateEditText(addExpenseValue, layoutExpenseValue, "Enter valid value");
-                    break;
-                case R.id.add_main_type:
-                    Utility.validateEditText(addMainType, layoutAddMainType, "Enter valid type");
-                    break;
-            }
-
-        }
-    }
-
-    private void DrawerClickListener() {
-        onTouchListener = new RecyclerTouchListener(this, recyclerViewDrawer);
-        onTouchListener
-                .setClickable(new RecyclerTouchListener.OnRowClickListener() {
-                    @Override
-                    public void onRowClicked(int position) {
-                        nameLedger = arrayListDrawer.get(position).getTitle();
-                        ledgerId = db.selectIdByLedgerName(nameLedger);
-                        initializeSumValue();
-                        viewItems();
-                        viewLedger();
-                        closeDrawer();
-                    }
-                    @Override
-                    public void onIndependentViewClicked(int independentViewID, int position) {
-                        Utility.shortToast(getApplicationContext(), "Button in row " + (position + 1) + " clicked!");
-                    }
-                });
-        recyclerViewDrawer.addOnItemTouchListener(onTouchListener);
-    }
-
-    private void drawer(Toolbar toolbar) {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
     }
 }

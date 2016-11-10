@@ -105,14 +105,20 @@
         android:padding="@dimen/six_margin"
         android:clickable="true"
         android:focusable="true"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:visibility="visible">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/colorPrimary"
-            android:id="@+id/name_main_type"/>
+            android:layout_marginRight="@dimen/_10sdp"
+            android:id="@+id/name_configure_drawer"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorPrimary"
+            android:id="@+id/value_configure_drawer"/>
 
     </LinearLayout>
     <View

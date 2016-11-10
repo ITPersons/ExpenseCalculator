@@ -173,9 +173,10 @@
     <string name="enter_value">Enter value</string>
     <string name="note">Note</string>
     <string name="expense">Expense</string>
-    <string name="value">Rs.1000</string>
+    <string name="value">Rs.0</string>
     <string name="income">Income</string>
     <string name="balance">Balance</string>
     <string name="remaining">Remaining</string>
     <string name="total">Total</string>
+    <string name="ledger">Ledger</string>
 </resources>

@@ -19,12 +19,12 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/drawer_items_recycle_view"
+        <ListView
+            android:id="@+id/drawer_items_listview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?android:attr/activatedBackgroundIndicator">
-        </android.support.v7.widget.RecyclerView>
+        </ListView>
 
     </android.support.design.widget.NavigationView>
 

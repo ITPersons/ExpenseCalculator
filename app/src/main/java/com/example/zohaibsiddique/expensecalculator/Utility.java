@@ -47,7 +47,17 @@ class Utility {
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
-        return String.valueOf(new StringBuilder().append(day).append("/").append(month+1).append("/").append(year));
+        return String.valueOf(new StringBuilder().append(day<10?"0"+day:day).append("/").append(month+1<10?"0"+month+1:month+1).append("/").append(year));
+    }
+
+    static String TimefutureThirtyDays() {
+        Calendar c = Calendar.getInstance();
+//        long time = c.getTimeInMillis() + 2592000000;
+        c.add(Calendar.DATE, 30);
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        return String.valueOf(new StringBuilder().append(day<10?"0"+day:day).append("/").append(month+1<10?"0"+month+1:month+1).append("/").append(year));
     }
 
     static String simpleDateFormat(long timeInMills) {

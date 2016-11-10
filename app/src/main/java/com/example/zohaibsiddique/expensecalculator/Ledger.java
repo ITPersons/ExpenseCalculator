@@ -2,19 +2,16 @@ package com.example.zohaibsiddique.expensecalculator;
 
 
 class Ledger {
-    private String id, title, date, startingBalance,  fromDate, toDate;
+    private String id, title, value, date, startingBalance,  fromDate, toDate;
 
     public Ledger(String title) {
         this.title = title;
     }
 
-    public Ledger(String id, String title, String startingBalance, String date, String fromDate, String toDate) {
+    public Ledger(String id, String title, String value) {
         this.id = id;
         this.title = title;
-        this.startingBalance = startingBalance;
-        this.date = date;
-        this.fromDate = fromDate;
-        this.toDate = toDate;
+        this.value = value;
     }
 
     public String getId() {
@@ -31,6 +28,14 @@ class Ledger {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 
     public String getStartingBalance() {

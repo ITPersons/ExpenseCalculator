@@ -101,12 +101,13 @@ class DB extends SQLiteOpenHelper {
 //        }
 //    }
 
-    Cursor selectExpense() {
+    Cursor selectExpense(String incomeId) {
         Cursor cursor = null;
         try {
             SQLiteDatabase db = this.getWritableDatabase();
             cursor = db.rawQuery("SELECT " + ID_EXPENSE + "," + NAME_EXPENSE + "," + VALUE_EXPENSE
                     + "," + DATE_EXPENSE + "," + TYPE_ID_EXPENSE + " FROM " + TABLE_EXPENSE
+                    + " WHERE " + FOREIGN_KEY_LEDGER + "='" + incomeId + "'"
                     + " ORDER BY " + DATE_EXPENSE + " DESC", null);
         } catch (Exception e) {
             Log.d("selectExpenses", " error " + e.getMessage());
@@ -115,7 +116,7 @@ class DB extends SQLiteOpenHelper {
         return cursor;
     }
 
-    Cursor selectExpenseByTypeAndDate(String type, String date) {
+    Cursor selectExpenseByTypeAndDate(String type, String date, String idLedger) {
         Cursor cursor = null;
         try {
             SQLiteDatabase db = this.getWritableDatabase();
@@ -126,7 +127,7 @@ class DB extends SQLiteOpenHelper {
                     + KEY_SEARCH_DATE + ","
                     + TYPE_ID_EXPENSE + " FROM " + TABLE_EXPENSE
                     + " WHERE " + TYPE_ID_EXPENSE + "='" + type + "' AND "
-                    + KEY_SEARCH_DATE + "='" + date + "'"
+                    + KEY_SEARCH_DATE + "='" + date + "' AND " + FOREIGN_KEY_LEDGER + "='" + idLedger + "'"
                     + " ORDER BY " + DATE_EXPENSE + " DESC", null);
         } catch (Exception e) {
             Log.d("selectExpenses", " error " + e.getMessage());
@@ -135,7 +136,7 @@ class DB extends SQLiteOpenHelper {
         return cursor;
     }
 
-    Cursor selectExpenseByTypeAndFromToDate(String type, String fromDate, String toDate) {
+    Cursor selectExpenseByTypeAndFromToDate(String type, String fromDate, String toDate, String idLedger) {
         Cursor cursor = null;
         try {
             SQLiteDatabase db = this.getWritableDatabase();
@@ -146,7 +147,7 @@ class DB extends SQLiteOpenHelper {
                     + KEY_SEARCH_DATE + ","
                     + TYPE_ID_EXPENSE + " FROM " + TABLE_EXPENSE
                     + " WHERE " + TYPE_ID_EXPENSE + "='" + type + "' AND "
-                    + KEY_SEARCH_DATE + " BETWEEN '" + fromDate + "' AND '" + toDate + "'"
+                    + KEY_SEARCH_DATE + " BETWEEN '" + fromDate + "' AND '" + toDate + "' AND " + FOREIGN_KEY_LEDGER + "='" + idLedger + "'"
                     + " ORDER BY " + DATE_EXPENSE + " DESC", null);
         } catch (Exception e) {
             Log.d("selectExpenses", " error " + e.getMessage());
@@ -159,7 +160,7 @@ class DB extends SQLiteOpenHelper {
         Cursor cursor = null;
         try {
             SQLiteDatabase db = this.getWritableDatabase();
-            cursor = db.rawQuery("SELECT " + TITLE_LEDGER  + " FROM " + TABLE_LEDGER
+            cursor = db.rawQuery("SELECT " + ID_LEDGER + "," + TITLE_LEDGER  + "," + STARTING_BALANCE_LEDGER + " FROM " + TABLE_LEDGER
                     + " ORDER BY " + ID_LEDGER + " DESC", null);
         } catch (Exception e) {
             Log.d("selectLedger", " error " + e.getMessage());
@@ -168,7 +169,33 @@ class DB extends SQLiteOpenHelper {
         return cursor;
     }
 
-    Cursor selectFromToDate(String from, String to) {
+    Cursor selectLedgerValueById(String id) {
+        Cursor cursor = null;
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            cursor = db.rawQuery("SELECT " + STARTING_BALANCE_LEDGER  + " FROM " + TABLE_LEDGER
+                    + " WHERE "+ID_LEDGER+"='" +id+"'", null);
+        } catch (Exception e) {
+            Log.d("selectLedgerValueById", " error " + e.getMessage());
+        }
+
+        return cursor;
+    }
+
+    Cursor selectExpenseValueById(String id) {
+        Cursor cursor = null;
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            cursor = db.rawQuery("SELECT " + VALUE_EXPENSE  + " FROM " + TABLE_EXPENSE
+                    + " WHERE "+FOREIGN_KEY_LEDGER+"='" +id+"'", null);
+        } catch (Exception e) {
+            Log.d("selectLedgerValueById", " error " + e.getMessage());
+        }
+
+        return cursor;
+    }
+
+    Cursor selectFromToDate(String from, String to, String idLedger) {
         Cursor cursor = null;
         try {
             SQLiteDatabase db = this.getWritableDatabase();
@@ -178,7 +205,8 @@ class DB extends SQLiteOpenHelper {
                     + DATE_EXPENSE + ","
                     + KEY_SEARCH_DATE + ","
                     + TYPE_ID_EXPENSE + " FROM " + TABLE_EXPENSE
-                    + " WHERE " + KEY_SEARCH_DATE + " BETWEEN '" + from + "' AND '" + to + "'", null);
+                    + " WHERE " + KEY_SEARCH_DATE + " BETWEEN '" + from + "' AND '" + to
+                    + "' AND " + FOREIGN_KEY_LEDGER + "='" + idLedger + "'", null);
         } catch (Exception e) {
             Log.d("selectFromToDate", " error " + e.getMessage());
         }
@@ -191,7 +219,7 @@ class DB extends SQLiteOpenHelper {
         String id = null;
         try {
             SQLiteDatabase db = this.getWritableDatabase();
-            cursor = db.rawQuery("SELECT " + ID_LEDGER + " FROM " + TITLE_LEDGER + " WHERE " + TITLE_LEDGER + "='" + name + "'", null);
+            cursor = db.rawQuery("SELECT " + ID_LEDGER + " FROM " + TABLE_LEDGER + " WHERE " + TITLE_LEDGER + "='" + name + "'", null);
             cursor.moveToFirst();
         } catch (Exception e) {
             Log.d("selectIdByMainTypeName", " error is " + e.getMessage());
@@ -203,7 +231,20 @@ class DB extends SQLiteOpenHelper {
         return id;
     }
 
-    Cursor selectExpenseByType(String type) {
+    String selectLastIdOfLedger() {
+        Cursor cursor;
+        String id = null;
+        SQLiteDatabase db = this.getWritableDatabase();
+        cursor = db.rawQuery("SELECT " + ID_LEDGER + " FROM " + TABLE_LEDGER, null);
+        if(cursor!=null && cursor.moveToLast()) {
+            cursor.moveToLast();
+            id = cursor.getString(cursor.getColumnIndex(ID_LEDGER));
+            cursor.close();
+        }
+        return id;
+    }
+
+    Cursor selectExpenseByType(String type, String idLedger) {
         Cursor cursor = null;
         try {
             SQLiteDatabase db = this.getWritableDatabase();
@@ -212,7 +253,7 @@ class DB extends SQLiteOpenHelper {
                     + VALUE_EXPENSE + ","
                     + DATE_EXPENSE + ","
                     + TYPE_ID_EXPENSE + " FROM " + TABLE_EXPENSE
-                    + " WHERE " + TYPE_ID_EXPENSE + "='" + type + "'"
+                    + " WHERE " + TYPE_ID_EXPENSE + "='" + type + "' AND " + FOREIGN_KEY_LEDGER + "='" + idLedger + "'"
                     + " ORDER BY " + DATE_EXPENSE + " DESC", null);
         } catch (Exception e) {
             Log.d("selectExpenseByType", " error is " + e.getMessage());
@@ -220,7 +261,7 @@ class DB extends SQLiteOpenHelper {
         return cursor;
     }
 
-    Cursor selectExpenseByDate(String date) {
+    Cursor selectExpenseByDate(String date, String idLedger) {
         Cursor cursor = null;
         try {
             SQLiteDatabase db = this.getWritableDatabase();
@@ -230,7 +271,7 @@ class DB extends SQLiteOpenHelper {
                     + DATE_EXPENSE + ","
                     + TYPE_ID_EXPENSE + ","
                     + KEY_SEARCH_DATE +" FROM " + TABLE_EXPENSE
-                    + " WHERE " + KEY_SEARCH_DATE + "='" + date + "'"
+                    + " WHERE " + KEY_SEARCH_DATE + "='" + date + "' AND " + FOREIGN_KEY_LEDGER + "='" + idLedger + "'"
                     + " ORDER BY " + DATE_EXPENSE + " DESC", null);
         } catch (Exception e) {
             Log.d("selectDateOfExpense", " error " + e.getMessage());
@@ -253,16 +294,16 @@ class DB extends SQLiteOpenHelper {
         return true;
     }
 
-    boolean addExpense(String name, String value, String date, String keyDate, String type) {
+    boolean addExpense(String name, String value, String date, String keyDate, String type, String incomeId) {
         try {
             SQLiteDatabase db = this.getWritableDatabase();
             ContentValues contentValues = new ContentValues();
-
             contentValues.put(NAME_EXPENSE, name);
             contentValues.put(VALUE_EXPENSE, value);
             contentValues.put(DATE_EXPENSE, date);
             contentValues.put(KEY_SEARCH_DATE, keyDate);
             contentValues.put(TYPE_ID_EXPENSE, type);
+            contentValues.put(FOREIGN_KEY_LEDGER, incomeId);
             db.insert(TABLE_EXPENSE, null, contentValues);
 
         } catch (Exception e) {
@@ -329,20 +370,51 @@ class DB extends SQLiteOpenHelper {
         return true;
     }
 
+
+    boolean deleteLedger(String id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM " + TABLE_LEDGER + " WHERE " + ID_LEDGER + "='" + id + "'");
+        return true;
+    }
+
     boolean deleteType(String id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DELETE FROM " + TABLE_MAIN_TYPE + " WHERE " + ID_MAIN_TYPE + "='" + id + "'");
         return true;
     }
 
-    boolean updateExpense(long id, String name, String value, String type) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(NAME_EXPENSE, name);
-        contentValues.put(VALUE_EXPENSE, value);
-        contentValues.put(TYPE_ID_EXPENSE, type);
-        db.update(TABLE_EXPENSE, contentValues, ID_EXPENSE + "= ?", new String[]{Long.toString(id)});
-        return true;
+    boolean updateExpense(long id, String name, String value, String date, String keyDate, String type, String ledgerId) {
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(NAME_EXPENSE, name);
+            contentValues.put(VALUE_EXPENSE, value);
+            contentValues.put(DATE_EXPENSE, date);
+            contentValues.put(KEY_SEARCH_DATE, keyDate);
+            contentValues.put(TYPE_ID_EXPENSE, type);
+            contentValues.put(FOREIGN_KEY_LEDGER, ledgerId);
+            db.update(TABLE_EXPENSE, contentValues, ID_EXPENSE + "= ?", new String[]{Long.toString(id)});
+            return true;
+        } catch (Exception e) {
+            Log.d("updateExpense", e.getMessage());
+        }
+        return false;
+    }
+
+    boolean updateLedger(long id, String name, String value, String fromDate, String toDate) {
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(TITLE_LEDGER, name);
+            contentValues.put(STARTING_BALANCE_LEDGER, value);
+            contentValues.put(FROM_DATE_LEDGER, fromDate);
+            contentValues.put(TO_DATE_LEDGER, toDate);
+            db.update(TABLE_LEDGER, contentValues, ID_LEDGER + "= ?", new String[]{Long.toString(id)});
+            return true;
+        } catch (Exception e) {
+            Log.d("updateLedger", e.getMessage());
+        }
+        return false;
     }
 
     boolean updateType(long id, String name) {
@@ -423,6 +495,23 @@ class DB extends SQLiteOpenHelper {
         }
         if(cursor != null && cursor.moveToFirst()) {
             id = cursor.getString(cursor.getColumnIndex(ID_MAIN_TYPE));
+            cursor.close();
+        }
+        return id;
+    }
+
+    String getIdByLedger(String ledger) {
+        Cursor cursor = null;
+        String id = null;
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            cursor = db.rawQuery("SELECT " + ID_LEDGER + " FROM " + TABLE_LEDGER + " WHERE " + TITLE_LEDGER + "='" + ledger + "'", null);
+            cursor.moveToFirst();
+        } catch (Exception e) {
+            Log.d("getIdByType", " error is " + e.getMessage());
+        }
+        if(cursor != null && cursor.moveToFirst()) {
+            id = cursor.getString(cursor.getColumnIndex(ID_LEDGER));
             cursor.close();
         }
         return id;

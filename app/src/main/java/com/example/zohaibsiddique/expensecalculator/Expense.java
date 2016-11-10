@@ -3,7 +3,7 @@ package com.example.zohaibsiddique.expensecalculator;
 class Expense {
     private String id, title, date, value, type;
 
-    public Expense(String id, String title, String value, String date, String type) {
+    Expense(String id, String title, String value, String date, String type) {
         this.id = id;
         this.title = title;
         this.value = value;

@@ -2,53 +2,66 @@ package com.example.zohaibsiddique.expensecalculator;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import java.util.HashMap;
 import java.util.List;
 
-class AdapterConfigureDrawer extends RecyclerView.Adapter<AdapterConfigureDrawer.MainViewHolder> {
-    private LayoutInflater inflater;
-    List<HashMap<String, Object>> list;
+class AdapterConfigureDrawer extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private List<Object> items;
+
+    private final int LEDGER = 0;
     Context context;
 
-
-    AdapterConfigureDrawer(Context context, List<HashMap<String, Object>> list) {
-        inflater = LayoutInflater.from(context);
-        this.list = list;
+    AdapterConfigureDrawer(Context context, List<Object> items) {
         this.context = context;
-    }
-
-    @Override
-    public MainViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = inflater.inflate(R.layout.view_configure_drawer_items, null);
-        return new MainViewHolder(view);
-    }
-
-    @Override
-    public void onBindViewHolder(MainViewHolder holder, int position) {
-        try {
-            final String NAME_TYPE = "name";
-            holder.name.setText(list.get(position).get(NAME_TYPE).toString());
-        } catch (NullPointerException e) {
-            Log.d("onBindViewHolder", " error is" + e.getMessage());
-        }
+        this.items = items;
     }
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return this.items.size();
     }
 
-    class MainViewHolder extends RecyclerView.ViewHolder {
-        TextView name;
+    @Override
+    public int getItemViewType(int position) {
+        if (items.get(position) instanceof Ledger) {
+            return LEDGER;
+        }
+        return -1;
+    }
 
-        private MainViewHolder(View itemView) {
-            super(itemView);
-            name = (TextView) itemView.findViewById(R.id.name_main_type);
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+
+        RecyclerView.ViewHolder viewHolder = null;
+        LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
+
+        switch (viewType) {
+            case LEDGER:
+                View v1 = inflater.inflate(R.layout.view_configure_drawer_items, viewGroup, false);
+                viewHolder = new ViewHolderConfigureDrawer(v1);
+                break;
+        }
+        return viewHolder;
+    }
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+        switch (viewHolder.getItemViewType()) {
+            case LEDGER:
+                ViewHolderConfigureDrawer view = (ViewHolderConfigureDrawer) viewHolder;
+                configureViewHolder(view, position);
+                break;
+        }
+    }
+
+    private void configureViewHolder(ViewHolderConfigureDrawer viewHolder, int position) {
+        Ledger expense = (Ledger) items.get(position);
+        if (expense != null) {
+            viewHolder.getName().setText(expense.getTitle());
+            viewHolder.getValue().setText(expense.getValue());
         }
     }
 }

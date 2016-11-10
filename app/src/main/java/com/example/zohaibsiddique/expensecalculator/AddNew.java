@@ -1,5 +1,7 @@
 package com.example.zohaibsiddique.expensecalculator;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -20,7 +22,7 @@ public class AddNew extends AppCompatActivity{
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        if(actionBar != null) {
+        if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
@@ -34,10 +36,35 @@ public class AddNew extends AppCompatActivity{
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
+        final String PREFERENCE_LEDGER = "edit_ledger";
+        final String PREFERENCE_EXPENSE = "edit_expense";
+        final String KEY_ID = "id";
+        final String KEY_NAME = "name";
+        final String KEY_VALUE = "value";
+
+        SharedPreferences editorExpense;
+        editorExpense = getSharedPreferences(PREFERENCE_EXPENSE, Context.MODE_PRIVATE);
+        if (editorExpense.contains(KEY_ID) && editorExpense.contains(KEY_NAME) && editorExpense.contains(KEY_VALUE)) {
+            if (actionBar != null) {
+                actionBar.setTitle("Edit");
+            }
+        }
+
+        SharedPreferences editor;
+        editor = getSharedPreferences(PREFERENCE_LEDGER, Context.MODE_PRIVATE);
+        if (editor.contains(KEY_ID) && editor.contains(KEY_NAME)) {
+            if (actionBar != null) {
+                actionBar.setTitle("Edit");
+            }
+            viewPager.setCurrentItem(1);
+
+        }
+
         tabLayout.addOnTabSelectedListener (new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
+
             }
 
             @Override

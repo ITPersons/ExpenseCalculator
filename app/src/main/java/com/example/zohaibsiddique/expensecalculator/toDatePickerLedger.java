@@ -16,7 +16,7 @@ public class toDatePickerLedger extends DialogFragment
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final Calendar c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
-        int month = c.get(Calendar.MONTH) + 1;
+        int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
 
         return new DatePickerDialog(getActivity(), this, year, month, day);
@@ -25,7 +25,7 @@ public class toDatePickerLedger extends DialogFragment
     public void onDateSet(DatePicker view, int year, int month, int day) {
         if(view.isShown()) {
             EditText toDate = (EditText) getActivity().findViewById(R.id.to_date_edit_text_ledger);
-            String date = String.valueOf(new StringBuilder().append(day<10?"0"+day:day).append("/").append(month<10?"0"+month:month).append("/").append(year));
+            String date = String.valueOf(new StringBuilder().append(day<10?"0"+day:day).append("/").append(month+1<10?"0"+month+1:month+1).append("/").append(year));
             toDate.setText(date);
         }
 

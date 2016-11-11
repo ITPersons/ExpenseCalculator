@@ -138,8 +138,8 @@ public class AddLedgerFragment extends Fragment {
                             Utility.successSnackBar(layoutFromDate, "Ledger saved", getActivity());
                             titleEditText.setText("");
                             startingBalanceEditText.setText("");
-                            fromDateEditText.setText("");
-                            toDateEditText.setText("");
+                            fromDateEditText.setText(Utility.currentTimeInDateFormat());
+                            toDateEditText.setText(Utility.TimefutureThirtyDays());
                             Utility.requestFocus(titleEditText, getActivity());
                             Utility.hintDisable(titleEditText, layoutLedgerTitle);
                             Utility.hintDisable(startingBalanceEditText, layoutStartingBalance);

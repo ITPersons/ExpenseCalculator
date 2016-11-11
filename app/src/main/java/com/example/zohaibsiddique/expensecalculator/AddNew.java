@@ -27,8 +27,9 @@ public class AddNew extends AppCompatActivity{
         }
 
         tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        tabLayout.addTab(tabLayout.newTab().setText("Add Expense"));
-        tabLayout.addTab(tabLayout.newTab().setText("Add Ledger"));
+        tabLayout.addTab(tabLayout.newTab().setText("Expense"));
+        tabLayout.addTab(tabLayout.newTab().setText("Ledger"));
+        tabLayout.addTab(tabLayout.newTab().setText("Type"));
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.pager2);
         final TabAdapter adapter = new TabAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
@@ -38,6 +39,7 @@ public class AddNew extends AppCompatActivity{
 
         final String PREFERENCE_LEDGER = "edit_ledger";
         final String PREFERENCE_EXPENSE = "edit_expense";
+        final String PREFERENCE_TYPE = "edit_type";
         final String KEY_ID = "id";
         final String KEY_NAME = "name";
         final String KEY_VALUE = "value";
@@ -57,6 +59,16 @@ public class AddNew extends AppCompatActivity{
                 actionBar.setTitle("Edit");
             }
             viewPager.setCurrentItem(1);
+
+        }
+
+        SharedPreferences editorType;
+        editorType = getSharedPreferences(PREFERENCE_TYPE, Context.MODE_PRIVATE);
+        if (editorType.contains(KEY_ID) && editorType.contains(KEY_NAME)) {
+            if (actionBar != null) {
+                actionBar.setTitle("Edit");
+            }
+            viewPager.setCurrentItem(2);
 
         }
 
@@ -96,4 +108,11 @@ public class AddNew extends AppCompatActivity{
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void onBackPressed() {
+        Utility.setResultActivity(AddNew.this);
+        finish();
+    }
+
 }

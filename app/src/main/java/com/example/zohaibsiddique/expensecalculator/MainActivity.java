@@ -72,8 +72,6 @@ public class MainActivity extends AppCompatActivity{
         if(db.selectLastIdOfLedger() != null) {
             ledgerId = db.selectLastIdOfLedger();
             viewItems(ledgerId);
-        } else {
-
         }
 
         Button addNewButton = (Button) findViewById(R.id.add_new_button);
@@ -183,9 +181,10 @@ public class MainActivity extends AppCompatActivity{
                 String value = String.valueOf(valueExpense);
 
                 String date = Utility.dateFormat(cursor.getLong(cursor.getColumnIndex(DATE)));
-                String type = db.selectTypeById(cursor.getString(cursor.getColumnIndex(TYPE_ID)));
+                String typeId = cursor.getString(cursor.getColumnIndex(TYPE_ID));
+                String type = db.selectTypeById(typeId);
 
-                arrayListExpense.add(new Expense(id, name, value, date, type));
+                arrayListExpense.add(new Expense(id, name, value, date, type, typeId, ledgerId));
 
                 cursor.moveToNext();
             }
@@ -208,9 +207,12 @@ public class MainActivity extends AppCompatActivity{
 
                         } else if (viewID == R.id.edit) {
                             SessionManager preference = new SessionManager();
-                            preference.setDatePreferences(MainActivity.this, "edit_expense", "id", expense.getId());
-                            preference.setDatePreferences(MainActivity.this, "edit_expense", "name", expense.getTitle());
-                            preference.setDatePreferences(MainActivity.this, "edit_expense", "value", expense.getValue());
+                            final String PREFERENCES = "edit_expense";
+                            preference.setDatePreferences(MainActivity.this, PREFERENCES, "id", expense.getId());
+                            preference.setDatePreferences(MainActivity.this, PREFERENCES, "name", expense.getTitle());
+                            preference.setDatePreferences(MainActivity.this, PREFERENCES, "value", expense.getValue());
+                            preference.setDatePreferences(MainActivity.this, PREFERENCES, "typeID", expense.getTypeId());
+                            preference.setDatePreferences(MainActivity.this, PREFERENCES, "ledgerId", expense.getIdLedger());
                             Utility.startAnActivityForResult(MainActivity.this, MainActivity.this, AddNew.class, EDIT_EXPENSE_REQUEST_CODE);
                         }
                     }
@@ -262,10 +264,6 @@ public class MainActivity extends AppCompatActivity{
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.add_type_menu) {
-            addType();
-            return true;
-        }
         if (id == R.id.configure_drawer) {
             Utility.startAnActivityForResult(MainActivity.this, MainActivity.this, ConfigureDrawer.class, CONFIGURE_DRAWER_REQUEST_CODE);
             return true;
@@ -388,33 +386,7 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
-    private class addNewItemTextWatcher implements TextWatcher {
-        private View view;
 
-        private addNewItemTextWatcher(View view) {
-            this.view = view;
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable editable) {
-            switch (view.getId()) {
-                case R.id.add_main_type:
-                    Utility.validateEditText(addMainType, layoutAddMainType, "Enter valid type");
-                    break;
-            }
-
-        }
-    }
 
     private void drawer(Toolbar toolbar) {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -423,51 +395,6 @@ public class MainActivity extends AppCompatActivity{
         drawer.addDrawerListener(toggle);
         toggle.syncState();
     }
-
-    private void addType() {
-        LayoutInflater layoutInflater = LayoutInflater.from(MainActivity.this);
-        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linear_layout_add_main_type) ;
-        View addMainTypeView = layoutInflater.inflate(R.layout.add_type, linearLayout);
-        layoutAddMainType = (TextInputLayout) addMainTypeView.findViewById(R.id.text_input_layout_add_main_type);
-        addMainType = (EditText) addMainTypeView.findViewById(R.id.add_main_type);
-        addMainType.addTextChangedListener(new addNewItemTextWatcher(addMainType));
-
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);
-        alertDialogBuilder.setTitle("Add type");
-        alertDialogBuilder.setView(addMainTypeView);
-
-        alertDialogBuilder.setCancelable(true)
-                .setNegativeButton("CANCEL",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        })
-                .setPositiveButton("ADD",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-
-                                if (Utility.validateEditText(addMainType, layoutAddMainType, "Enter valid type")) {
-                                    String mainType = addMainType.getText().toString().trim();
-
-                                    if (db.isMainTypeExisted(mainType)) {
-                                        Utility.failSnackBar(recyclerView, "Error, type already existed. try another", MainActivity.this);
-                                    } else {
-                                        db.addMainType(mainType);
-                                        viewDrawerItems();
-                                        viewItems(ledgerId);
-                                        Utility.successSnackBar(recyclerView, "Type added", MainActivity.this);
-                                    }
-                                } else if (!Utility.validateEditText(addMainType, layoutAddMainType, "Enter valid type")) {
-                                    addType();
-                                    Utility.failSnackBar(recyclerView, "Error, field cannot be empty, try again", MainActivity.this);
-                                }
-                            }
-                        });
-        AlertDialog alert = alertDialogBuilder.create();
-        alert.show();
-    }
-
 
     private void deleteExpense(final String idExpense) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this);

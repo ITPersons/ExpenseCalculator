@@ -169,6 +169,19 @@ class DB extends SQLiteOpenHelper {
         return cursor;
     }
 
+    Cursor selectLedgerOrderById(String id) {
+        Cursor cursor = null;
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            cursor = db.rawQuery("SELECT " + ID_LEDGER + "," + TITLE_LEDGER  + "," + STARTING_BALANCE_LEDGER + " FROM " + TABLE_LEDGER
+                    + " ORDER BY " + ID_LEDGER + "='" + id + "' DESC", null);
+        } catch (Exception e) {
+            Log.d("selectLedger", " error " + e.getMessage());
+        }
+
+        return cursor;
+    }
+
     Cursor selectLedgerValueById(String id) {
         Cursor cursor = null;
         try {
@@ -280,7 +293,7 @@ class DB extends SQLiteOpenHelper {
         return cursor;
     }
 
-    boolean addMainType(String mainType) {
+    boolean addType(String mainType) {
         try {
             SQLiteDatabase db = this.getWritableDatabase();
             ContentValues contentValues = new ContentValues();
@@ -335,7 +348,7 @@ class DB extends SQLiteOpenHelper {
         try {
             SQLiteDatabase db = this.getWritableDatabase();
             cursor = db.rawQuery("SELECT " + TITLE_LEDGER + " FROM " + TABLE_LEDGER
-                    + " WHERE " + TITLE_LEDGER + "='" + title + "'", null);
+                    + " WHERE " + TITLE_LEDGER + "='" + title + "' COLLATE NOCASE", null);
             if(cursor != null && cursor.moveToFirst()) {
                 cursor.getString(cursor.getColumnIndex(TITLE_LEDGER));
                 cursor.close();
@@ -352,7 +365,7 @@ class DB extends SQLiteOpenHelper {
         try {
             SQLiteDatabase db = this.getWritableDatabase();
             cursor = db.rawQuery("SELECT " + NAME_EXPENSE + " FROM " + TABLE_EXPENSE
-                    + " WHERE " + NAME_EXPENSE + "='" + title + "'", null);
+                    + " WHERE " + NAME_EXPENSE + "='" + title + "' COLLATE NOCASE", null);
             if(cursor != null && cursor.moveToFirst()) {
                 cursor.getString(cursor.getColumnIndex(NAME_EXPENSE));
                 cursor.close();
@@ -374,6 +387,18 @@ class DB extends SQLiteOpenHelper {
     boolean deleteLedger(String id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("DELETE FROM " + TABLE_LEDGER + " WHERE " + ID_LEDGER + "='" + id + "'");
+        return true;
+    }
+
+    boolean deleteExpenseByLedgerId(String id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM " + TABLE_EXPENSE + " WHERE " + FOREIGN_KEY_LEDGER + "='" + id + "'");
+        return true;
+    }
+
+    boolean deleteExpenseByTypeId(String id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM " + TABLE_EXPENSE + " WHERE " + TYPE_ID_EXPENSE + "='" + id + "'");
         return true;
     }
 
@@ -401,6 +426,19 @@ class DB extends SQLiteOpenHelper {
         return false;
     }
 
+//    boolean updateType(long id, String name) {
+//        try {
+//            SQLiteDatabase db = this.getWritableDatabase();
+//            ContentValues contentValues = new ContentValues();
+//            contentValues.put(NAME_EXPENSE, name);
+//            db.update(TABLE_EXPENSE, contentValues, ID_EXPENSE + "= ?", new String[]{Long.toString(id)});
+//            return true;
+//        } catch (Exception e) {
+//            Log.d("updateExpense", e.getMessage());
+//        }
+//        return false;
+//    }
+
     boolean updateLedger(long id, String name, String value, String fromDate, String toDate) {
         try {
             SQLiteDatabase db = this.getWritableDatabase();
@@ -425,11 +463,12 @@ class DB extends SQLiteOpenHelper {
         return true;
     }
 
-    boolean isMainTypeExisted(String inputMainType) {
+    boolean isTypeExisted(String inputMainType) {
         Cursor cursor;
         try {
             SQLiteDatabase db = this.getWritableDatabase();
-            cursor = db.rawQuery("SELECT " + NAME_MAIN_TYPE + " FROM " + TABLE_MAIN_TYPE + " WHERE " + NAME_MAIN_TYPE + "='" + inputMainType + "'", null);
+            cursor = db.rawQuery("SELECT " + NAME_MAIN_TYPE + " FROM " + TABLE_MAIN_TYPE
+                    + " WHERE " + NAME_MAIN_TYPE + "='" + inputMainType + "' COLLATE NOCASE", null);
             if(cursor != null && cursor.moveToFirst()) {
                 cursor.getString(cursor.getColumnIndex(NAME_MAIN_TYPE));
                 cursor.close();
@@ -451,6 +490,20 @@ class DB extends SQLiteOpenHelper {
                     + " ORDER BY " + ID_MAIN_TYPE + " DESC", null);
         } catch (Exception e) {
             Log.d("selectMainType", " error is " + e.getMessage());
+        }
+        return cursor;
+    }
+
+    Cursor selectTypeOrderByTypeId(String orderId) {
+        Cursor cursor = null;
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+            cursor = db.rawQuery("SELECT " + ID_MAIN_TYPE + "," + NAME_MAIN_TYPE + " FROM " + TABLE_MAIN_TYPE
+                    + " WHERE " + ID_MAIN_TYPE + " NOT IN (SELECT " + ID_MAIN_TYPE + " FROM " + TABLE_MAIN_TYPE
+                    + " WHERE " + ID_MAIN_TYPE + "= '1')"
+                    + " ORDER BY " + ID_MAIN_TYPE + " ='+" + orderId + "' DESC", null);
+        } catch (Exception e) {
+            Log.d("selectTypeOrderByEditId", " error is " + e.getMessage());
         }
         return cursor;
     }

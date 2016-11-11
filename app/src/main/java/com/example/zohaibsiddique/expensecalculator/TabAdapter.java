@@ -23,6 +23,9 @@ class TabAdapter extends FragmentStatePagerAdapter {
             case 1:
                 return new AddLedgerFragment();
 
+            case 2:
+                return new AddTypeFragment();
+
         }
         return null;
     }

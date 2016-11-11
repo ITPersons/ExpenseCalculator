@@ -40,6 +40,8 @@ public class AddExpenseFragment extends Fragment implements AdapterView.OnItemSe
     private final String KEY_ID = "id";
     private final String KEY_NAME = "name";
     private final String KEY_VALUE = "value";
+    private final String KEY_TYPE_ID = "typeID";
+    private final String KEY_LEDGER_ID = "ledgerId";
     String id;
 
     @Override
@@ -50,15 +52,34 @@ public class AddExpenseFragment extends Fragment implements AdapterView.OnItemSe
 
         preference = new SessionManager();
         editor = getActivity().getSharedPreferences(PREFERENCE_EDIT, Context.MODE_PRIVATE);
-        if(editor.contains(KEY_ID) && editor.contains(KEY_NAME) && editor.contains(KEY_VALUE)) {
+        if(editor.contains(KEY_ID) && editor.contains(KEY_NAME) && editor.contains(KEY_VALUE) && editor.contains(KEY_TYPE_ID) && editor.contains(KEY_LEDGER_ID)) {
             if(check) {
                 id = preference.getDatePreferences(getActivity(), PREFERENCE_EDIT, KEY_ID);
                 String name = preference.getDatePreferences(getActivity(), PREFERENCE_EDIT, KEY_NAME);
                 String value = preference.getDatePreferences(getActivity(), PREFERENCE_EDIT, KEY_VALUE);
+                String typeId = preference.getDatePreferences(getActivity(), PREFERENCE_EDIT, KEY_TYPE_ID);
+                String ledgerId = preference.getDatePreferences(getActivity(), PREFERENCE_EDIT, KEY_LEDGER_ID);
+
                 EditText nameEditText = (EditText) view.findViewById(R.id.name_expense);
                 nameEditText.setText(name);
+
                 EditText valueEditText = (EditText) view.findViewById(R.id.value_expense);
                 valueEditText.setText(value);
+
+                arrayListType = new ArrayList<>();
+                arrayListType.clear();
+                getTypesOrderByTypeId(typeId);
+                Spinner typeSpinner = (Spinner) view.findViewById(R.id.type_spinner);
+                typeSpinner.setOnItemSelectedListener(this);
+                Utility.setSpinnerAdapterByArrayList(typeSpinner, getActivity(), arrayListType);
+
+                arrayListLedger = new ArrayList<>();
+                arrayListLedger.clear();
+                getLedgerOrderById(ledgerId);
+                Spinner ledgerSpinner = (Spinner) view.findViewById(R.id.ledger_expense_spinner);
+                ledgerSpinner.setOnItemSelectedListener(this);
+                Utility.setSpinnerAdapterByArrayList(ledgerSpinner, getActivity(), arrayListLedger);
+
                 removeSharedPreferences();
             }
         }
@@ -72,6 +93,9 @@ public class AddExpenseFragment extends Fragment implements AdapterView.OnItemSe
         try {
             if (isVisibleToUser) {
                 check = true;
+            }
+            if (isVisibleToUser && isResumed()) {
+                setLedgerSpinner();
             }
         } catch (Exception e) {
             Log.d("setUserVisibleHint", e.getMessage());
@@ -98,15 +122,19 @@ public class AddExpenseFragment extends Fragment implements AdapterView.OnItemSe
         typeSpinner.setOnItemSelectedListener(this);
         Utility.setSpinnerAdapterByArrayList(typeSpinner, getActivity(), arrayListType);
 
+        setLedgerSpinner();
+
+        Button saveButton = (Button) view.findViewById(R.id.save_add_expense);
+        saveButton.setOnClickListener(new OnClickListener());
+    }
+
+    private void setLedgerSpinner() {
         arrayListLedger = new ArrayList<>();
         arrayListLedger.clear();
         getLedger();
         Spinner ledgerSpinner = (Spinner) view.findViewById(R.id.ledger_expense_spinner);
         ledgerSpinner.setOnItemSelectedListener(this);
         Utility.setSpinnerAdapterByArrayList(ledgerSpinner, getActivity(), arrayListLedger);
-
-        Button saveButton = (Button) view.findViewById(R.id.save_add_expense);
-        saveButton.setOnClickListener(new OnClickListener());
     }
 
     private class OnClickListener implements View.OnClickListener {
@@ -218,6 +246,16 @@ public class AddExpenseFragment extends Fragment implements AdapterView.OnItemSe
 
     }
 
+    private void getTypesOrderByTypeId(String orderId) {
+        Cursor cursor = db.selectTypeOrderByTypeId(orderId);
+        cursor.moveToFirst();
+        for (int i = 0; i < cursor.getCount(); i++) {
+            arrayListType.add(cursor.getString(cursor.getColumnIndex("name")));
+            cursor.moveToNext();
+        }
+        cursor.close();
+    }
+
     private void getTypes() {
         Cursor cursor = db.selectMainType();
         cursor.moveToFirst();
@@ -238,9 +276,20 @@ public class AddExpenseFragment extends Fragment implements AdapterView.OnItemSe
         cursor.close();
     }
 
+    private void getLedgerOrderById(String id) {
+        Cursor cursor = db.selectLedgerOrderById(id);
+        cursor.moveToFirst();
+        for (int i = 0; i < cursor.getCount(); i++) {
+            arrayListLedger.add(cursor.getString(cursor.getColumnIndex("title")));
+            cursor.moveToNext();
+        }
+        cursor.close();
+    }
+
     private boolean validateInput() {
         return Utility.validateEditText(addNameEditText, layoutExpenseName, "Enter valid name") &&
-                Utility.validateEditText(addValueEditText, layoutExpenseValue, "Enter valid value");
+                Utility.validateEditText(addValueEditText, layoutExpenseValue, "Enter valid value") &&
+                idType!=null && idLedger!=null;
     }
 
     private void removeSharedPreferences() {
@@ -248,6 +297,8 @@ public class AddExpenseFragment extends Fragment implements AdapterView.OnItemSe
         preferences.remove(KEY_ID);
         preferences.remove(KEY_NAME);
         preferences.remove(KEY_VALUE);
+        preferences.remove(KEY_TYPE_ID);
+        preferences.remove(KEY_LEDGER_ID);
         preferences.apply();
     }
 }

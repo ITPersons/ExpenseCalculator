@@ -28,6 +28,7 @@
     <string name="add_sub_type">Add sub type</string>
     <string name="type">Type</string>
     <string name="configure_drawer">Configure Drawer</string>
+    <string name="edit_type_ledger"><![CDATA[Edit types & ledgers]]></string>
     <string name="choose_date">Choose Date</string>
     <string name="choose_from_date">Choose from Date</string>
     <string name="choose_to_date">Choose to Date</string>

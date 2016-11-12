@@ -31,7 +31,6 @@ public class AddLedgerFragment extends Fragment {
     private final String KEY_ID = "id";
     private final String KEY_NAME = "name";
     private final String KEY_VALUE = "value";
-    String id;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -44,14 +43,12 @@ public class AddLedgerFragment extends Fragment {
         editor = getActivity().getSharedPreferences(PREFERENCE_EDIT, Context.MODE_PRIVATE);
         if(editor.contains(KEY_ID) && editor.contains(KEY_NAME) && editor.contains(KEY_VALUE)) {
             if(check) {
-                id = preference.getDatePreferences(getActivity(), PREFERENCE_EDIT, KEY_ID);
                 String name = preference.getDatePreferences(getActivity(), PREFERENCE_EDIT, KEY_NAME);
                 String value = preference.getDatePreferences(getActivity(), PREFERENCE_EDIT, KEY_VALUE);
                 EditText nameEditText = (EditText) view.findViewById(R.id.title_ledger);
                 nameEditText.setText(name);
                 EditText valueEditText = (EditText) view.findViewById(R.id.starting_balance_ledger);
                 valueEditText.setText(value);
-                removeSharedPreferences();
             }
         }
 
@@ -106,6 +103,8 @@ public class AddLedgerFragment extends Fragment {
                 DialogFragment dialog = new toDatePickerLedger();
                 dialog.show(manager, "toDatePickerLedger");
             }
+            SessionManager preference = new SessionManager();
+            String id = preference.getDatePreferences(getActivity(), PREFERENCE_EDIT, KEY_ID);
             if(id!=null) {
                 if(view.getId() == R.id.save_ledger) {
                     if (validateEditText()) {
@@ -116,6 +115,7 @@ public class AddLedgerFragment extends Fragment {
 
                             Utility.successSnackBar(layoutFromDate, "Updated", getActivity());
                             Utility.setResultActivity(getActivity());
+                            removeSharedPreferences();
                             getActivity().finish();
                         } else {
                             Utility.failSnackBar(layoutFromDate, "Error, try again", getActivity());

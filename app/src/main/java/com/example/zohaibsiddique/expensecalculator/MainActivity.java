@@ -1,12 +1,13 @@
 package com.example.zohaibsiddique.expensecalculator;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.TextInputLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -14,17 +15,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,8 +28,6 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity{
 
-    private TextInputLayout layoutAddMainType;
-    private EditText addMainType;
     private RecyclerView recyclerView;
     private ArrayList<Object> arrayListExpense;
     private ArrayList<Ledger> arrayListDrawer;
@@ -60,6 +54,8 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        removeShearedPreferenceOfEdit();
 
         db = new DB(MainActivity.this);
         showValueExpense = (TextView) findViewById(R.id.show_value_expense);
@@ -422,5 +418,37 @@ public class MainActivity extends AppCompatActivity{
                         });
         AlertDialog alert = alertDialogBuilder.create();
         alert.show();
+    }
+
+    private void removeShearedPreferenceOfEdit() {
+
+        final String PREFERENCE_LEDGER = "edit_ledger";
+        final String PREFERENCE_EXPENSE = "edit_expense";
+        final String PREFERENCE_TYPE = "edit_type";
+        final String KEY_ID = "id";
+        final String KEY_NAME = "name";
+        final String KEY_VALUE = "value";
+        final String KEY_TYPE_ID = "typeID";
+        final String KEY_LEDGER_ID = "ledgerId";
+
+        SharedPreferences.Editor expense = getSharedPreferences(PREFERENCE_EXPENSE, Context.MODE_PRIVATE).edit();
+        SharedPreferences.Editor type = getSharedPreferences(PREFERENCE_TYPE, Context.MODE_PRIVATE).edit();
+        SharedPreferences.Editor ledger = getSharedPreferences(PREFERENCE_LEDGER, Context.MODE_PRIVATE).edit();
+
+        expense.remove(KEY_ID);
+        expense.remove(KEY_NAME);
+        expense.remove(KEY_VALUE);
+        expense.remove(KEY_TYPE_ID);
+        expense.remove(KEY_LEDGER_ID);
+        expense.apply();
+
+        type.remove(KEY_ID);
+        type.remove(KEY_NAME);
+        type.apply();
+
+        ledger.remove(KEY_ID);
+        ledger.remove(KEY_NAME);
+        ledger.remove(KEY_VALUE);
+        ledger.apply();
     }
 }

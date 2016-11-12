@@ -42,7 +42,6 @@ public class AddExpenseFragment extends Fragment implements AdapterView.OnItemSe
     private final String KEY_VALUE = "value";
     private final String KEY_TYPE_ID = "typeID";
     private final String KEY_LEDGER_ID = "ledgerId";
-    String id;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -54,7 +53,6 @@ public class AddExpenseFragment extends Fragment implements AdapterView.OnItemSe
         editor = getActivity().getSharedPreferences(PREFERENCE_EDIT, Context.MODE_PRIVATE);
         if(editor.contains(KEY_ID) && editor.contains(KEY_NAME) && editor.contains(KEY_VALUE) && editor.contains(KEY_TYPE_ID) && editor.contains(KEY_LEDGER_ID)) {
             if(check) {
-                id = preference.getDatePreferences(getActivity(), PREFERENCE_EDIT, KEY_ID);
                 String name = preference.getDatePreferences(getActivity(), PREFERENCE_EDIT, KEY_NAME);
                 String value = preference.getDatePreferences(getActivity(), PREFERENCE_EDIT, KEY_VALUE);
                 String typeId = preference.getDatePreferences(getActivity(), PREFERENCE_EDIT, KEY_TYPE_ID);
@@ -79,8 +77,6 @@ public class AddExpenseFragment extends Fragment implements AdapterView.OnItemSe
                 Spinner ledgerSpinner = (Spinner) view.findViewById(R.id.ledger_expense_spinner);
                 ledgerSpinner.setOnItemSelectedListener(this);
                 Utility.setSpinnerAdapterByArrayList(ledgerSpinner, getActivity(), arrayListLedger);
-
-                removeSharedPreferences();
             }
         }
 
@@ -144,12 +140,15 @@ public class AddExpenseFragment extends Fragment implements AdapterView.OnItemSe
             String valueExpense = addValueEditText.getText().toString().trim();
             String dateExpense = Utility.simpleDateFormat(Utility.dateInMilliSecond(dateTextView.getText().toString()));
 
-            if(id!=null) {
+            SessionManager preference = new SessionManager();
+            String id = preference.getDatePreferences(getActivity(), PREFERENCE_EDIT, KEY_ID);
+            if(id != null) {
                 if (view.getId() == R.id.save_add_expense) {
                     if (validateInput()) {
                             if(db.updateExpense(Long.valueOf(id), nameExpense, valueExpense, Utility.currentTimeInMillis(), dateExpense, idType, idLedger)) {
                                 Utility.successSnackBar(layoutExpenseName, "Updated", getActivity());
                                 Utility.setResultActivity(getActivity());
+                                removeSharedPreferences();
                                 getActivity().finish();
                             } else {
                                 Utility.failSnackBar(layoutExpenseName, "Error, try again", getActivity());
@@ -168,7 +167,7 @@ public class AddExpenseFragment extends Fragment implements AdapterView.OnItemSe
                         if (db.isExpenseExist(nameExpense)) {
                             Utility.failSnackBar(layoutExpenseName, "Error, name already existed", getActivity());
                         } else {
-                            if (db.addExpense(nameExpense, valueExpense, Utility.currentTimeInMillis(), dateExpense, idType,idLedger)) {
+                            if (db.addExpense(nameExpense, valueExpense, Utility.currentTimeInMillis(), dateExpense, idType, idLedger)) {
                                 Utility.successSnackBar(layoutExpenseName, "Save", getActivity());
                                 addNameEditText.setText("");
                                 addValueEditText.setText("");

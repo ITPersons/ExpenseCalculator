@@ -14,6 +14,12 @@ import android.view.MenuItem;
 public class AddNew extends AppCompatActivity{
 
     TabLayout tabLayout;
+    final String PREFERENCE_LEDGER = "edit_ledger";
+    final String PREFERENCE_EXPENSE = "edit_expense";
+    final String PREFERENCE_TYPE = "edit_type";
+    final String KEY_ID = "id";
+    final String KEY_NAME = "name";
+    final String KEY_VALUE = "value";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,16 +50,14 @@ public class AddNew extends AppCompatActivity{
         final String KEY_NAME = "name";
         final String KEY_VALUE = "value";
 
-        SharedPreferences editorExpense;
-        editorExpense = getSharedPreferences(PREFERENCE_EXPENSE, Context.MODE_PRIVATE);
+        SharedPreferences editorExpense = getSharedPreferences(PREFERENCE_EXPENSE, Context.MODE_PRIVATE);
         if (editorExpense.contains(KEY_ID) && editorExpense.contains(KEY_NAME) && editorExpense.contains(KEY_VALUE)) {
             if (actionBar != null) {
                 actionBar.setTitle("Edit");
             }
         }
 
-        SharedPreferences editor;
-        editor = getSharedPreferences(PREFERENCE_LEDGER, Context.MODE_PRIVATE);
+        SharedPreferences editor = getSharedPreferences(PREFERENCE_LEDGER, Context.MODE_PRIVATE);
         if (editor.contains(KEY_ID) && editor.contains(KEY_NAME)) {
             if (actionBar != null) {
                 actionBar.setTitle("Edit");
@@ -62,8 +66,7 @@ public class AddNew extends AppCompatActivity{
 
         }
 
-        SharedPreferences editorType;
-        editorType = getSharedPreferences(PREFERENCE_TYPE, Context.MODE_PRIVATE);
+        SharedPreferences editorType = getSharedPreferences(PREFERENCE_TYPE, Context.MODE_PRIVATE);
         if (editorType.contains(KEY_ID) && editorType.contains(KEY_NAME)) {
             if (actionBar != null) {
                 actionBar.setTitle("Edit");
@@ -97,11 +100,36 @@ public class AddNew extends AppCompatActivity{
         return true;
     }
 
+    private void removeShearedPreference() {
+        SharedPreferences.Editor expense = getSharedPreferences(PREFERENCE_EXPENSE, Context.MODE_PRIVATE).edit();
+        SharedPreferences.Editor type = getSharedPreferences(PREFERENCE_TYPE, Context.MODE_PRIVATE).edit();
+        SharedPreferences.Editor ledger = getSharedPreferences(PREFERENCE_LEDGER, Context.MODE_PRIVATE).edit();
+
+        final String KEY_TYPE_ID = "typeID";
+        final String KEY_LEDGER_ID = "ledgerId";
+        expense.remove(KEY_ID);
+        expense.remove(KEY_NAME);
+        expense.remove(KEY_VALUE);
+        expense.remove(KEY_TYPE_ID);
+        expense.remove(KEY_LEDGER_ID);
+        expense.apply();
+
+        type.remove(KEY_ID);
+        type.remove(KEY_NAME);
+        type.apply();
+
+        ledger.remove(KEY_ID);
+        ledger.remove(KEY_NAME);
+        ledger.remove(KEY_VALUE);
+        ledger.apply();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
         if (id == android.R.id.home) {
+            removeShearedPreference();
             Utility.setResultActivity(AddNew.this);
             finish();
             return true;
@@ -111,6 +139,7 @@ public class AddNew extends AppCompatActivity{
 
     @Override
     public void onBackPressed() {
+        removeShearedPreference();
         Utility.setResultActivity(AddNew.this);
         finish();
     }

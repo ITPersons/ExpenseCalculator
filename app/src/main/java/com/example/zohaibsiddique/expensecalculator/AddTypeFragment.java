@@ -1,7 +1,6 @@
 package com.example.zohaibsiddique.expensecalculator;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
@@ -14,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 public class AddTypeFragment extends Fragment{
 
@@ -30,7 +28,6 @@ public class AddTypeFragment extends Fragment{
     private final String PREFERENCE_EDIT = "edit_type";
     private final String KEY_ID = "id";
     private final String KEY_NAME = "name";
-    String idType;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -42,11 +39,9 @@ public class AddTypeFragment extends Fragment{
         editor = getActivity().getSharedPreferences(PREFERENCE_EDIT, Context.MODE_PRIVATE);
         if(editor.contains(KEY_ID) && editor.contains(KEY_NAME)) {
             if(check) {
-                idType = preference.getDatePreferences(getActivity(), PREFERENCE_EDIT, KEY_ID);
                 String name = preference.getDatePreferences(getActivity(), PREFERENCE_EDIT, KEY_NAME);
                 EditText nameEditText = (EditText) view.findViewById(R.id.add_main_type);
                 nameEditText.setText(name);
-                removeSharedPreferences();
             }
         }
 
@@ -59,9 +54,6 @@ public class AddTypeFragment extends Fragment{
         try {
             if (isVisibleToUser) {
                 check = true;
-            }
-            if (isVisibleToUser && isResumed()) {
-
             }
         } catch (Exception e) {
             Log.d("setUserVisibleHint", e.getMessage());
@@ -82,12 +74,15 @@ public class AddTypeFragment extends Fragment{
             int id = view.getId();
             switch (id) {
                 case R.id.add_type_button:
+                    SessionManager preference = new SessionManager();
+                    String idType = preference.getDatePreferences(getActivity(), PREFERENCE_EDIT, KEY_ID);
                     if(idType!=null) {
                         if (Utility.validateEditText(addType, layoutAddType, "Enter valid type")) {
                             String type = addType.getText().toString();
                             db.updateType(Long.valueOf(idType), type);
                             Utility.successSnackBar(layoutAddType, "Type updated", getActivity());
                             Utility.setResultActivity(getActivity());
+                            removeSharedPreferences();
                             getActivity().finish();
                         } else if (!Utility.validateEditText(addType, layoutAddType, "Enter valid type")) {
                             Utility.failSnackBar(layoutAddType, "Error, field cannot be empty, try again", getActivity());

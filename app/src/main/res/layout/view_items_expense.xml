@@ -17,9 +17,7 @@
             android:id="@+id/edit"
             android:layout_width="@dimen/swipeWidth"
             android:layout_height="match_parent"
-            android:layout_marginRight="@dimen/one_margin"
-            android:layout_marginEnd="@dimen/one_margin"
-            android:background="@color/off_white"
+            android:background="@color/gray"
             android:clickable="true"
             android:focusable="true"
             android:orientation="vertical">
@@ -36,8 +34,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:src="@android:drawable/ic_menu_edit"
-                    android:tint="@color/success"
+                    android:src="@drawable/ic_pencil"
+                    android:tint="@color/white"
                     android:contentDescription="@string/image"/>
 
             </LinearLayout>
@@ -47,7 +45,7 @@
             android:id="@+id/delete"
             android:layout_width="@dimen/swipeWidth"
             android:layout_height="match_parent"
-            android:background="@color/off_white"
+            android:background="@color/failure"
             android:clickable="true"
             android:focusable="true"
             android:orientation="vertical">
@@ -64,8 +62,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    app:srcCompat="@android:drawable/ic_delete"
-                    android:tint="@color/failure"
+                    app:srcCompat="@drawable/ic_trash"
+                    android:tint="@color/white"
                     android:contentDescription="@string/image"/>
 
             </LinearLayout>

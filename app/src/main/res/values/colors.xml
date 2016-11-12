@@ -3,9 +3,10 @@
     <color name="colorPrimary">#292787</color>
     <color name="colorPrimaryDark">#292787</color>
     <color name="warning">#FFFF9800</color>
-    <color name="failure">#bbB71C1C</color>
+    <color name="failure">#F01A33</color>
+    <color name="light_failure">#44F01A33</color>
     <color name="success">#FF689F38</color>
-    <color name="gray">#999</color>
+    <color name="gray">#777</color>
     <color name="off_white">#eee</color>
     <color name="white_shade">#99ffffff</color>
     <color name="white">#fff</color>

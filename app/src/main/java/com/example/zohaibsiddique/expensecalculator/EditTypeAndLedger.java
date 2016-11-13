@@ -11,13 +11,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class ConfigureDrawer extends AppCompatActivity {
+public class EditTypeAndLedger extends AppCompatActivity {
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_configure_drawer);
+        setContentView(R.layout.activity_edit_type_and_ledger);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -76,7 +76,7 @@ public class ConfigureDrawer extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == android.R.id.home) {
-           Utility.setResultActivity(ConfigureDrawer.this);
+           Utility.setResultActivity(EditTypeAndLedger.this);
             finish();
             return true;
         }
@@ -85,7 +85,7 @@ public class ConfigureDrawer extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Utility.setResultActivity(ConfigureDrawer.this);
+        Utility.setResultActivity(EditTypeAndLedger.this);
         finish();
     }
 }

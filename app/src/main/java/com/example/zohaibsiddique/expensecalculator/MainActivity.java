@@ -260,7 +260,7 @@ public class MainActivity extends AppCompatActivity{
         int id = item.getItemId();
 
         if (id == R.id.configure_drawer) {
-            Utility.startAnActivityForResult(MainActivity.this, MainActivity.this, ConfigureDrawer.class, CONFIGURE_DRAWER_REQUEST_CODE);
+            Utility.startAnActivityForResult(MainActivity.this, MainActivity.this, EditTypeAndLedger.class, CONFIGURE_DRAWER_REQUEST_CODE);
             return true;
         }
         if (id == R.id.filter) {

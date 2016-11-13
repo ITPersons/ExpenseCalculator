@@ -19,7 +19,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ConfigureDrawer"
+            android:name=".EditTypeAndLedger"
             android:label="@string/title_activity_configure_drawer"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

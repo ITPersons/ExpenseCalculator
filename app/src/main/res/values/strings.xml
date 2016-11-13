@@ -151,7 +151,7 @@
     <string name="title_activity_add_new_item">Add new item</string>
     <string name="title_activity_add_new_type">Add new type</string>
     <string name="title_activity_add_new_consignment">Add new consignment</string>
-    <string name="title_activity_configure_drawer">ConfigureDrawer</string>
+    <string name="title_activity_configure_drawer">Edit</string>
     <string name="title_activity_view_items">ViewItems</string>
 
     <string-array name="add_new_expense">

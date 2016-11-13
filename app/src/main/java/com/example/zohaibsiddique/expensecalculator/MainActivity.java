@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity{
     final String DATE = "date";
     final String TYPE_ID = "type_id";
     AdapterDrawerItems adapter = null;
-    private static int drawerListPosition = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +62,8 @@ public class MainActivity extends AppCompatActivity{
         showValueBalance = (TextView) findViewById(R.id.show_value_balance);
 
         viewDrawerItems();
-        setSelectedItemPositionOfDrawerItem(adapter, drawerListPosition);
+        setSelectedItemPositionOfDrawerItem(adapter, 0);
+
 
         if(db.selectLastIdOfLedger() != null) {
             ledgerId = db.selectLastIdOfLedger();
@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity{
             addValuesToArrayListExpense(cursorExpense);
             selectAndShowLedgerValue(incomeId);
             showBalance();
-            setSelectedItemPositionOfDrawerItem(adapter, drawerListPosition);
+            setSelectedItemPositionOfDrawerItem(adapter, 0);
         } catch (Exception e) {
             Log.d("showItems", " failed " + e.getMessage());
         }
@@ -225,7 +225,6 @@ public class MainActivity extends AppCompatActivity{
         drawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                drawerListPosition = position;
                 nameLedger = arrayListDrawer.get(position).getTitle();
                 ledgerId = db.selectIdByLedgerName(nameLedger);
                 setSelectedItemPositionOfDrawerItem(adapter, position);
@@ -299,7 +298,9 @@ public class MainActivity extends AppCompatActivity{
                     viewItems(ledgerId);
                     break;
                 case ADD_NEW_REQUEST_CODE:
+                    ledgerId = db.selectLastIdOfLedger();
                     viewDrawerItems();
+                    setSelectedItemPositionOfDrawerItem(adapter, 0);
                     viewItems(ledgerId);
                     break;
                 case EDIT_EXPENSE_REQUEST_CODE:

@@ -21,6 +21,14 @@ class AdapterDrawerItems extends ArrayAdapter<Ledger> {
         this.list = list;
     }
 
+//    @Override
+//    public int getItemViewType(int position) {
+//        if (items.get(position) instanceof Expense) {
+//            return EXPENSE;
+//        }
+//        return -1;
+//    }
+
     @Override
     public View getView(int position, View view, ViewGroup parent) {
         if (view == null) {
@@ -32,6 +40,7 @@ class AdapterDrawerItems extends ArrayAdapter<Ledger> {
         if(selectedItemPosition != -1) {
             if (selectedItemPosition == position) {
                 setTypeFace(view, Typeface.BOLD);
+
             } else {
                 setTypeFace(view, Typeface.NORMAL);
             }

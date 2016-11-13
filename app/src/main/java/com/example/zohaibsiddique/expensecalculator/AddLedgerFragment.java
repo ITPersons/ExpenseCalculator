@@ -1,5 +1,6 @@
 package com.example.zohaibsiddique.expensecalculator;
 
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.content.Context;
@@ -124,12 +125,13 @@ public class AddLedgerFragment extends Fragment {
                 }
             } else {
                 if(view.getId() == R.id.save_ledger) {
+                    String title = titleEditText.getText().toString();
                     if(validateEditText()) {
 
-                        if(db.isLedgerExist(titleEditText.getText().toString())) {
+                        if(db.isLedgerExist(title)) {
                             Utility.failSnackBar(layoutFromDate, "Error, ledger already existed", getActivity());
 
-                        } else if (db.addLedger(titleEditText.getText().toString(),
+                        } else if (db.addLedger(title,
                                 startingBalanceEditText.getText().toString(),
                                 Utility.currentTimeInMillis(),
                                 Utility.simpleDateFormat(Utility.dateInMilliSecond(fromDateEditText.getText().toString())),

@@ -16,7 +16,7 @@ class AdapterDrawerItems extends ArrayAdapter<Ledger> {
     private int selectedItemPosition = -1;
 
     AdapterDrawerItems(Context context, List<Ledger> list) {
-        super(context, R.layout.drawer_items, list);
+        super(context, R.layout.adapter_drawer_items, list);
         inflater = LayoutInflater.from(context);
         this.list = list;
     }
@@ -32,7 +32,7 @@ class AdapterDrawerItems extends ArrayAdapter<Ledger> {
     @Override
     public View getView(int position, View view, ViewGroup parent) {
         if (view == null) {
-            view = inflater.inflate(R.layout.drawer_items, parent, false);
+            view = inflater.inflate(R.layout.adapter_drawer_items, parent, false);
             name = (TextView) view.findViewById(R.id.name_ledger);
         }
         name.setText(list.get(position).getTitle());

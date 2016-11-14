@@ -48,7 +48,7 @@ public class EditLedgerFragment extends Fragment {
         recyclerView = (RecyclerView) view.findViewById(R.id.edit_recyclerView);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setAdapter(new AdapterConfigureDrawer(getActivity(), arrayListLedger));
+        recyclerView.setAdapter(new Adapter(getActivity(), arrayListLedger));
     }
 
     private void addValuesToArrayListExpense(Cursor cursor) {

@@ -10,7 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import java.util.List;
 
-class CustomListAdapter extends ArrayAdapter<String> {
+class AdapterLeftFragment extends ArrayAdapter<String> {
     private final LayoutInflater inflater;
     private int selectedItemPosition;
     TextView name;
@@ -18,8 +18,8 @@ class CustomListAdapter extends ArrayAdapter<String> {
     private boolean firstPositionCheck, secondPositionCheck, thirdPositionCheck;
     private int count;
 
-    CustomListAdapter(Context context, List<String> list) {
-        super(context, R.layout.single_list_item_view, list);
+    AdapterLeftFragment(Context context, List<String> list) {
+        super(context, R.layout.adapter_left_fragment, list);
         inflater = LayoutInflater.from(context);
         this.list = list;
     }
@@ -27,7 +27,7 @@ class CustomListAdapter extends ArrayAdapter<String> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.single_list_item_view, parent, false);
+            convertView = inflater.inflate(R.layout.adapter_left_fragment, parent, false);
             name = (TextView) convertView.findViewById(R.id.name_single_list_item_view);
 
         }

@@ -89,7 +89,6 @@ public class MainActivity extends AppCompatActivity{
             addValuesToArrayListExpense(cursorExpense);
             selectAndShowLedgerValue(incomeId);
             showBalance();
-            setSelectedItemPositionOfDrawerItem(adapter, 0);
         } catch (Exception e) {
             Log.d("showItems", " failed " + e.getMessage());
         }
@@ -160,7 +159,7 @@ public class MainActivity extends AppCompatActivity{
         recyclerView = (RecyclerView) findViewById(R.id.view_item_recycle_view);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setAdapter(new ComplexRecyclerViewAdapter(MainActivity.this, arrayListExpense));
+        recyclerView.setAdapter(new Adapter(MainActivity.this, arrayListExpense));
     }
 
     private void addValuesToArrayListExpense(Cursor cursor) {

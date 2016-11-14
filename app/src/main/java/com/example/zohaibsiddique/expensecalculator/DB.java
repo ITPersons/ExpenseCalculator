@@ -11,9 +11,6 @@ class DB extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "expense_calculator.db";
-//    private DB myDBHelper;
-//    private Context context;
-//    private SQLiteDatabase db;
 
     private final String TABLE_MAIN_TYPE = "main_type";
     private final String ID_MAIN_TYPE = "id";
@@ -188,19 +185,6 @@ class DB extends SQLiteOpenHelper {
             SQLiteDatabase db = this.getWritableDatabase();
             cursor = db.rawQuery("SELECT " + STARTING_BALANCE_LEDGER  + " FROM " + TABLE_LEDGER
                     + " WHERE "+ID_LEDGER+"='" +id+"'", null);
-        } catch (Exception e) {
-            Log.d("selectLedgerValueById", " error " + e.getMessage());
-        }
-
-        return cursor;
-    }
-
-    Cursor selectExpenseValueById(String id) {
-        Cursor cursor = null;
-        try {
-            SQLiteDatabase db = this.getWritableDatabase();
-            cursor = db.rawQuery("SELECT " + VALUE_EXPENSE  + " FROM " + TABLE_EXPENSE
-                    + " WHERE "+FOREIGN_KEY_LEDGER+"='" +id+"'", null);
         } catch (Exception e) {
             Log.d("selectLedgerValueById", " error " + e.getMessage());
         }

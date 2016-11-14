@@ -16,7 +16,7 @@ public class LeftFragmentFilter extends ListFragment implements AdapterView.OnIt
     Get get;
     View view, prevSelectedView;
     ListView listView;
-    CustomListAdapter adapter;
+    AdapterLeftFragment adapter;
 
     public interface Get {
         void getData(int s);
@@ -50,7 +50,7 @@ public class LeftFragmentFilter extends ListFragment implements AdapterView.OnIt
         arrayList.add("Date");
         arrayList.add("From-to Date");
 
-        adapter = new CustomListAdapter(getActivity(), arrayList);
+        adapter = new AdapterLeftFragment(getActivity(), arrayList);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);
 

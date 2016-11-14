@@ -10,10 +10,10 @@ class ViewHolderExpense extends RecyclerView.ViewHolder {
 
     ViewHolderExpense(View v) {
         super(v);
-        name = (TextView) itemView.findViewById(R.id.name_expense);
-        value = (TextView) itemView.findViewById(R.id.value_expense);
-        date = (TextView) itemView.findViewById(R.id.date_expense);
-        type = (TextView) itemView.findViewById(R.id.type_expense);
+        name = (TextView) itemView.findViewById(R.id.name);
+        value = (TextView) itemView.findViewById(R.id.value);
+        date = (TextView) itemView.findViewById(R.id.date);
+        type = (TextView) itemView.findViewById(R.id.type);
     }
 
     TextView getName() {

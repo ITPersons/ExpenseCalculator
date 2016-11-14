@@ -10,7 +10,7 @@ class ViewHolderType extends RecyclerView.ViewHolder {
 
     ViewHolderType(View v) {
         super(v);
-        name = (TextView) itemView.findViewById(R.id.name_configure_drawer);
+        name = (TextView) itemView.findViewById(R.id.name);
     }
 
     TextView getName() {

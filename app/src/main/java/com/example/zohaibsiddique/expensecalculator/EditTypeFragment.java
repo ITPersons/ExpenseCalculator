@@ -48,7 +48,7 @@ public class EditTypeFragment extends Fragment {
         recyclerView = (RecyclerView) view.findViewById(R.id.edit_recyclerView);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setAdapter(new AdapterConfigureDrawer(getActivity(), arrayList));
+        recyclerView.setAdapter(new Adapter(getActivity(), arrayList));
     }
 
     private void addValuesToArrayListType(Cursor cursor) {
